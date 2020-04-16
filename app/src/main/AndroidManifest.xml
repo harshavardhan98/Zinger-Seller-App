@@ -11,9 +11,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ui.menu.MenuActivity"></activity>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".ui.order.OrderActivity"></activity>
+        <activity android:name=".ui.shopConfiguration.ShopConfigActivity" />
+        <activity android:name=".ui.menu.MenuActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

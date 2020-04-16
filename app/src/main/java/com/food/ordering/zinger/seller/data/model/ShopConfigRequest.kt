@@ -2,7 +2,7 @@ package com.food.ordering.zinger.seller.data.model
 import com.google.gson.annotations.SerializedName
 
 
-data class ShopConfigurationRequest(
+data class ShopConfigRequest(
     @SerializedName("deliveryPrice")
     val deliveryPrice: Int,
     @SerializedName("isDeliveryAvailable")

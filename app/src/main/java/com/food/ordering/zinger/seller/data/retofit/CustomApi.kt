@@ -10,22 +10,22 @@ interface CustomApi  {
     suspend fun login(@Body loginRequest: LoginRequest): LoginResponse
 
     @GET("/user/seller/shopid")
-    suspend fun getSellers()
+    suspend fun getSellers(): Response<List<UserModel>>
 
     // shop repository
     @PATCH("/shop/config")
-    suspend fun updateShopConfiguration(@Body shopConfigurationRequest: ShopConfigurationRequest): ShopConfigurationResponse
+    suspend fun updateShopConfiguration(@Body shopConfigRequest: ShopConfigRequest): Response<String>
 
 
     // Item Repository
     @GET("/menu/shop/{shopId}")
-    suspend fun getShopMenu(@Path("shopId") shopId: Int): MenuResponse
+    suspend fun getShopMenu(@Path("shopId") shopId: Int): Response<List<ItemModel>>
 
     @POST("/menu")
-    suspend fun addItem(@Body item: Item): Response<String>
+    suspend fun addItem(@Body item: ItemModel): Response<String>
 
     @PATCH("/menu")
-    suspend fun updateItem(@Body item: Item): Response<String>
+    suspend fun updateItem(@Body item: ItemModel): Response<String>
 
     @DELETE("/menu/delete/{itemId}")
     suspend fun deleteItem(@Path("itemId") itemId: Int): Response<String>
@@ -36,17 +36,18 @@ interface CustomApi  {
 
     // Order Repository
 
-    @POST("/order/accept/{orderId}")
-    suspend fun acceptOrder(@Path("orderId") orderId: Int): Response<String>
-
     @GET("/order/{orderId}")
-    suspend fun getOrderById(@Path("orderId") orderId: Int): OrderResponse
+    suspend fun getOrderById(@Path("orderId") orderId: String): Response<TransactionModel>
 
     @GET("/order/seller/{shopId}/{pageNum}/{pageCnt}")
-    suspend fun getOrderByPagination(@Path("shopId") shopId: Int,@Path("pageNum") pageNum: Int,@Path("pageCnt") pageCnt: Int): Response<List<OrderModel>>
+    suspend fun getOrderByPagination(@Path("shopId") shopId: Int,@Path("pageNum") pageNum: Int,@Path("pageCnt") pageCnt: Int): Response<List<OrderItemList>>
 
     @GET("/order/seller/{shopId}")
-    suspend fun getOrderByShopId(@Path("shopId") shopId: Int): Response<List<OrderModel>>
+    suspend fun getOrderByShopId(@Path("shopId") shopId: Int): Response<List<OrderItemList>>
+
+    @PATCH("/order/status")
+    suspend fun updateOrderStatus(@Body order: OrderModel):Response<String>
+
 
     // Notify Repository
     @POST("notify/seller/invite")

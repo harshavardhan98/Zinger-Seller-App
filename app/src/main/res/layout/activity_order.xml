@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.order.OrderActivity">
+
+        <Button
+            android:id="@+id/btn_orderId"
+            android:text="OrderById"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btn_pastOrders"
+            android:text="Past Orders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btn_currentOrders"
+            android:text="Current Orders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btn_updateOrderStatus"
+            android:text="Update Order Status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+</layout>

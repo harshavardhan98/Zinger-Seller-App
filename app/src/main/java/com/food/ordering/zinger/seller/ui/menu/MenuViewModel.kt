@@ -1,22 +1,19 @@
 package com.food.ordering.zinger.seller.ui.menu
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.food.ordering.zinger.seller.data.local.Resource
-import com.food.ordering.zinger.seller.data.model.Item
-import com.food.ordering.zinger.seller.data.model.LoginResponse
-import com.food.ordering.zinger.seller.data.model.MenuResponse
+import com.food.ordering.zinger.seller.data.model.ItemModel
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.retofit.ItemRepository
 import kotlinx.coroutines.launch
 
 class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
 
-    private val menuRequest = MutableLiveData<Resource<MenuResponse>>()
-    val menuRequestResponse : LiveData<Resource<MenuResponse>>
+    private val menuRequest = MutableLiveData<Resource<Response<List<ItemModel>>>>()
+    val menuRequestResponse : LiveData<Resource<Response<List<ItemModel>>>>
     get() = menuRequest
 
     private val addItem = MutableLiveData<Resource<Response<String>>>()
@@ -50,7 +47,7 @@ class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
         }
     }
 
-    fun addItem(item: Item){
+    fun addItem(item: ItemModel){
         viewModelScope.launch {
             try{
                 addItem.value = Resource.loading()
@@ -65,7 +62,7 @@ class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
         }
     }
 
-    fun updateItem(item: Item){
+    fun updateItem(item: ItemModel){
         viewModelScope.launch {
             try {
                 updateItem.value = Resource.loading()

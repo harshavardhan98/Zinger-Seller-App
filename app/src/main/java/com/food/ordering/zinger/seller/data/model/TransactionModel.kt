@@ -2,16 +2,8 @@ package com.food.ordering.zinger.seller.data.model
 import com.google.gson.annotations.SerializedName
 
 
-data class OrderResponse(
-    @SerializedName("code")
-    val code: Int,
-    @SerializedName("data")
-    val `data`: Transaction,
-    @SerializedName("message")
-    val message: String
-)
 
-data class Transaction(
+data class TransactionModel(
     @SerializedName("bankName")
     val bankName: String,
     @SerializedName("bankTransactionId")
@@ -36,28 +28,28 @@ data class Transaction(
 
 data class OrderModel(
     @SerializedName("cookingInfo")
-    val cookingInfo: String,
+    val cookingInfo: String?=null,
     @SerializedName("date")
-    val date: String,
+    val date: String?=null,
     @SerializedName("deliveryLocation")
-    val deliveryLocation: String?,
+    val deliveryLocation: String?=null,
     @SerializedName("deliveryPrice")
-    val deliveryPrice: Double,
+    val deliveryPrice: Double?=null,
     @SerializedName("id")
-    val id: String,
+    val id: String?=null,
     @SerializedName("lastStatusUpdatedTime")
-    val lastStatusUpdatedTime: String,
+    val lastStatusUpdatedTime: String?=null,
     @SerializedName("orderStatus")
-    val orderStatus: String,
+    val orderStatus: String?=null,
     @SerializedName("price")
-    val price: Double,
+    val price: Double?=null,
     @SerializedName("rating")
-    val rating: Double,
+    val rating: Double?=null,
     @SerializedName("secretKey")
-    val secretKey: String?,
+    val secretKey: String?=null,
     @SerializedName("shopModel")
-    val shopModel: ShopModel,
+    val shopModel: ShopModel?=null,
     @SerializedName("userModel")
-    val userModel: UserModel
+    val userModel: UserModel?=null
 )
 
