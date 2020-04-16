@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
@@ -17,9 +18,13 @@ android {
     }
 
     buildTypes {
+        debug{
+            buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
         }
     }
 
