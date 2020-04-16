@@ -66,21 +66,21 @@ data class RatingModel(
 
 data class ShopModel(
     @SerializedName("closingTime")
-    val closingTime: String,
+    val closingTime: String? = null,
     @SerializedName("coverUrls")
-    val coverUrls: List<String>,
+    val coverUrls: List<String>? = null ,
     @SerializedName("id")
-    val id: Int,
+    val id: Int? = null,
     @SerializedName("mobile")
-    val mobile: String,
+    val mobile: String? = null,
     @SerializedName("name")
-    val name: String,
+    val name: String? = null,
     @SerializedName("openingTime")
-    val openingTime: String,
+    val openingTime: String? = null,
     @SerializedName("photoUrl")
-    val photoUrl: String,
+    val photoUrl: String? = null,
     @SerializedName("placeModel")
-    val placeModel: PlaceModel?
+    val placeModel: PlaceModel? = null
 )
 
 data class PlaceModel(

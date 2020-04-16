@@ -19,7 +19,7 @@ interface CustomApi  {
 
     // Item Repository
     @GET("/menu/shop/{shopId}")
-    suspend fun getShopMenu(@Path("shopId") shopId: String): MenuResponse
+    suspend fun getShopMenu(@Path("shopId") shopId: Int): MenuResponse
 
     @POST("/menu")
     suspend fun addItem(@Body item: Item): Response<String>

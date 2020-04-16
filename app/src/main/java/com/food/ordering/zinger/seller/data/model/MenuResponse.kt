@@ -15,9 +15,9 @@ data class Item(
     @SerializedName("category")
     val category: String,
     @SerializedName("id")
-    val id: Int,
+    val id: Int? = null,
     @SerializedName("isAvailable")
-    val isAvailable: Int,
+    val isAvailable: Int?,
     @SerializedName("isVeg")
     val isVeg: Int,
     @SerializedName("name")
