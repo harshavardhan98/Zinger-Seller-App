@@ -1,6 +1,6 @@
 package com.food.ordering.zinger.seller.data.model
 import com.google.gson.annotations.SerializedName
-
+import java.util.*
 
 
 data class TransactionModel(
@@ -30,7 +30,7 @@ data class OrderModel(
     @SerializedName("cookingInfo")
     val cookingInfo: String?=null,
     @SerializedName("date")
-    val date: String?=null,
+    val date: Date?=null,
     @SerializedName("deliveryLocation")
     val deliveryLocation: String?=null,
     @SerializedName("deliveryPrice")
@@ -38,7 +38,7 @@ data class OrderModel(
     @SerializedName("id")
     val id: String?=null,
     @SerializedName("lastStatusUpdatedTime")
-    val lastStatusUpdatedTime: String?=null,
+    val lastStatusUpdatedTime: Date?=null,
     @SerializedName("orderStatus")
     val orderStatus: String?=null,
     @SerializedName("price")
