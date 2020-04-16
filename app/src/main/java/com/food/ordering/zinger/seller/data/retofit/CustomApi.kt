@@ -9,8 +9,27 @@ interface CustomApi  {
     @POST("/user/seller")
     suspend fun login(@Body loginRequest: LoginRequest): LoginResponse
 
-    @GET("/user/seller/shopid")
-    suspend fun getSellers(): Response<List<UserModel>>
+
+    // seller repository
+
+    @GET("/user/seller/{shopId}")
+    suspend fun getSellers(@Path("shopId") shopId: String): Response<List<UserModel>>
+
+    @POST("/user/seller/invite")
+    suspend fun inviteSeller(@Body userShop: UserShopModel): Response<String>
+
+    @GET("/user/verify/invite/{shopId}/{phoneNum}")
+    suspend fun verifyInvite(@Path("shopId") shopId: Int,@Path("phoneNum") phoneNum: String): Response<UserInviteModel>
+
+    @POST("/user/accept/invite")
+    suspend fun acceptInvite(@Body userShop:UserShopModel): Response<String>
+
+    @PATCH("/user/seller/invite")
+    suspend fun deleteInvite(@Body userShop:UserShopModel): Response<String>
+
+    @POST("notify/seller/invite")
+    suspend fun notifyInvite(@Body userShop: UserShopModel): Response<String>
+
 
     // shop repository
     @PATCH("/shop/config")
@@ -48,9 +67,5 @@ interface CustomApi  {
     @PATCH("/order/status")
     suspend fun updateOrderStatus(@Body order: OrderModel):Response<String>
 
-
-    // Notify Repository
-    @POST("notify/seller/invite")
-    suspend fun notifyRequest(@Body notifyRequest: NotifyRequest): Response<String>
 
 }

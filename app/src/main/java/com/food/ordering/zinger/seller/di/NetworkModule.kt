@@ -1,10 +1,7 @@
 package com.food.ordering.zinger.seller.di
 
 import com.food.ordering.zinger.seller.BuildConfig
-import com.food.ordering.zinger.seller.data.retofit.AuthInterceptor
-import com.food.ordering.zinger.seller.data.retofit.ItemRepository
-import com.food.ordering.zinger.seller.data.retofit.OrderRepository
-import com.food.ordering.zinger.seller.data.retofit.ShopRepository
+import com.food.ordering.zinger.seller.data.retofit.*
 import com.google.gson.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -22,6 +19,7 @@ val networkModule = module {
     single { ItemRepository(get()) }
     single { ShopRepository(get()) }
     single { OrderRepository(get())}
+    single { SellerRepository(get())}
 }
 
 fun provideRetrofit(authInterceptor: AuthInterceptor): Retrofit {
