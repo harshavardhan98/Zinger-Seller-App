@@ -20,6 +20,7 @@ val networkModule = module {
     single { ShopRepository(get()) }
     single { OrderRepository(get())}
     single { SellerRepository(get())}
+    single { UserRespository(get())}
 }
 
 fun provideRetrofit(authInterceptor: AuthInterceptor): Retrofit {

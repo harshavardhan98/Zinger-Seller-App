@@ -7,8 +7,8 @@ interface AppPreferencesHelper {
     val mobile: String?
     val role: String?
     val oauthId: String?
-    val place: String?
+    val shop: String?
 
-    fun saveUser(name: String?,email: String?, mobile: String?, role: String?, oauthId: String?, place: String?)
+    fun saveUser(name: String?,email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?)
 
 }

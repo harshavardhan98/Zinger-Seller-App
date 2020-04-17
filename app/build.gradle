@@ -19,6 +19,13 @@ android {
 
     buildTypes {
         debug {
+            aaptOptions {
+                cruncherEnabled = false
+            }
+            dexOptions {
+                preDexLibraries = true
+            }
+
             buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
         }
         release {
