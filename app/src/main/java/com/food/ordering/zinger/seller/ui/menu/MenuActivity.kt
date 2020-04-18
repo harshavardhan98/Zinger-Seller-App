@@ -40,8 +40,12 @@ class MenuActivity : AppCompatActivity() {
 
         binding.btnAddItem.setOnClickListener(View.OnClickListener { v ->
             var shop = ShopModel(id = 1)
-            var item = ItemModel(name = "Egg Macroni",price=30.0,photoUrl = "www.photo.com",category = "italian",shopModel = shop,isVeg = 0,isAvailable = null)
-            viewModel.addItem(item)
+            var item1 = ItemModel(name = "Egg Macroni1",price=30.0,photoUrl = "www.photo.com",category = "italian",shopModel = shop,isVeg = 0,isAvailable = null)
+            var item2 = ItemModel(name = "Egg Macroni2",price=30.0,photoUrl = "www.photo.com",category = "italian",shopModel = shop,isVeg = 0,isAvailable = null)
+            var itemModelList = ArrayList<ItemModel>()
+            itemModelList.add(item1)
+            itemModelList.add(item2)
+            viewModel.addItem(itemModelList)
         })
 
         binding.btnUpdateItem.setOnClickListener(View.OnClickListener { v->

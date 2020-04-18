@@ -95,6 +95,7 @@ class OTPActivity : AppCompatActivity() {
                                 val userModel = resource.data.data?.userModel
                                 if(userModel!=null){
                                     preferencesHelper.saveUser(
+                                        id = userModel.id,
                                         name = userModel.name,
                                         email = userModel.email,
                                         mobile = userModel.mobile,

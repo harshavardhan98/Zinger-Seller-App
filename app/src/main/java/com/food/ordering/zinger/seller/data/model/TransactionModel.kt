@@ -36,7 +36,7 @@ data class OrderModel(
     @SerializedName("deliveryPrice")
     val deliveryPrice: Double?=null,
     @SerializedName("id")
-    val id: String?=null,
+    val id: Int?=null,
     @SerializedName("lastStatusUpdatedTime")
     val lastStatusUpdatedTime: Date?=null,
     @SerializedName("orderStatus")

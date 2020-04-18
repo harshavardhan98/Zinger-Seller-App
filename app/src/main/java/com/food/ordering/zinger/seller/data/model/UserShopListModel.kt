@@ -21,6 +21,8 @@ data class ShopConfigurationModel(
 
 
 data class UserModel(
+    @SerializedName("id")
+    val id: Int? = null,
     @SerializedName("email")
     val email: String? = null,
     @SerializedName("mobile")

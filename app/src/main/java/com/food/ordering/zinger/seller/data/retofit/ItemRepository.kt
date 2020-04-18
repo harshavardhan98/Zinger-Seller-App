@@ -7,7 +7,7 @@ class ItemRepository(private val retrofit: Retrofit) {
 
     suspend fun getShopMenu(shopId: Int) = retrofit.create(CustomApi::class.java).getShopMenu(shopId);
 
-    suspend fun addItem(item: ItemModel) = retrofit.create(CustomApi::class.java).addItem(item)
+    suspend fun addItem(item: List<ItemModel>) = retrofit.create(CustomApi::class.java).addItem(item)
 
     suspend fun updateItem(item: ItemModel) = retrofit.create(CustomApi::class.java).updateItem(item)
 

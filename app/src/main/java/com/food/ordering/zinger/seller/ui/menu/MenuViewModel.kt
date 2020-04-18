@@ -47,7 +47,7 @@ class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
         }
     }
 
-    fun addItem(item: ItemModel){
+    fun addItem(item: List<ItemModel>){
         viewModelScope.launch {
             try{
                 addItem.value = Resource.loading()

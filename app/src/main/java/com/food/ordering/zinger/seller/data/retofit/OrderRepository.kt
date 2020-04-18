@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 
 class OrderRepository(private val retrofit: Retrofit) {
 
-    suspend fun getOrderById(orderId: String) = retrofit.create(CustomApi::class.java).getOrderById(orderId)
+    suspend fun getOrderById(orderId: Int) = retrofit.create(CustomApi::class.java).getOrderById(orderId)
 
     suspend fun getOrderByShopId(shopId: Int) = retrofit.create(CustomApi::class.java).getOrderByShopId(shopId)
 

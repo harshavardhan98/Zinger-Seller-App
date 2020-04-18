@@ -44,25 +44,25 @@ class SellerActivity : AppCompatActivity() {
         })
 
         binding.btnInviteSeller.setOnClickListener(View.OnClickListener {v ->
-            val user = UserModel(mobile="9176786586",role = "SELLER")
+            val user = UserModel(mobile="9176786587",role = "SELLER")
             val shop = ShopModel(id = 1)
             val userShop = UserShopModel(shop,user)
             viewModel.inviteSeller(userShop)
         })
 
         binding.btnVerifyInvite.setOnClickListener(View.OnClickListener {v ->
-            viewModel.verifyInvite(1,"9176786586")
+            viewModel.verifyInvite(1,"9176786587")
         })
 
         binding.btnAcceptInvite.setOnClickListener(View.OnClickListener {v ->
-            val user = UserModel(mobile="9176786586",oauthId = "auth_9176786586")
+            val user = UserModel(mobile="9176786587",oauthId = "auth_9176786587")
             val shop = ShopModel(id = 1)
             val userShop = UserShopModel(shop,user)
             viewModel.acceptInvite(userShop)
         })
 
         binding.btnDeleteInvite.setOnClickListener(View.OnClickListener {v ->
-            val user = UserModel(mobile="9176786586",oauthId = "auth_9176786586")
+            val user = UserModel(mobile="9176786587",oauthId = "auth_9176786587",role = "SELLER")
             val shop = ShopModel(id = 1)
             val userShop = UserShopModel(shop,user)
             viewModel.deleteInvite(userShop)
@@ -70,7 +70,7 @@ class SellerActivity : AppCompatActivity() {
 
         binding.btnNotifyInvite.setOnClickListener(View.OnClickListener {v ->
 
-            val user = UserModel(mobile="9176786586")
+            val user = UserModel(mobile="9176786587")
             val shop = ShopModel(id = 1)
             val userShop = UserShopModel(shop,user)
             viewModel.notifyInvite(userShop)

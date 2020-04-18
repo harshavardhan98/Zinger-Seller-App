@@ -41,7 +41,7 @@ interface CustomApi  {
     suspend fun getShopMenu(@Path("shopId") shopId: Int): Response<List<ItemModel>>
 
     @POST("/menu")
-    suspend fun addItem(@Body item: ItemModel): Response<String>
+    suspend fun addItem(@Body itemModelList: List<ItemModel>): Response<String>
 
     @PATCH("/menu")
     suspend fun updateItem(@Body item: ItemModel): Response<String>
@@ -56,7 +56,7 @@ interface CustomApi  {
     // Order Repository
 
     @GET("/order/{orderId}")
-    suspend fun getOrderById(@Path("orderId") orderId: String): Response<TransactionModel>
+    suspend fun getOrderById(@Path("orderId") orderId: Int): Response<TransactionModel>
 
     @GET("/order/seller/{shopId}/{pageNum}/{pageCnt}")
     suspend fun getOrderByPagination(@Path("shopId") shopId: Int,@Path("pageNum") pageNum: Int,@Path("pageCnt") pageCnt: Int): Response<List<OrderItemList>>

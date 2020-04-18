@@ -22,7 +22,7 @@ class AuthInterceptor(val context: Context, val preferences: PreferencesHelper) 
             // TODO replace with the name in shared preference
             req.newBuilder()
                 .addHeader("oauth_id", "auth_9176786581")
-                .addHeader("mobile", "9176786581")
+                .addHeader("id", "3")
                 .addHeader("role", "SHOP_OWNER")
                 .build()
         } else {

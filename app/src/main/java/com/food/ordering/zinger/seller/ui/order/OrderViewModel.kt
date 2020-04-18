@@ -31,7 +31,7 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
     val orderByPaginationResponse : LiveData<Resource<Response<List<OrderItemList>>>>
         get() = orderByPagination
 
-    fun getOrderById(orderId: String){
+    fun getOrderById(orderId: Int){
         viewModelScope.launch {
             try {
                 orderByIdRequest.value = Resource.loading()

@@ -37,7 +37,7 @@ class OrderActivity : AppCompatActivity() {
     private fun setListeners(){
 
         binding.btnOrderId.setOnClickListener(View.OnClickListener { v ->
-            viewModel.getOrderById("O0001")
+            viewModel.getOrderById(4)
         })
 
         binding.btnCurrentOrders.setOnClickListener(View.OnClickListener { v ->
@@ -45,7 +45,7 @@ class OrderActivity : AppCompatActivity() {
         })
 
         binding.btnUpdateOrderStatus.setOnClickListener(View.OnClickListener { V ->
-            var orderModel = OrderModel(id="O0002",orderStatus = "ACCEPTED")
+            var orderModel = OrderModel(id=4,orderStatus = "ACCEPTED")
             viewModel.updateOrder(orderModel)
         })
 

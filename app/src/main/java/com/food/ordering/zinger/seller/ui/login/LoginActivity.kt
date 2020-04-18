@@ -24,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
 
         initView()
         setListener()
-        if (!preferencesHelper.oauthId.isNullOrEmpty()) {
+        if (!preferencesHelper.oauthId.isNullOrEmpty() && preferencesHelper.id!=null) {
             startActivity(Intent(applicationContext, MainActivity::class.java))
             finish()
         }
