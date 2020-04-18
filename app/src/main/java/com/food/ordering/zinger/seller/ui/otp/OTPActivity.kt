@@ -193,7 +193,7 @@ class OTPActivity : AppCompatActivity() {
                     val user = task.result?.user
                     preferencesHelper.oauthId = user?.uid
                     preferencesHelper.mobile = user?.phoneNumber?.substring(3)
-                    preferencesHelper.role = "CUSTOMER"
+                    preferencesHelper.role = "SHOP_OWNER"
                     val loginRequest = user?.uid?.let { user.phoneNumber?.let { it1 -> UserModel(oauthId = it, mobile = it1.substring(3)) } }
                     loginRequest?.let { viewModel.login(it) }?:run{
                         Toast.makeText(applicationContext,"Login failed!", Toast.LENGTH_SHORT).show()

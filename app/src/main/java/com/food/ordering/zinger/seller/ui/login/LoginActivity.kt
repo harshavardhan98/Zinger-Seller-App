@@ -24,11 +24,10 @@ class LoginActivity : AppCompatActivity() {
 
         initView()
         setListener()
-        if (!preferencesHelper.oauthId.isNullOrEmpty() && preferencesHelper.id!=null) {
+        if (!preferencesHelper.oauthId.isNullOrEmpty() && preferencesHelper.id!=-1) {
             startActivity(Intent(applicationContext, MainActivity::class.java))
             finish()
         }
-
     }
 
     private fun initView() {
