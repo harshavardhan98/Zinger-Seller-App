@@ -8,4 +8,7 @@
     <string name="label_register">Register</string>
     <string name="label_update">Update</string>
     <string name="hint_search_outlets_or_dish">Search Outlets or Dish</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
