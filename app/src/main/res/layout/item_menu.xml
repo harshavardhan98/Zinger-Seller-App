@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/layout_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+
+            <ImageView
+                android:id="@+id/image_veg"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="3dp"
+                android:background="@android:color/white"
+                android:src="@drawable/ic_veg" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_food_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="center|start"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="Plain Dosa" />
+
+                <TextView
+                    android:id="@+id/text_food_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="start|center"
+                    android:minWidth="60dp"
+                    android:text="₹50"
+                    android:textColor="@android:color/tab_indicator_text"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+			<ImageView
+				android:id="@+id/image_edit"
+				android:layout_width="32dp"
+				android:layout_height="32dp"
+				android:padding="4dp"
+				android:layout_marginEnd="8dp"
+				android:layout_marginTop="3dp"
+				android:tint="@android:color/tab_indicator_text"
+				android:background="@android:color/white"
+				android:src="@drawable/ic_edit" />
+			<ImageView
+				android:id="@+id/image_delete"
+				android:layout_width="32dp"
+				android:layout_height="32dp"
+				android:padding="4dp"
+				android:layout_marginEnd="8dp"
+				android:layout_marginTop="3dp"
+				android:background="@android:color/white"
+				android:src="@drawable/ic_delete" />
+
+
+			<com.google.android.material.switchmaterial.SwitchMaterial
+				android:id="@+id/switch_delivery"
+				android:layout_width="wrap_content"
+				android:layout_height="40dp"
+				android:layout_gravity="start"
+				android:checked="false"
+				android:fontFamily="@font/open_sans_semibold"
+				android:gravity="start|center"
+				android:text=""
+				android:textSize="0dp"
+				android:textStyle="bold"
+				app:switchPadding="8dp"
+				app:thumbTint="#4CAF50"
+				app:trackTint="#CCCCCC" />
+
+
+		</LinearLayout>
+
+	</LinearLayout>
+</layout>
