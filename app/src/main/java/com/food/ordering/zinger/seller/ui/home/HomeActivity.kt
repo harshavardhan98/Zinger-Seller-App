@@ -17,9 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.amulyakhare.textdrawable.TextDrawable
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
+import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
+import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBinding
+import com.food.ordering.zinger.seller.databinding.BottomSheetSecretKeyBinding
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -159,6 +163,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         val textDrawable = TextDrawable.builder()
             .buildRound("S", ContextCompat.getColor(this, R.color.accent))
         headerLayout.imageProfilePic.setImageDrawable(textDrawable)
+        //TODO handle this
+        //binding.imageCompany.setImageDrawable()
         //binding.imageMenu.setImageDrawable(textDrawable);
     }
 
@@ -222,6 +228,36 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setObservers() {
 
+    }
+
+    lateinit var accountAdapter: AccountAdapter
+    private fun showAccountListBottomSheet() {
+        val dialogBinding: BottomSheetAccountSwitchBinding =
+            DataBindingUtil.inflate(
+                layoutInflater,
+                R.layout.bottom_sheet_account_switch,
+                null,
+                false
+            )
+        val dialog = BottomSheetDialog(this)
+        dialog.setContentView(dialogBinding.root)
+        dialog.show()
+        //TODO get account list from shared pref
+        var accountList: ArrayList<ShopConfigurationModel> = ArrayList()
+        accountAdapter = AccountAdapter(accountList,object: AccountAdapter.OnItemClickListener{
+            override fun onItemClick(item: ShopConfigurationModel, position: Int) {
+                for(i in accountList.indices){
+                    accountList[i].isSelected = false
+                }
+                accountList[position].isSelected = true
+                accountAdapter.notifyDataSetChanged()
+                //TODO
+                //viewModel.changeAccount(shopId)
+                dialog.dismiss()
+            }
+        })
+        dialogBinding.recyclerAccounts.layoutManager = LinearLayoutManager(this)
+        dialogBinding.recyclerAccounts.adapter = accountAdapter
     }
 
 

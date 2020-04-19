@@ -16,7 +16,8 @@ data class ShopConfigurationModel(
     @SerializedName("ratingModel")
     val ratingModel: RatingModel,
     @SerializedName("shopModel")
-    val shopModel: ShopModel
+    val shopModel: ShopModel,
+    var isSelected: Boolean = false
 )
 
 

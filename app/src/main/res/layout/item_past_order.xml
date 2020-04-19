@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/layout_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_shop_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:ellipsize="marquee"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="Shrikanth Ravi" />
+
+                    <TextView
+                        android:id="@+id/text_order_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:fontFamily="@font/open_sans_semibold"
+                        android:textColor="@android:color/tab_indicator_text"
+                        android:textSize="10sp"
+                        tools:text="March 17, 6:20 PM" />
+
+
+                </LinearLayout>
+				<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="start"
+					android:layout_marginStart="16dp"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="end"
+						android:fontFamily="@font/open_sans_bold"
+						android:gravity="end"
+						android:text="ORDER ID"
+						android:textColor="@android:color/tab_indicator_text"
+						android:textSize="10sp" />
+
+
+					<TextView
+						android:id="@+id/text_order_id"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="end"
+						android:fontFamily="@font/open_sans_bold"
+						android:gravity="end"
+						android:textColor="@color/colorAccentLight"
+						android:textSize="14sp"
+						tools:text="#123123" />
+				</LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans_bold"
+                        android:text="ITEMS"
+                        android:textColor="@android:color/tab_indicator_text"
+                        android:textSize="10sp" />
+
+
+                    <TextView
+                        android:id="@+id/text_order_items"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/open_sans_bold"
+                        android:maxLines="2"
+                        android:textColor="@color/colorAccentLight"
+                        android:textSize="12sp"
+                        tools:text="1 X Chicken noodles\n2 X Lemon Juice" />
+                </LinearLayout>
+
+
+				<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="start"
+					android:layout_marginStart="16dp"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="end"
+						android:fontFamily="@font/open_sans_bold"
+						android:gravity="end"
+						android:text="AMOUNT"
+						android:textColor="@android:color/tab_indicator_text"
+						android:textSize="10sp" />
+
+
+					<TextView
+						android:id="@+id/text_order_price"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="end"
+						android:fontFamily="@font/open_sans_bold"
+						android:gravity="end"
+						android:textColor="@color/colorAccentLight"
+						android:textSize="14sp"
+						tools:text="$50" />
+				</LinearLayout>
+
+
+			</LinearLayout>
+
+
+            <TextView
+                android:id="@+id/text_view_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="View More"
+                android:textSize="12sp" />
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+				<TextView
+					android:id="@+id/text_order_status"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:drawableStart="@drawable/ic_pending"
+					android:drawablePadding="4dp"
+					android:fontFamily="@font/poppins_semibold"
+					android:gravity="center"
+					android:paddingTop="8dp"
+					android:paddingBottom="4dp"
+					android:textColor="@android:color/black"
+					android:textSize="16sp"
+					tools:text="Pending" />
+				<View
+					android:layout_width="0dp"
+					android:layout_height="1dp"
+					android:layout_weight="1"/>
+				<com.google.android.material.button.MaterialButton
+					android:id="@+id/button_view_order"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="end"
+					android:fontFamily="@font/poppins_semibold"
+					android:text="View Order"
+					android:textSize="12sp"
+					android:visibility="visible"
+					app:backgroundTint="@color/colorAccent"
+					app:cornerRadius="20dp"
+					app:elevation="0dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

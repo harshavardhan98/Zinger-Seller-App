@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+
+	<data>
+
+	</data>
+
+	<com.google.android.material.card.MaterialCardView
+		android:id="@+id/layout_root"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:clickable="true"
+		android:focusable="true"
+		app:cardCornerRadius="0dp"
+		app:cardElevation="0dp">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<de.hdodenhof.circleimageview.CircleImageView
+				android:id="@+id/image_shop"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
+				android:layout_margin="16dp"
+				android:scaleType="centerCrop" />
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_marginTop="16dp"
+				android:layout_marginBottom="16dp"
+				android:orientation="horizontal">
+
+				<TextView
+					android:id="@+id/text_shop_name"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:fontFamily="@font/poppins_semibold"
+					android:textColor="@android:color/black"
+					android:textSize="16sp"
+					android:gravity="start"
+					android:textStyle="bold"
+					android:layout_marginEnd="16dp"
+					android:layout_weight="1"
+					android:layout_gravity="center"
+					tools:text="Sathyas Main Canteen" />
+
+				<com.google.android.material.radiobutton.MaterialRadioButton
+					android:id="@+id/radio_current"
+					android:clickable="false"
+					android:text=""
+					android:textSize="0dp"
+					android:checked="false"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+
+
+			</LinearLayout>
+		</LinearLayout>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_gravity="top"
+			android:background="#f2f2f2" />
+	</com.google.android.material.card.MaterialCardView>
+</layout>
