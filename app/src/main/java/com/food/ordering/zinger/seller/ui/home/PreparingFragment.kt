@@ -14,10 +14,12 @@ import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderItemList
 import com.food.ordering.zinger.seller.data.model.OrderModel
+import com.food.ordering.zinger.seller.databinding.BottomSheetSecretKeyBinding
 import com.food.ordering.zinger.seller.databinding.FragmentNewOrdersBinding
 import com.food.ordering.zinger.seller.databinding.FragmentPreparingBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.utils.AppConstants
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 /**
@@ -108,6 +110,21 @@ class PreparingFragment : Fragment() {
         binding.recyclerOrders.layoutManager = LinearLayoutManager(context!!,LinearLayoutManager.VERTICAL,false)
         binding.recyclerOrders.adapter = orderAdapter
         orderAdapter.notifyDataSetChanged()
+    }
+
+    //TODO show this
+    private fun showSecretKeyBottomSheet(){
+        val dialogBinding: BottomSheetSecretKeyBinding =
+            DataBindingUtil.inflate(layoutInflater, R.layout.bottom_sheet_secret_key, null, false)
+        val dialog = BottomSheetDialog(context!!)
+        dialog.setContentView(dialogBinding.root)
+        dialog.show()
+        dialogBinding.buttonConfirm.setOnClickListener {
+            if(dialogBinding.editSecretKey.text.toString().isNotEmpty()){
+                //TODO save secret key and proceed
+            }
+            dialog.dismiss()
+        }
     }
 
 

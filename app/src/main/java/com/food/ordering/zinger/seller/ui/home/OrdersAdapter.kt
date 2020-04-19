@@ -44,56 +44,13 @@ class OrdersAdapter(private val orderList: List<OrderItemList>, private val list
             binding.textOrderPrice.text = "₹ " + order.transactionModel.orderModel.price?.toInt().toString()
             var items = ""
             order.orderItemsList.forEach {
-                items += it.quantity.toString() + " X " + it.itemModel.name + ", "
+                items += it.quantity.toString() + " X " + it.itemModel.name + "\n"
             }
-            items = items.substring(0, items.length - 2)
             binding.textOrderItems.text = items
-            binding.textOrderStatus.text = order.transactionModel.orderModel.orderStatus?.let {
-                StatusHelper.getStatusMessage(it)
-            }
-            if (order.transactionModel.orderModel.rating == 0.0) {
-                binding.buttonTrackRate.visibility = View.VISIBLE
-                binding.textOrderRating.visibility = View.GONE
-            } else {
-                binding.buttonTrackRate.visibility = View.GONE
-                binding.textOrderRating.visibility = View.VISIBLE
-                binding.textOrderRating.text = order.transactionModel.orderModel.rating.toString()
-            }
-            when (order.transactionModel.orderModel.orderStatus) {
-
-                AppConstants.ORDER_STATUS_COMPLETED,
-                AppConstants.ORDER_STATUS_DELIVERED,
-                AppConstants.ORDER_STATUS_REFUND_COMPLETED -> {
-                    binding.textOrderStatus.setCompoundDrawablesWithIntrinsicBounds(
-                            binding.textOrderStatus.context.getDrawable(R.drawable.ic_checked),
-                            null,
-                            null,
-                            null)
-                }
-
-                AppConstants.ORDER_STATUS_CANCELLED_BY_SELLER,
-                AppConstants.ORDER_STATUS_CANCELLED_BY_USER,
-                    AppConstants.ORDER_STATUS_TXN_FAILURE -> {
-                    binding.textOrderStatus.setCompoundDrawablesWithIntrinsicBounds(
-                            binding.textOrderStatus.context.getDrawable(R.drawable.ic_cancelled),
-                            null,
-                            null,
-                            null)
-                }
-
-                else -> {
-                    binding.textOrderStatus.setCompoundDrawablesWithIntrinsicBounds(
-                            binding.textOrderStatus.context.getDrawable(R.drawable.ic_pending),
-                            null,
-                            null,
-                            null)
-                }
-
-            }
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
-            binding.buttonTrackRate.setOnClickListener {
+            /*binding.buttonTrackRate.setOnClickListener {
                     listener.onUpdateClick(order, position)
-            }
+            }*/
         }
 
     }
