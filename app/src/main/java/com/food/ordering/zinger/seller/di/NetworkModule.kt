@@ -1,5 +1,7 @@
 package com.food.ordering.zinger.seller.di
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.food.ordering.zinger.seller.BuildConfig
 import com.food.ordering.zinger.seller.data.retofit.*
 import com.google.gson.*
@@ -10,6 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.util.*
 
 
@@ -34,10 +37,18 @@ fun provideRetrofit(authInterceptor: AuthInterceptor): Retrofit {
 
 }
 
+
 fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
-    val builder = OkHttpClient()
-        .newBuilder()
-        .addInterceptor(authInterceptor)
+    val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        OkHttpClient()
+            .newBuilder()
+            .connectTimeout(Duration.ofMinutes(1))
+            .readTimeout(Duration.ofMinutes(1))
+            .writeTimeout(Duration.ofMinutes(1))
+            .addInterceptor(authInterceptor)
+    } else {
+        TODO("VERSION.SDK_INT < O")
+    }
 
     if (BuildConfig.DEBUG) {
         val requestInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)

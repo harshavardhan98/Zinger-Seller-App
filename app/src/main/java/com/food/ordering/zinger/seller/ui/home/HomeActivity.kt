@@ -51,9 +51,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         setListeners()
         setupMaterialDrawer()
         setObservers()
+
         viewModel.getOrderByShopId(1)
     }
 
+    // This API end point is responsible for inserting the order details. It verifies the availability of all the items in the shop and calculates the total bill
+    //     * amount.  After verifying
     private fun initView(savedInstanceState: Bundle?) {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
         headerLayout = DataBindingUtil.inflate(
