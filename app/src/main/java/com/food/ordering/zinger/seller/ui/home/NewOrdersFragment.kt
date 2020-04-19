@@ -69,14 +69,6 @@ class  NewOrdersFragment : Fragment() {
             }
         })
 
-        viewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer {
-            when(it.status){
-                Resource.Status.SUCCESS -> {
-                    viewModel.getOrderByShopId(1)
-                }
-            }
-        })
-
     }
 
     var ordersList: ArrayList<OrderItemList> = ArrayList()
@@ -90,8 +82,8 @@ class  NewOrdersFragment : Fragment() {
             }
 
             override fun onUpdateClick(orderItemListModel: OrderItemList?, position: Int) {
-                var orderModel = orderItemListModel!!.transactionModel.orderModel
-                orderModel.orderStatus=AppConstants.STATUS.ACCEPTED.name
+                var orderModel = OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id,orderStatus = orderItemListModel!!.transactionModel.orderModel.orderStatus)
+                orderModel.orderStatus = AppConstants.STATUS.ACCEPTED.name
                 viewModel.updateOrder(orderModel)
             }
         })

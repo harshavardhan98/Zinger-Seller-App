@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderItemList
+import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.databinding.FragmentNewOrdersBinding
 import com.food.ordering.zinger.seller.databinding.FragmentPreparingBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
@@ -78,13 +79,7 @@ class PreparingFragment : Fragment() {
             }
         })
 
-        viewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer {
-            when(it.status){
-                Resource.Status.SUCCESS -> {
-                    viewModel.getOrderByShopId(1)
-                }
-            }
-        })
+
     }
 
     var ordersList: ArrayList<OrderItemList> = ArrayList()
@@ -99,9 +94,9 @@ class PreparingFragment : Fragment() {
 
             override fun onUpdateClick(orderItemListModel: OrderItemList?, position: Int) {
 
-                var orderModel = orderItemListModel!!.transactionModel.orderModel
+                var orderModel = OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id,orderStatus = orderItemListModel!!.transactionModel.orderModel.orderStatus)
 
-                if(orderModel.deliveryPrice==null)
+                if(orderItemListModel!!.transactionModel.orderModel.deliveryPrice==null)
                     orderModel.orderStatus=AppConstants.STATUS.READY.name
                 else
                     orderModel.orderStatus=AppConstants.STATUS.OUT_FOR_DELIVERY.name

@@ -67,18 +67,6 @@ class ReadyFragment : Fragment() {
                 // todo handle all other cases for view model
             }
         })
-
-        viewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer {
-            when(it.status){
-                Resource.Status.SUCCESS -> {
-                    viewModel.getOrderByShopId(1)
-                }
-            }
-        })
-
-
-
-
     }
 
     var ordersList: ArrayList<OrderItemList> = ArrayList()
@@ -95,8 +83,9 @@ class ReadyFragment : Fragment() {
                 Toast.makeText(activity,"testing ready", Toast.LENGTH_LONG).show()
 
                 var orderModel = orderItemListModel!!.transactionModel.orderModel
+                // set the secret key
 
-                if(orderModel.deliveryPrice==null)
+                if(orderItemListModel!!.transactionModel.orderModel.deliveryPrice==null)
                     orderModel.orderStatus=AppConstants.STATUS.COMPLETED.name
                 else
                     orderModel.orderStatus=AppConstants.STATUS.DELIVERED.name

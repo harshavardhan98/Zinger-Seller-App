@@ -30,7 +30,7 @@ data class OrderModel(
     @SerializedName("cookingInfo")
     val cookingInfo: String?=null,
     @SerializedName("date")
-    val date: Date?=null,
+    var date: Date?=null,
     @SerializedName("deliveryLocation")
     val deliveryLocation: String?=null,
     @SerializedName("deliveryPrice")

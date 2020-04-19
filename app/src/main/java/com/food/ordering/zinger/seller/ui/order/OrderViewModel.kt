@@ -52,8 +52,10 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
                 updateOrder.value = Resource.loading()
                 val response = orderRepository.updateOrderStatus(orderModel)
 
-                if(response.code==1)
+                if(response.code==1) {
                     updateOrder.value = Resource.success(response)
+                    getOrderByShopId(1)
+                }
                 else
                     println("Something is wrong")
 
