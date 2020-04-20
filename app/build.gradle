@@ -26,12 +26,13 @@ android {
                 preDexLibraries = true
             }
 
-            buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
+            //buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
+            buildConfigField "String", "CUSTOM_BASE_URL", '"https://27e3c2cb.ngrok.io/"'
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
+            buildConfigField "String", "CUSTOM_BASE_URL", '"https://e238065d.ngrok.io/"'
         }
     }
 

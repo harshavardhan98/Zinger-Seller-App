@@ -12,9 +12,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.util.*
-
+import java.util.concurrent.TimeUnit
 
 val networkModule = module {
     single { AuthInterceptor(get(),get()) }
@@ -27,28 +26,20 @@ val networkModule = module {
 }
 
 fun provideRetrofit(authInterceptor: AuthInterceptor): Retrofit {
-
     val gson = GsonBuilder().registerTypeAdapter(Date::class.java, DateTypeDeserializer()).create()
-
     return Retrofit.Builder()
-        .baseUrl("https://food-backend-ssn.herokuapp.com")
+        .baseUrl(BuildConfig.CUSTOM_BASE_URL)
         .client(provideOkHttpClient(authInterceptor))
         .addConverterFactory(GsonConverterFactory.create(gson)).build()
-
 }
 
-
 fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
-    val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        OkHttpClient()
-            .newBuilder()
-            .connectTimeout(Duration.ofMinutes(1))
-            .readTimeout(Duration.ofMinutes(1))
-            .writeTimeout(Duration.ofMinutes(1))
-            .addInterceptor(authInterceptor)
-    } else {
-        TODO("VERSION.SDK_INT < O")
-    }
+    val builder = OkHttpClient()
+        .newBuilder()
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .addInterceptor(authInterceptor)
 
     if (BuildConfig.DEBUG) {
         val requestInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -58,7 +49,6 @@ fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
 }
 
 class DateTypeDeserializer : JsonDeserializer<Date> {
-
     private val DATE_FORMATS = arrayOf("dd/MM/yyyy HH:mm:ss", "HH:mm:ss")
 
     @Throws(JsonParseException::class)

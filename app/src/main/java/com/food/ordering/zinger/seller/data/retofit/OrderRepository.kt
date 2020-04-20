@@ -14,6 +14,4 @@ class OrderRepository(private val retrofit: Retrofit) {
     suspend fun getOrderByPagination(shopId: Int,pageNum: Int,pageCnt: Int) = retrofitVar.getOrderByPagination(shopId,pageNum,pageCnt)
 
     suspend fun updateOrderStatus(order: OrderModel) = retrofitVar.updateOrderStatus(order)
-
-
 }

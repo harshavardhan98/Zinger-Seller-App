@@ -20,7 +20,6 @@
         <activity android:name=".ui.order.OrderActivity" />
         <activity android:name=".ui.shopConfiguration.ShopConfigActivity" />
         <activity android:name=".ui.menu.MenuActivity" />
-        <activity android:name=".MainActivity" />
         <activity android:name=".ui.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

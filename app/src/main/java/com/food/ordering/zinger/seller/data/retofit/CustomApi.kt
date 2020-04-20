@@ -9,7 +9,6 @@ interface CustomApi  {
     @POST("/user/seller")
     suspend fun login(@Body userModel: UserModel): Response<UserShopListModel>
 
-
     // seller repository
 
     @GET("/user/seller/{shopId}")
