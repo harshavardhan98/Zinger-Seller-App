@@ -60,13 +60,17 @@ class PreferencesHelper(context: Context) : AppPreferencesHelper {
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_PLACE, shop).apply()
     }
 
-    fun getShop(): List<ShopConfigurationModel>? {
+    override fun getShop(): List<ShopConfigurationModel>? {
         val listType = object : TypeToken<List<ShopConfigurationModel?>?>() {}.type
         return Gson().fromJson(shop, listType)
     }
 
-    fun getUser(): UserModel? {
+    override fun getUser(): UserModel? {
         return UserModel(id,email, mobile, name, oauthId, role)
     }
 
+    override fun clearPreferences() {
+        loginPreferences.edit().clear().apply()
+        sellerPreferences.edit().clear().apply()
+    }
 }

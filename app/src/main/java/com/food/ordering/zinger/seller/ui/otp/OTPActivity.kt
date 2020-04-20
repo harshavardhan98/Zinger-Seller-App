@@ -54,7 +54,6 @@ class OTPActivity : AppCompatActivity() {
         setListener()
         setObservers()
         number?.let { sendOtp(it) }
-
     }
 
     private fun getArgs() {
@@ -74,7 +73,7 @@ class OTPActivity : AppCompatActivity() {
         countDownTimer = object : CountDownTimer(10000, 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
-                binding.textResendOtp.setText("Resend OTP (" + millisUntilFinished / 1000 + "s)")
+                binding.textResendOtp.setText("Resend OTP (" + millisUntilFinished / 1000 + ")")
             }
 
             override fun onFinish() {
@@ -136,13 +135,7 @@ class OTPActivity : AppCompatActivity() {
 
         binding.textResendOtp.setOnClickListener(View.OnClickListener { v ->
             number?.let {
-                if (!otpSent)
-                    if(timeOut)
-                        number?.let { sendOtp(number!!) }
-                    else
-                        number?.let { resendVerificationCode(number!!, resendToken) }
-                else
-                    Toast.makeText(applicationContext, "OTP already sent", Toast.LENGTH_SHORT).show()
+                number?.let { resendVerificationCode(number!!, resendToken) }
             }
         })
 
@@ -241,7 +234,6 @@ class OTPActivity : AppCompatActivity() {
                     val user = task.result?.user
                     preferencesHelper.oauthId = user?.uid
                     preferencesHelper.mobile = user?.phoneNumber?.substring(3)
-                    preferencesHelper.role = "SHOP_OWNER"
                     val loginRequest = user?.uid?.let {
                         user.phoneNumber?.let { it1 ->
                             UserModel(oauthId = it, mobile = it1.substring(3))

@@ -8,7 +8,7 @@ import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.data.model.UserShopListModel
-import com.food.ordering.zinger.seller.data.retofit.UserRespository
+import com.food.ordering.zinger.seller.data.retrofit.UserRespository
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 

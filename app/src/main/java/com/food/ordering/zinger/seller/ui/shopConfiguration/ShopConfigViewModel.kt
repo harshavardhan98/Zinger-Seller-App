@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.model.ShopConfigRequest
-import com.food.ordering.zinger.seller.data.retofit.ShopRepository
+import com.food.ordering.zinger.seller.data.retrofit.ShopRepository
 import kotlinx.coroutines.launch
 
 class ShopConfigViewModel(private val shopRepository: ShopRepository):ViewModel() {

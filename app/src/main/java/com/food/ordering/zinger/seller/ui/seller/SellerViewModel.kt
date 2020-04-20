@@ -9,7 +9,7 @@ import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.model.UserInviteModel
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.data.model.UserShopModel
-import com.food.ordering.zinger.seller.data.retofit.SellerRepository
+import com.food.ordering.zinger.seller.data.retrofit.SellerRepository
 import kotlinx.coroutines.launch
 
 import kotlin.Exception

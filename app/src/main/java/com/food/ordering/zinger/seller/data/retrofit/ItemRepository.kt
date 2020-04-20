@@ -1,4 +1,4 @@
-package com.food.ordering.zinger.seller.data.retofit
+package com.food.ordering.zinger.seller.data.retrofit
 
 import com.food.ordering.zinger.seller.data.model.ItemModel
 import retrofit2.Retrofit

@@ -9,7 +9,7 @@ import com.food.ordering.zinger.seller.data.model.OrderItemList
 import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.model.TransactionModel
-import com.food.ordering.zinger.seller.data.retofit.OrderRepository
+import com.food.ordering.zinger.seller.data.retrofit.OrderRepository
 import kotlinx.coroutines.launch
 import kotlin.Exception
 
@@ -75,8 +75,9 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
 
                 if(response.code==1)
                     orderByShopId.value = Resource.success(response)
-                else
-                    println("Something is wrong")
+                else {
+                    orderByShopId.value = Resource.error(message = response.message)
+                }
 
             }catch (e: Exception){
                 println(e.printStackTrace())

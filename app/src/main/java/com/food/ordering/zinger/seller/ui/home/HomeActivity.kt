@@ -12,7 +12,6 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amulyakhare.textdrawable.TextDrawable
 import com.food.ordering.zinger.seller.R
@@ -20,16 +19,14 @@ import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBinding
-import com.food.ordering.zinger.seller.databinding.BottomSheetSecretKeyBinding
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
+import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
+import com.google.firebase.auth.FirebaseAuth
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
@@ -56,11 +53,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         setupMaterialDrawer()
         setObservers()
 
-        viewModel.getOrderByShopId(1)
+        preferencesHelper.getShop()!![0].shopModel.id?.let { viewModel.getOrderByShopId(it) }
     }
 
     // This API end point is responsible for inserting the order details. It verifies the availability of all the items in the shop and calculates the total bill
-    //     * amount.  After verifying
+    //  * amount.  After verifying
     private fun initView(savedInstanceState: Bundle?) {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
         headerLayout = DataBindingUtil.inflate(
@@ -91,7 +88,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .commit()
 
         setStatusBarHeight()
-        updateHeaderLayoutUI()
     }
 
     private fun setListeners() {
@@ -158,13 +154,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateHeaderLayoutUI() {
-        headerLayout.textCustomerName.text = "Shrikanth Ravi"
-        headerLayout.textEmail.text = "shrikanthravi.me@gmail.com"
+        headerLayout.textCustomerName.text = preferencesHelper.name
+        headerLayout.textEmail.text = preferencesHelper.email
         val textDrawable = TextDrawable.builder()
-            .buildRound("S", ContextCompat.getColor(this, R.color.accent))
+            .buildRound(preferencesHelper.name?.get(0).toString().capitalize(), ContextCompat.getColor(this, R.color.accent))
         headerLayout.imageProfilePic.setImageDrawable(textDrawable)
         //TODO handle this
-        //binding.imageCompany.setImageDrawable()
         //binding.imageMenu.setImageDrawable(textDrawable);
     }
 
@@ -200,7 +195,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             )
             .withOnDrawerItemClickListener { view, position, drawerItem ->
                 if (profileItem.identifier == drawerItem.identifier) {
-                    //startActivity(Intent(applicationContext, ProfileActivity::class.java))
+                    startActivity(Intent(applicationContext, ProfileActivity::class.java))
                 }
                 if (ordersItem.identifier == drawerItem.identifier) {
                     //startActivity(Intent(applicationContext, OrdersActivity::class.java))
@@ -214,9 +209,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .setTitle("Confirm Sign Out")
                         .setMessage("Are you sure want to sign out?")
                         .setPositiveButton("Yes") { dialog, which ->
-                            /*preferencesHelper.clearPreferences()
-                            startActivity(Intent(applicationContext, LoginActivity::class.java))
-                            finish()*/
+                            FirebaseAuth.getInstance().signOut()
+                            preferencesHelper.clearPreferences()
+                            startActivity(Intent(applicationContext, ProfileActivity::class.java))
+                            finish()
                         }
                         .setNegativeButton("No") { dialog, which -> dialog.dismiss() }
                         .show()
@@ -271,6 +267,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+
+        updateHeaderLayoutUI()
     }
 
 

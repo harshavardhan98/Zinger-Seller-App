@@ -1,4 +1,4 @@
-package com.food.ordering.zinger.seller.data.retofit
+package com.food.ordering.zinger.seller.data.retrofit
 
 import com.food.ordering.zinger.seller.data.model.*
 import retrofit2.http.*
@@ -8,6 +8,9 @@ interface CustomApi  {
     // user repository
     @POST("/user/seller")
     suspend fun login(@Body userModel: UserModel): Response<UserShopListModel>
+
+    @PATCH("/user")
+    suspend fun updateProfile(@Body userModel: UserModel): Response<String>
 
     // seller repository
 

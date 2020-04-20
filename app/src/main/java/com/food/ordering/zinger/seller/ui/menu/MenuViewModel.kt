@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.ItemModel
 import com.food.ordering.zinger.seller.data.model.Response
-import com.food.ordering.zinger.seller.data.retofit.ItemRepository
+import com.food.ordering.zinger.seller.data.retrofit.ItemRepository
 import kotlinx.coroutines.launch
 
 class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {

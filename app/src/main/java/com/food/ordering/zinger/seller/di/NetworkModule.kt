@@ -1,9 +1,7 @@
 package com.food.ordering.zinger.seller.di
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.food.ordering.zinger.seller.BuildConfig
-import com.food.ordering.zinger.seller.data.retofit.*
+import com.food.ordering.zinger.seller.data.retrofit.*
 import com.google.gson.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

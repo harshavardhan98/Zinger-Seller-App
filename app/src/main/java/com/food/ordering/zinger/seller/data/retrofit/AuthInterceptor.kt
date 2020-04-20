@@ -1,8 +1,7 @@
-package com.food.ordering.zinger.seller.data.retofit
+package com.food.ordering.zinger.seller.data.retrofit
 
 import android.content.Context
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
-import com.food.ordering.zinger.seller.utils.AppConstants
 import okhttp3.Interceptor
 import okhttp3.Response
 
