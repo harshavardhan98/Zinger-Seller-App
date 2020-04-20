@@ -22,6 +22,7 @@ import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBindi
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
+import com.food.ordering.zinger.seller.ui.shopProfile.ShopProfileActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -164,12 +165,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupMaterialDrawer() {
-        headerLayout.layoutHeader.setOnClickListener {
-            //startActivity(Intent(applicationContext, ProfileActivity::class.java))
-        }
         var identifier = 0L
         val profileItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("My Profile")
             .withIcon(R.drawable.ic_drawer_user)
+        val shopProfileItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("My Shop Profile")
+            .withIcon(R.drawable.ic_home)
         val ordersItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Your Orders")
             .withIcon(R.drawable.ic_drawer_past_rides)
         val contactUsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contact Us")
@@ -187,6 +187,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .withSelectedItem(-1)
             .addDrawerItems(
                 profileItem,
+                shopProfileItem,
                 ordersItem,
                 helpcenter,
                 contactUsItem,
@@ -196,6 +197,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .withOnDrawerItemClickListener { view, position, drawerItem ->
                 if (profileItem.identifier == drawerItem.identifier) {
                     startActivity(Intent(applicationContext, ProfileActivity::class.java))
+                }
+                if (shopProfileItem.identifier == drawerItem.identifier) {
+                    startActivity(Intent(applicationContext, ShopProfileActivity::class.java))
                 }
                 if (ordersItem.identifier == drawerItem.identifier) {
                     //startActivity(Intent(applicationContext, OrdersActivity::class.java))

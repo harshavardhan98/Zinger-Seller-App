@@ -12,6 +12,7 @@ object AppConstants {
     const val PREFS_SELLER_NAME = "name"
     const val PREFS_SELLER_EMAIL = "email"
     const val PREFS_SELLER_PLACE = "place"
+    const val PREFS_CURRENT_SHOP_ID = "current_shop_id"
     const val PREFS_SELLER_MOBILE = "mobile"
     const val PREFS_SELLER_ROLE = "role"
 

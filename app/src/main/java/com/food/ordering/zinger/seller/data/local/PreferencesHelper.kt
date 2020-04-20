@@ -48,6 +48,10 @@ class PreferencesHelper(context: Context) : AppPreferencesHelper {
         get() = sellerPreferences.getString(AppConstants.PREFS_SELLER_PLACE, null)
         set(value) = sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_PLACE, value).apply()
 
+    override var currentShop: Int
+        get() = sellerPreferences.getInt(AppConstants.PREFS_CURRENT_SHOP_ID, 0)
+        set(value) = sellerPreferences.edit().putInt(AppConstants.PREFS_CURRENT_SHOP_ID, value).apply()
+
     override fun saveUser(id: Int?,name: String?, email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?) {
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_NAME, name).apply()
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_EMAIL, email).apply()

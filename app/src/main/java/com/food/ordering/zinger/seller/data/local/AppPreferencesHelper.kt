@@ -11,6 +11,7 @@ interface AppPreferencesHelper {
     val role: String?
     val oauthId: String?
     val shop: String?
+    val currentShop: Int?
     val id: Int?
 
     fun saveUser(id: Int?,name: String?,email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?)

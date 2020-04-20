@@ -161,6 +161,7 @@ class OTPActivity : AppCompatActivity() {
                                     oauthId = userModel.oauthId,
                                     shop = Gson().toJson(shopModelList)
                                 )
+                                preferencesHelper.currentShop = shopModelList?.get(0)?.shopModel?.id!!
                                 unloadKoinModules(networkModule)
                                 loadKoinModules(networkModule)
                                 startActivity(Intent(applicationContext, HomeActivity::class.java))
