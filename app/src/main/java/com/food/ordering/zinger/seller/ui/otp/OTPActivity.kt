@@ -2,18 +2,20 @@ package com.food.ordering.zinger.seller.ui.otp
 
 import android.app.ProgressDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import com.food.ordering.zinger.seller.MainActivity
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.databinding.ActivityOTPBinding
 import com.food.ordering.zinger.seller.di.networkModule
+import com.food.ordering.zinger.seller.ui.home.HomeActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.FirebaseException
@@ -28,6 +30,7 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import java.util.concurrent.TimeUnit
 
+
 class OTPActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOTPBinding
@@ -36,9 +39,12 @@ class OTPActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
     private var number: String? = null
-    private var otp = ""
     private var storedVerificationId = ""
+    private var otpSent = false
+    private var timeOut = false
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
+    lateinit var verificationCallBack: PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    lateinit var countDownTimer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +59,7 @@ class OTPActivity : AppCompatActivity() {
 
     private fun getArgs() {
         number = intent.getStringExtra(AppConstants.PREFS_SELLER_MOBILE)
-        println("Number testing"+number)
+        println("Number testing" + number)
     }
 
     private fun initView() {
@@ -64,6 +70,57 @@ class OTPActivity : AppCompatActivity() {
     }
 
     private fun setListener() {
+
+        countDownTimer = object : CountDownTimer(10000, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                binding.textResendOtp.setText("Resend OTP (" + millisUntilFinished / 1000 + "s)")
+            }
+
+            override fun onFinish() {
+                binding.textResendOtp.setText("Resend OTP")
+                binding.textResendOtp.isEnabled=true
+            }
+        }
+
+        verificationCallBack = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+                override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                    progressDialog.dismiss()
+                    Toast.makeText(applicationContext, "Verification Successful!", Toast.LENGTH_LONG).show()
+                    binding.editOtp.setText(p0.smsCode)
+                    signInWithPhoneAuthCredential(p0)
+                }
+
+                override fun onVerificationFailed(p0: FirebaseException) {
+                    progressDialog.dismiss()
+                    p0.printStackTrace()
+                    Toast.makeText(applicationContext, "Verification failed!", Toast.LENGTH_LONG).show()
+                    binding.editOtp.setText("")
+                    otpSent = false
+                    binding.textResendOtp.isEnabled = true
+                    //TODO OTP shake animation
+                }
+
+                override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                    otpSent = true
+                    progressDialog.dismiss()
+                    storedVerificationId = verificationId
+                    resendToken = token
+                    binding.textResendOtp.isEnabled = false
+                    countDownTimer.start()
+                }
+
+                override fun onCodeAutoRetrievalTimeOut(p0: String) {
+                    super.onCodeAutoRetrievalTimeOut(p0)
+                    otpSent = false
+                    binding.textResendOtp.isEnabled = true
+                    timeOut = true
+                    Toast.makeText(applicationContext, "Verification failed!", Toast.LENGTH_LONG).show()
+                }
+        }
+
+
         binding.buttonLogin.setOnClickListener {
             if (binding.editOtp.text.toString().isNotEmpty() && binding.editOtp.text.toString().length == 6) {
                 if (storedVerificationId.isNotEmpty()) {
@@ -72,9 +129,23 @@ class OTPActivity : AppCompatActivity() {
                 }
             }
         }
+
         binding.imageClose.setOnClickListener {
             onBackPressed()
         }
+
+        binding.textResendOtp.setOnClickListener(View.OnClickListener { v ->
+            number?.let {
+                if (!otpSent)
+                    if(timeOut)
+                        number?.let { sendOtp(number!!) }
+                    else
+                        number?.let { resendVerificationCode(number!!, resendToken) }
+                else
+                    Toast.makeText(applicationContext, "OTP already sent", Toast.LENGTH_SHORT).show()
+            }
+        })
+
     }
 
     private fun setObservers() {
@@ -84,45 +155,58 @@ class OTPActivity : AppCompatActivity() {
                     Resource.Status.SUCCESS -> {
                         if (resource.data != null) {
                             progressDialog.dismiss()
-                            if (resource.data.code==1163) {
+
+                            val shopModelList = resource.data.data?.shopModelList
+                            val userModel = resource.data.data?.userModel
+                            if (userModel != null) {
+                                preferencesHelper.saveUser(
+                                    id = userModel.id,
+                                    name = userModel.name,
+                                    email = userModel.email,
+                                    mobile = userModel.mobile,
+                                    role = userModel.role,
+                                    oauthId = userModel.oauthId,
+                                    shop = Gson().toJson(shopModelList)
+                                )
                                 unloadKoinModules(networkModule)
                                 loadKoinModules(networkModule)
-                                val intent = Intent(applicationContext, MainActivity::class.java)
-                                startActivity(intent)
+                                startActivity(Intent(applicationContext, HomeActivity::class.java))
                                 finish()
                             } else {
-                                val shopModelList =resource.data.data?.shopModelList
-                                val userModel = resource.data.data?.userModel
-                                if(userModel!=null){
-                                    preferencesHelper.saveUser(
-                                        id = userModel.id,
-                                        name = userModel.name,
-                                        email = userModel.email,
-                                        mobile = userModel.mobile,
-                                        role = userModel.role,
-                                        oauthId = userModel.oauthId,
-                                        shop = Gson().toJson(shopModelList)
-                                    )
-                                }
-                                unloadKoinModules(networkModule)
-                                loadKoinModules(networkModule)
-                                startActivity(Intent(applicationContext, MainActivity::class.java))
-                                finish()
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Data not available in Server",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
+
+
                         } else {
-                            Toast.makeText(applicationContext, "Something went wrong", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                applicationContext,
+                                "Something went wrong",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(applicationContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext,
+                            "No Internet Connection",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                         resource.message?.let {
                             Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
                         } ?: run {
-                            Toast.makeText(applicationContext, "Something went wrong", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                applicationContext,
+                                "Something went wrong",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                     Resource.Status.LOADING -> {
@@ -137,48 +221,14 @@ class OTPActivity : AppCompatActivity() {
     private fun sendOtp(number: String) {
         progressDialog.setMessage("Sending OTP")
         progressDialog.show()
+        timeOut = false
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
             number, // Phone number to verify
             60, // Timeout duration
             TimeUnit.SECONDS, // Unit of timeout
             this, // Activity (for callback binding)
-            object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-                    progressDialog.dismiss()
-                    Toast.makeText(applicationContext, "Verification Successful!", Toast.LENGTH_LONG).show()
-                    binding.editOtp.setText(p0.smsCode)
-                    signInWithPhoneAuthCredential(p0)
-                }
-
-                override fun onVerificationFailed(p0: FirebaseException) {
-                    progressDialog.dismiss()
-                    p0.printStackTrace()
-                    Toast.makeText(applicationContext, "Verification failed!", Toast.LENGTH_LONG).show()
-                    binding.editOtp.setText("")
-                    //TODO OTP shake animation
-                }
-
-                override fun onCodeSent(
-                    verificationId: String,
-                    token: PhoneAuthProvider.ForceResendingToken
-                ) {
-                    progressDialog.dismiss()
-                    // The SMS verification code has been sent to the provided phone number, we
-                    // now need to ask the user to enter the code and then construct a credential
-                    // by combining the code with a verification ID.
-                    //Log.d(TAG, "onCodeSent:$verificationId")
-
-                    // Save verification ID and resending token so we can use them later
-                    storedVerificationId = verificationId
-                    resendToken = token
-                }
-
-                override fun onCodeAutoRetrievalTimeOut(p0: String) {
-                    super.onCodeAutoRetrievalTimeOut(p0)
-                    //TODO enable resend
-                    //
-                }
-            }) // OnVerificationStateChangedCallbacks
+            verificationCallBack
+        )
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
@@ -187,28 +237,36 @@ class OTPActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    //Log.d(TAG, "signInWithCredential:success")
                     progressDialog.dismiss()
                     val user = task.result?.user
                     preferencesHelper.oauthId = user?.uid
                     preferencesHelper.mobile = user?.phoneNumber?.substring(3)
                     preferencesHelper.role = "SHOP_OWNER"
-                    val loginRequest = user?.uid?.let { user.phoneNumber?.let { it1 -> UserModel(oauthId = it, mobile = it1.substring(3)) } }
-                    loginRequest?.let { viewModel.login(it) }?:run{
-                        Toast.makeText(applicationContext,"Login failed!", Toast.LENGTH_SHORT).show()
+                    val loginRequest = user?.uid?.let {
+                        user.phoneNumber?.let { it1 ->
+                            UserModel(oauthId = it, mobile = it1.substring(3))
+                        }
+                    }
+                    loginRequest?.let { viewModel.login(it) } ?: run {
+                        Toast.makeText(applicationContext, "Login failed!", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
                     progressDialog.dismiss()
-                    // Sign in failed, display a message and update the UI
-                    //Log.w(TAG, "signInWithCredential:failure", task.exception)
+
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
                         (task.exception as FirebaseAuthInvalidCredentialsException).printStackTrace()
-                        Toast.makeText(applicationContext, "Verification failed!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            applicationContext,
+                            "Verification failed!",
+                            Toast.LENGTH_LONG
+                        ).show()
                         binding.editOtp.setText("")
                     }
                 }
+                otpSent = false
+                countDownTimer.cancel()
+                binding.textResendOtp.isEnabled = true
             }
     }
 
@@ -222,5 +280,19 @@ class OTPActivity : AppCompatActivity() {
             }
             .setNegativeButton("No") { dialog, which -> dialog.dismiss() }
             .show()
+    }
+
+    fun resendVerificationCode(number: String, token: PhoneAuthProvider.ForceResendingToken) {
+
+        timeOut = false
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+            number,        // Phone number to verify
+            60,                 // Timeout duration
+            TimeUnit.SECONDS,   // Unit of timeout
+            this,               // Activity (for callback binding)
+            verificationCallBack,         // OnVerificationStateChangedCallbacks
+            token // ForceResendingToken from callbacks
+        );
+
     }
 }

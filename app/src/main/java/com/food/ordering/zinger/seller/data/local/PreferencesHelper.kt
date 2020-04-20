@@ -18,10 +18,10 @@ class PreferencesHelper(context: Context) : AppPreferencesHelper {
     )
 
     override var id: Int?
-        get() = sellerPreferences.getInt(AppConstants.PREFS_SELLER_ID,-1)
+        get() = loginPreferences.getInt(AppConstants.PREFS_SELLER_ID,-1)
         set(value) {
             if(value!=null)
-                sellerPreferences.edit().putInt(AppConstants.PREFS_SELLER_ID,value)
+                loginPreferences.edit().putInt(AppConstants.PREFS_SELLER_ID,value)
         }
 
     override var name: String?

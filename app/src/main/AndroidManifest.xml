@@ -14,11 +14,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.home.HomeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.otp.OTPActivity"/>
         <activity android:name=".ui.seller.SellerActivity" />
@@ -27,7 +22,10 @@
         <activity android:name=".ui.menu.MenuActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ui.login.LoginActivity">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

@@ -22,7 +22,10 @@ class OTPViewModel(private val userRespository: UserRespository) : ViewModel() {
             try {
                 performLogin.value = Resource.loading()
                 val response = userRespository.login(userModel)
-                performLogin.value = Resource.success(response)
+                if(response.code==1)
+                    performLogin.value = Resource.success(response)
+                else
+                    performLogin.value = Resource.error(message = response.message)
             } catch (e: Exception) {
                 println("fetch stats failed ${e.message}")
                 if (e is UnknownHostException) {

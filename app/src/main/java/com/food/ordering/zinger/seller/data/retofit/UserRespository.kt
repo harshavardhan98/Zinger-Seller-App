@@ -4,6 +4,6 @@ import com.food.ordering.zinger.seller.data.model.UserModel
 import retrofit2.Retrofit
 
 class UserRespository(private val retofit: Retrofit) {
-
-    suspend fun login(userModel: UserModel) = retofit.create(CustomApi::class.java).login(userModel)
+    val retrofitVar = retofit.create(CustomApi::class.java)
+    suspend fun login(userModel: UserModel) = retrofitVar.login(userModel)
 }

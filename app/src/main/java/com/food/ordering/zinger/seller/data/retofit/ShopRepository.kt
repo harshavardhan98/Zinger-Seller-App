@@ -5,8 +5,8 @@ import retrofit2.Retrofit
 
 class ShopRepository(private val retrofit: Retrofit) {
 
-    // suspend fun getShopMenu(shopId: Int) = retrofit.create(CustomApi::class.java).getShopMenu(shopId);
-    suspend fun updateShopConfiguration(shopConfigRequest: ShopConfigRequest) =
-        retrofit.create(CustomApi::class.java).updateShopConfiguration(shopConfigRequest)
+    val retrofitVar =retrofit.create(CustomApi::class.java)
+
+    suspend fun updateShopConfiguration(shopConfigRequest: ShopConfigRequest) = retrofitVar.updateShopConfiguration(shopConfigRequest)
 
 }

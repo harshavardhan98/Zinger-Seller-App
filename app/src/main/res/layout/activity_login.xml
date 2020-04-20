@@ -74,6 +74,7 @@
                 android:fontFamily="@font/poppins_semibold"
                 android:hint="@string/hint_enter_phone_number"
                 android:inputType="phone"
+                android:maxLength="10"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:singleLine="true"

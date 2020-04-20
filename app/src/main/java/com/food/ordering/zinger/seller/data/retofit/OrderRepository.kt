@@ -5,13 +5,15 @@ import retrofit2.Retrofit
 
 class OrderRepository(private val retrofit: Retrofit) {
 
-    suspend fun getOrderById(orderId: Int) = retrofit.create(CustomApi::class.java).getOrderById(orderId)
+    val retrofitVar =  retrofit.create(CustomApi::class.java)
 
-    suspend fun getOrderByShopId(shopId: Int) = retrofit.create(CustomApi::class.java).getOrderByShopId(shopId)
+    suspend fun getOrderById(orderId: Int) = retrofitVar.getOrderById(orderId)
 
-    suspend fun getOrderByPagination(shopId: Int,pageNum: Int,pageCnt: Int) = retrofit.create(CustomApi::class.java).getOrderByPagination(shopId,pageNum,pageCnt)
+    suspend fun getOrderByShopId(shopId: Int) = retrofitVar.getOrderByShopId(shopId)
 
-    suspend fun updateOrderStatus(order: OrderModel) = retrofit.create(CustomApi::class.java).updateOrderStatus(order)
+    suspend fun getOrderByPagination(shopId: Int,pageNum: Int,pageCnt: Int) = retrofitVar.getOrderByPagination(shopId,pageNum,pageCnt)
+
+    suspend fun updateOrderStatus(order: OrderModel) = retrofitVar.updateOrderStatus(order)
 
 
 }
