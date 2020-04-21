@@ -21,6 +21,7 @@ import com.food.ordering.zinger.seller.databinding.ActivityLoginBinding
 import com.food.ordering.zinger.seller.databinding.ActivityOrderHistoryBinding
 import com.food.ordering.zinger.seller.ui.home.HomeActivity
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
+import com.food.ordering.zinger.seller.ui.orderDetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.ui.otp.OTPActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.snackbar.Snackbar
@@ -51,10 +52,6 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
         initView()
         setListener()
         setObservers()
-    }
-
-    override fun onResume() {
-        super.onResume()
         getOrders()
     }
 
@@ -174,10 +171,9 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
     private fun setupShopRecyclerView() {
         orderAdapter = OrdersAdapter(orderList, object : OrdersAdapter.OnItemClickListener {
             override fun onItemClick(item: OrderItemListModel?, position: Int) {
-
-//                val intent = Intent(applicationContext, OrderDetailActivity::class.java)
-//                intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(item))
-//                startActivity(intent)
+                val intent = Intent(applicationContext, OrderDetailActivity::class.java)
+                intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(item))
+                startActivity(intent)
             }
         })
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
