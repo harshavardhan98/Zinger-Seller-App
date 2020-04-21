@@ -72,6 +72,9 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha01'
     implementation 'com.google.firebase:firebase-auth:19.3.0'
     implementation 'com.github.dhaval2404:imagepicker:1.7.1'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'jp.wasabeef:recyclerview-animators:3.0.0'
+    implementation 'com.airbnb.android:lottie:3.4.0'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.firebase:firebase-storage:19.1.1'

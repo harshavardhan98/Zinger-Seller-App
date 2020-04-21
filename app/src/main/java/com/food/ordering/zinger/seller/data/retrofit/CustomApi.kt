@@ -61,10 +61,10 @@ interface CustomApi  {
     suspend fun getOrderById(@Path("orderId") orderId: Int): Response<TransactionModel>
 
     @GET("/order/seller/{shopId}/{pageNum}/{pageCnt}")
-    suspend fun getOrderByPagination(@Path("shopId") shopId: Int,@Path("pageNum") pageNum: Int,@Path("pageCnt") pageCnt: Int): Response<List<OrderItemList>>
+    suspend fun getOrderByPagination(@Path("shopId") shopId: Int,@Path("pageNum") pageNum: Int,@Path("pageCnt") pageCnt: Int): Response<List<OrderItemListModel>>
 
     @GET("/order/seller/{shopId}")
-    suspend fun getOrderByShopId(@Path("shopId") shopId: Int): Response<List<OrderItemList>>
+    suspend fun getOrderByShopId(@Path("shopId") shopId: Int): Response<List<OrderItemListModel>>
 
     @PATCH("/order/status")
     suspend fun updateOrderStatus(@Body order: OrderModel):Response<String>

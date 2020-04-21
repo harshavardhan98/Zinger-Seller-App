@@ -5,10 +5,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.food.ordering.zinger.seller.R
-import com.food.ordering.zinger.seller.data.model.OrderItemList
 import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.databinding.ItemAccountBinding
-import com.food.ordering.zinger.seller.databinding.ItemOrderBinding
 import com.squareup.picasso.Picasso
 
 class AccountAdapter(

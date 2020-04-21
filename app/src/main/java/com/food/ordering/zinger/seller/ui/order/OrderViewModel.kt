@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.food.ordering.zinger.seller.data.local.Resource
-import com.food.ordering.zinger.seller.data.model.OrderItemList
+import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.model.TransactionModel
@@ -19,16 +19,16 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
     val orderByIdResponse : LiveData<Resource<Response<TransactionModel>>>
     get() = orderByIdRequest
 
-    private val orderByShopId = MutableLiveData<Resource<Response<List<OrderItemList>>>>()
-    val orderByShopIdResponse : LiveData<Resource<Response<List<OrderItemList>>>>
+    private val orderByShopId = MutableLiveData<Resource<Response<List<OrderItemListModel>>>>()
+    val orderByShopIdResponse : LiveData<Resource<Response<List<OrderItemListModel>>>>
     get() = orderByShopId
 
     private val updateOrder = MutableLiveData<Resource<Response<String>>>()
     val updateOrderResponse: LiveData<Resource<Response<String>>>
     get() = updateOrder
 
-    private val orderByPagination = MutableLiveData<Resource<Response<List<OrderItemList>>>>()
-    val orderByPaginationResponse : LiveData<Resource<Response<List<OrderItemList>>>>
+    private val orderByPagination = MutableLiveData<Resource<Response<List<OrderItemListModel>>>>()
+    val orderByPaginationResponse : LiveData<Resource<Response<List<OrderItemListModel>>>>
         get() = orderByPagination
 
     fun getOrderById(orderId: Int){
@@ -98,7 +98,7 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
                     println("Something is wrong")
 
             }catch (e: Exception){
-                println(e.printStackTrace())
+                //println(e.printStackTrace())
             }
         }
     }

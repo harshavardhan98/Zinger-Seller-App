@@ -8,7 +8,6 @@ object CommonUtils {
     fun TimeConversion24to12(hours: Int,mins: Int): String{
 
         try {
-
             var _24HourTime = hours.toString()+":"+mins
 
             val _24HourSDF = SimpleDateFormat("HH:mm", Locale.US)

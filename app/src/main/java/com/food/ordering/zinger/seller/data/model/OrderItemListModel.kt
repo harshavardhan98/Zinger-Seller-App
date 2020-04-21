@@ -3,7 +3,7 @@ import com.google.gson.annotations.SerializedName
 
 
 
-data class OrderItemList(
+data class OrderItemListModel(
     @SerializedName("orderItemsList")
     val orderItemsList: List<OrderItems>,
     @SerializedName("transactionModel")

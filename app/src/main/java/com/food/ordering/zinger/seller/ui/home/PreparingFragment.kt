@@ -5,17 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.Resource
-import com.food.ordering.zinger.seller.data.model.OrderItemList
+import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.databinding.BottomSheetSecretKeyBinding
-import com.food.ordering.zinger.seller.databinding.FragmentNewOrdersBinding
 import com.food.ordering.zinger.seller.databinding.FragmentPreparingBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.utils.AppConstants
@@ -84,17 +82,17 @@ class PreparingFragment : Fragment() {
 
     }
 
-    var ordersList: ArrayList<OrderItemList> = ArrayList()
+    var ordersList: ArrayList<OrderItemListModel> = ArrayList()
     lateinit var orderAdapter: OrdersAdapter
     private fun updateUI() {
         println("Order list size "+ordersList.size)
         orderAdapter = OrdersAdapter(ordersList, object: OrdersAdapter.OnItemClickListener{
-            override fun onItemClick(item: OrderItemList?, position: Int) {
+            override fun onItemClick(item: OrderItemListModel?, position: Int) {
                 //TODO navigate to detail
 
             }
 
-            override fun onUpdateClick(orderItemListModel: OrderItemList?, position: Int) {
+            override fun onUpdateClick(orderItemListModel: OrderItemListModel?, position: Int) {
 
                 var orderModel = OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id,orderStatus = orderItemListModel!!.transactionModel.orderModel.orderStatus)
 

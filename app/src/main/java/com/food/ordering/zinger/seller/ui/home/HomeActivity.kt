@@ -22,6 +22,7 @@ import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBinding
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
+import com.food.ordering.zinger.seller.ui.orderHistory.OrderHistoryActivity
 import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
 import com.food.ordering.zinger.seller.ui.shopProfile.ShopProfileActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -222,7 +223,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                     startActivity(Intent(applicationContext, ShopProfileActivity::class.java))
                 }
                 if (ordersItem.identifier == drawerItem.identifier) {
-                    //startActivity(Intent(applicationContext, OrdersActivity::class.java))
+                    startActivity(Intent(applicationContext, OrderHistoryActivity::class.java))
                 }
                 if (helpcenter.identifier == drawerItem.identifier) { //TODO open help activity
                 }

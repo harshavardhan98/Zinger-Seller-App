@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.Resource
-import com.food.ordering.zinger.seller.data.model.OrderItemList
+import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.databinding.FragmentReadyBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.utils.AppConstants
@@ -69,16 +69,16 @@ class ReadyFragment : Fragment() {
 
     }
 
-    var ordersList: ArrayList<OrderItemList> = ArrayList()
+    var ordersList: ArrayList<OrderItemListModel> = ArrayList()
     lateinit var orderAdapter: OrdersAdapter
     private fun updateUI() {
         println("Order list size "+ordersList.size)
         orderAdapter = OrdersAdapter(ordersList, object: OrdersAdapter.OnItemClickListener{
-            override fun onItemClick(item: OrderItemList?, position: Int) {
+            override fun onItemClick(item: OrderItemListModel?, position: Int) {
                 //TODO navigate to detail
             }
 
-            override fun onUpdateClick(orderItemListModel: OrderItemList?, position: Int) {
+            override fun onUpdateClick(orderItemListModel: OrderItemListModel?, position: Int) {
                 //TODO show order status update bottom sheet
                 Toast.makeText(activity,"testing ready", Toast.LENGTH_LONG).show()
 

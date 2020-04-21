@@ -35,7 +35,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/text_shop_name"
+                        android:id="@+id/text_customer_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -117,6 +117,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
+						android:visibility="visible"
                         android:fontFamily="@font/open_sans_bold"
                         android:maxLines="2"
                         android:textColor="@color/colorAccentLight"
