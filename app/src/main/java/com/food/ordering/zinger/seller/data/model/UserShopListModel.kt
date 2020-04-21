@@ -45,7 +45,7 @@ data class ConfigurationModel(
     @SerializedName("isOrderTaken")
     var isOrderTaken: Int,
     @SerializedName("merchantId")
-    val merchantId: String,
+    val merchantId: String? =null,
     @SerializedName("shopModel")
     var shopModel: ShopModel?
 )
@@ -63,7 +63,7 @@ data class ShopModel(
     @SerializedName("closingTime")
     var closingTime: String? = null,
     @SerializedName("coverUrls")
-    val coverUrls: MutableList<String>? = null ,
+    var coverUrls: ArrayList<String>? =null,
     @SerializedName("id")
     val id: Int? = null,
     @SerializedName("mobile")

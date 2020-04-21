@@ -18,8 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
+import com.food.ordering.zinger.seller.data.model.ConfigurationModel
 import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.data.model.ShopImageDataModel
+import com.food.ordering.zinger.seller.data.model.ShopModel
 import com.food.ordering.zinger.seller.databinding.ActivityShopProfileBinding
 import com.food.ordering.zinger.seller.utils.CommonUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -49,6 +51,7 @@ class ShopProfileActivity : AppCompatActivity() {
     private var currentShopLogoUri: Uri? = null
     private var deleteImageList: ArrayList<String> = ArrayList()
     private var mStorageRef: StorageReference? = null
+    private lateinit var updateConfigurationModel: ConfigurationModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,17 +78,15 @@ class ShopProfileActivity : AppCompatActivity() {
         }
 
 
-        shopConfig?.shopModel?.coverUrls?.let {
-            it.forEach { it1 ->
-                imageList.add(it1)
-            }
-        }
+        imageList.clear()
+        shopConfig?.shopModel?.coverUrls?.let { imageList.addAll(it) }
 
         shopCoverImageAdapter =
             ShopCoverImageAdapter(imageList, object : ShopCoverImageAdapter.OnItemClickListener {
 
                 override fun onItemClick(shopImageList: List<String>?, position: Int) {
-                    Toast.makeText(applicationContext, "testing " + position, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "testing " + position, Toast.LENGTH_SHORT)
+                        .show()
                     // todo go to a plain screen
                 }
 
@@ -95,7 +96,8 @@ class ShopProfileActivity : AppCompatActivity() {
                 }
 
             })
-        binding.recyclerCoverPhoto.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerCoverPhoto.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerCoverPhoto.adapter = shopCoverImageAdapter
 
         binding.editName.setText(shopConfig?.shopModel?.name)
@@ -115,21 +117,29 @@ class ShopProfileActivity : AppCompatActivity() {
     private fun setListener() {
         binding.buttonUpdate.setOnClickListener(View.OnClickListener {
 
-            shopConfig?.shopModel?.name = binding.editName.text.toString()
-            shopConfig?.configurationModel?.deliveryPrice = binding.editDeliveryPrice.text.toString().toDouble()
-            shopConfig?.configurationModel?.isDeliveryAvailable =
-                if (binding.switchOrders.isChecked) 1 else 0
-            shopConfig?.configurationModel?.isOrderTaken =
-                if (binding.switchDelivery.isChecked) 1 else 0
             var openingTime = binding.textOpeningTime.text.toString().split(Regex(" "), 0)
             var closingTime = binding.textClosingTime.text.toString().split(Regex(" "), 0)
-            shopConfig?.configurationModel?.shopModel?.openingTime = openingTime.get(0) + ":00"
-            shopConfig?.configurationModel?.shopModel?.closingTime = closingTime.get(0) + ":00"
-            shopConfig?.configurationModel?.shopModel?.coverUrls?.clear()
-            shopConfig?.configurationModel?.shopModel?.coverUrls?.addAll(imageList)
-            shopConfig?.configurationModel?.shopModel = shopConfig?.shopModel
 
-            shopConfig?.configurationModel?.let { it1 -> viewModel.updateShopProfile(it1) }
+            val shopModel = ShopModel(
+                photoUrl = if(photoUrl.isNullOrEmpty())shopConfig?.shopModel?.photoUrl else photoUrl,
+                closingTime = closingTime.get(0) + ":00",
+                openingTime = openingTime.get(0) + ":00",
+                name = binding.editName.text.toString(),
+                coverUrls = imageList,
+                mobile = shopConfig?.shopModel?.mobile,
+                id = shopConfig?.shopModel?.id
+            )
+
+
+            updateConfigurationModel = ConfigurationModel(
+                deliveryPrice = binding.editDeliveryPrice.text.toString().toDouble(),
+                isDeliveryAvailable = if (binding.switchOrders.isChecked) 1 else 0,
+                isOrderTaken = if (binding.switchDelivery.isChecked) 1 else 0,
+                shopModel = shopModel
+            )
+
+            viewModel.updateShopProfile(updateConfigurationModel)
+
         })
 
         binding.imageEditName.setOnClickListener(View.OnClickListener {
@@ -148,15 +158,6 @@ class ShopProfileActivity : AppCompatActivity() {
             binding.editDeliveryPrice.isEnabled = !(binding.editDeliveryPrice.isEnabled)
         })
 
-        binding.switchOrders.setOnClickListener(View.OnClickListener { v ->
-            shopConfig?.configurationModel?.isOrderTaken =
-                if (binding.switchOrders.isChecked) 1 else 0
-        })
-
-        binding.switchDelivery.setOnClickListener(View.OnClickListener { v ->
-            shopConfig?.configurationModel?.isDeliveryAvailable =
-                if (binding.switchDelivery.isChecked) 1 else 0
-        })
 
         binding.textOpeningTime.setOnClickListener(View.OnClickListener {
 
@@ -172,8 +173,14 @@ class ShopProfileActivity : AppCompatActivity() {
                 }, openingTime.hours, openingTime.minutes, false
             )
             timePickerDialog.show()
-            timePickerDialog.getButton(TimePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(applicationContext,android.R.color.tab_indicator_text))
-            timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
+            timePickerDialog.getButton(TimePickerDialog.BUTTON_NEGATIVE).setTextColor(
+                ContextCompat.getColor(
+                    applicationContext,
+                    android.R.color.tab_indicator_text
+                )
+            )
+            timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
         })
 
         binding.textClosingTime.setOnClickListener(View.OnClickListener {
@@ -189,8 +196,14 @@ class ShopProfileActivity : AppCompatActivity() {
                 }, closingTime.hours, closingTime.minutes, false
             )
             timePickerDialog.show()
-            timePickerDialog.getButton(TimePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(applicationContext,android.R.color.tab_indicator_text))
-            timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
+            timePickerDialog.getButton(TimePickerDialog.BUTTON_NEGATIVE).setTextColor(
+                ContextCompat.getColor(
+                    applicationContext,
+                    android.R.color.tab_indicator_text
+                )
+            )
+            timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
         })
 
 
@@ -213,26 +226,28 @@ class ShopProfileActivity : AppCompatActivity() {
 
     }
 
+    var photoUrl: String? = null
+
     private fun setObserver() {
 
-        viewModel.performUploadImageStatus.observe(this, androidx.lifecycle.Observer {resource ->
-            if(resource!=null){
-                when(resource.status){
+        viewModel.performUploadImageStatus.observe(this, androidx.lifecycle.Observer { resource ->
+            if (resource != null) {
+                when (resource.status) {
 
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
 
                         resource.data?.let {
-                            if(isShopCoverImageClicked){
+                            if (isShopCoverImageClicked) {
                                 imageList.add(resource.data)
                                 shopCoverImageAdapter?.notifyDataSetChanged()
-                                isShopCoverImageClicked=!isShopCoverImageClicked
-                            }else if(isShopLogoClicked){
-                                shopConfig?.shopModel?.photoUrl = resource.data
+                                isShopCoverImageClicked = !isShopCoverImageClicked
+                            } else if (isShopLogoClicked) {
+                                photoUrl = resource.data
                                 Picasso.get().load(resource.data)
                                     .placeholder(R.drawable.ic_shop)
                                     .into(binding.imageLogo)
-                                isShopLogoClicked=!isShopLogoClicked
+                                isShopLogoClicked = !isShopLogoClicked
                             }
                         }
 
@@ -240,12 +255,20 @@ class ShopProfileActivity : AppCompatActivity() {
 
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(applicationContext, "Try again!! Error Occurred", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext,
+                            "Try again!! Error Occurred",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(applicationContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext,
+                            "No Internet Connection",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                     Resource.Status.LOADING -> {
@@ -256,51 +279,59 @@ class ShopProfileActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.performUpdateShopProfileStatus.observe(this, androidx.lifecycle.Observer { resource ->
-            if (resource != null) {
-                when (resource.status) {
-                    Resource.Status.SUCCESS -> {
+        viewModel.performUpdateShopProfileStatus.observe(
+            this,
+            androidx.lifecycle.Observer { resource ->
+                if (resource != null) {
+                    when (resource.status) {
+                        Resource.Status.SUCCESS -> {
 
-                        preferencesHelper.getShop()?.let {shopConfigurationList ->
+                            preferencesHelper.getShop()?.let { shopConfigurationList ->
 
-                            for(i in shopConfigurationList)
-                                if(i.shopModel.id == shopConfig?.shopModel?.id)
-                                {
-                                    shopConfig?.shopModel?.let {
-                                        i.shopModel=it
+                                for (i in shopConfigurationList)
+                                    if (i.shopModel.id == updateConfigurationModel.shopModel?.id) {
+                                        i.shopModel= updateConfigurationModel.shopModel!!
+                                        i.configurationModel =updateConfigurationModel
                                     }
 
-                                    shopConfig?.configurationModel?.let {
-                                        i.configurationModel=it
-                                    }
-                                }
+                                preferencesHelper.shop = Gson().toJson(shopConfigurationList)
+                            }
 
-                            preferencesHelper.shop = Gson().toJson(shopConfigurationList)
+                            progressDialog.dismiss()
+                            Toast.makeText(
+                                applicationContext,
+                                "Profile Successfully Updated",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
                         }
-
-                        progressDialog.dismiss()
-                        Toast.makeText(applicationContext, "Profile Successfully Updated", Toast.LENGTH_SHORT).show()
-
-                    }
-                    Resource.Status.OFFLINE_ERROR -> {
-                        progressDialog.dismiss()
-                        Toast.makeText(applicationContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
-                    }
-                    Resource.Status.ERROR -> {
-                        progressDialog.dismiss()
-                        resource.message?.let {
-                            Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
-                        } ?: run {
-                            Toast.makeText(applicationContext, "Update Failed Try again later", Toast.LENGTH_SHORT).show()
+                        Resource.Status.OFFLINE_ERROR -> {
+                            progressDialog.dismiss()
+                            Toast.makeText(
+                                applicationContext,
+                                "No Internet Connection",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                    }
-                    Resource.Status.LOADING -> {
-                        progressDialog.setMessage("Updating...")
-                        progressDialog.show()
+                        Resource.Status.ERROR -> {
+                            progressDialog.dismiss()
+                            resource.message?.let {
+                                Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
+                            } ?: run {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Update Failed Try again later",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                        Resource.Status.LOADING -> {
+                            progressDialog.setMessage("Updating...")
+                            progressDialog.show()
+                        }
                     }
                 }
-            }
-        })
+            })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -311,7 +342,7 @@ class ShopProfileActivity : AppCompatActivity() {
 
                 val fileUri = data?.data
                 val file: File? = ImagePicker.getFile(data)
-                var storageReference : StorageReference? =null
+                var storageReference: StorageReference? = null
 
                 if (isShopLogoClicked) {
                     storageReference =
@@ -324,7 +355,7 @@ class ShopProfileActivity : AppCompatActivity() {
 
                 if (storageReference != null) {
                     if (fileUri != null) {
-                        viewModel.uploadPhotoToFireBase(storageReference,fileUri)
+                        viewModel.uploadPhotoToFireBase(storageReference, fileUri)
                     }
                 }
             }
