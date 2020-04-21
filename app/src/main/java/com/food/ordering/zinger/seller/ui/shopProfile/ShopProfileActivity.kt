@@ -69,8 +69,8 @@ class ShopProfileActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext,"testing "+position,Toast.LENGTH_SHORT).show()
             }
 
-            override fun onUpdateClick(item: List<ShopImageDataModel>?, position: Int) {
-
+            override fun onDeleteClick(item: List<ShopImageDataModel>?, position: Int) {
+                //TODO delete logic
             }
 
         })

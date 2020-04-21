@@ -32,29 +32,26 @@ class ShopCoverImageAdapter(private val imageList: List<ShopImageDataModel>, pri
 
     class ThumbNailViewHolder(var binding: ItemThumbnailBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(imageList: List<ShopImageDataModel>, position: Int, listener: OnItemClickListener) {
-
             var shopImageData = imageList.get(position)
-
             shopImageData.imageLink?.let {
                 Picasso.get().load(shopImageData.imageLink).placeholder(R.drawable.ic_shop)
                     .into(binding.imageCover)
             }
-
             shopImageData.imageUri?.let {
                 binding.imageCover.setImageURI(it)
             }
-
-
             binding.imageCover.setOnClickListener{
                 listener.onItemClick(imageList,position)
             }
+            binding.imageClose.setOnClickListener {
+                listener.onDeleteClick(imageList,position)
+            }
         }
-
     }
 
     interface OnItemClickListener {
         fun onItemClick(item: List<ShopImageDataModel>?, position: Int)
-        fun onUpdateClick(item: List<ShopImageDataModel>?, position: Int)
+        fun onDeleteClick(item: List<ShopImageDataModel>?, position: Int)
     }
 
 }
