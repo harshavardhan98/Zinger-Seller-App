@@ -41,9 +41,9 @@ data class ConfigurationModel(
     @SerializedName("deliveryPrice")
     val deliveryPrice: Double,
     @SerializedName("isDeliveryAvailable")
-    val isDeliveryAvailable: Int,
+    var isDeliveryAvailable: Int,
     @SerializedName("isOrderTaken")
-    val isOrderTaken: Int,
+    var isOrderTaken: Int,
     @SerializedName("merchantId")
     val merchantId: String,
     @SerializedName("shopModel")
