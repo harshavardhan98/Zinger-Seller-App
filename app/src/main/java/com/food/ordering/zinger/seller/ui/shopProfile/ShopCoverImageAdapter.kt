@@ -15,10 +15,18 @@ import com.squareup.picasso.Picasso
 import java.lang.Exception
 import java.text.SimpleDateFormat
 
-class ShopCoverImageAdapter(private val imageList: List<ShopImageDataModel>, private val listener: OnItemClickListener) : RecyclerView.Adapter<ShopCoverImageAdapter.ThumbNailViewHolder>() {
+class ShopCoverImageAdapter(
+    private val imageList: List<String>,
+    private val listener: OnItemClickListener
+) : RecyclerView.Adapter<ShopCoverImageAdapter.ThumbNailViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThumbNailViewHolder {
-        val binding: ItemThumbnailBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_thumbnail, parent, false)
+        val binding: ItemThumbnailBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.item_thumbnail,
+            parent,
+            false
+        )
         return ThumbNailViewHolder(binding)
     }
 
@@ -30,28 +38,27 @@ class ShopCoverImageAdapter(private val imageList: List<ShopImageDataModel>, pri
         return imageList.size
     }
 
-    class ThumbNailViewHolder(var binding: ItemThumbnailBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(imageList: List<ShopImageDataModel>, position: Int, listener: OnItemClickListener) {
-            var shopImageData = imageList.get(position)
-            shopImageData.imageLink?.let {
-                Picasso.get().load(shopImageData.imageLink).placeholder(R.drawable.ic_shop)
-                    .into(binding.imageCover)
+    class ThumbNailViewHolder(var binding: ItemThumbnailBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(imageList: List<String>, position: Int, listener: OnItemClickListener) {
+
+            Picasso.get().load(imageList.get(position)).placeholder(R.drawable.ic_shop)
+                .into(binding.imageCover)
+
+            binding.imageCover.setOnClickListener {
+                listener.onItemClick(imageList, position)
             }
-            shopImageData.imageUri?.let {
-                binding.imageCover.setImageURI(it)
-            }
-            binding.imageCover.setOnClickListener{
-                listener.onItemClick(imageList,position)
-            }
+
             binding.imageClose.setOnClickListener {
-                listener.onDeleteClick(imageList,position)
+                listener.onDeleteClick(imageList, position)
             }
         }
     }
 
     interface OnItemClickListener {
-        fun onItemClick(item: List<ShopImageDataModel>?, position: Int)
-        fun onDeleteClick(item: List<ShopImageDataModel>?, position: Int)
+        fun onItemClick(item: List<String>?, position: Int)
+        fun onDeleteClick(item: List<String>?, position: Int)
     }
 
 }

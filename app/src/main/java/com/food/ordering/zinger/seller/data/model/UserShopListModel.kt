@@ -12,11 +12,11 @@ data class UserShopListModel(
 
 data class ShopConfigurationModel(
     @SerializedName("configurationModel")
-    val configurationModel: ConfigurationModel,
+    var configurationModel: ConfigurationModel,
     @SerializedName("ratingModel")
     val ratingModel: RatingModel,
     @SerializedName("shopModel")
-    val shopModel: ShopModel,
+    var shopModel: ShopModel,
     var isSelected: Boolean = false
 )
 
@@ -39,7 +39,7 @@ data class UserModel(
 
 data class ConfigurationModel(
     @SerializedName("deliveryPrice")
-    val deliveryPrice: Double,
+    var deliveryPrice: Double,
     @SerializedName("isDeliveryAvailable")
     var isDeliveryAvailable: Int,
     @SerializedName("isOrderTaken")

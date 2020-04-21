@@ -11,11 +11,13 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
+import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.data.model.ShopImageDataModel
 import com.food.ordering.zinger.seller.databinding.ActivityShopProfileBinding
@@ -24,13 +26,14 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.*;
 import kotlin.collections.ArrayList
 
 class ShopProfileActivity : AppCompatActivity() {
@@ -40,7 +43,7 @@ class ShopProfileActivity : AppCompatActivity() {
     private lateinit var progressDialog: ProgressDialog
     private var shopConfig: ShopConfigurationModel? = null
     private var shopCoverImageAdapter: ShopCoverImageAdapter? = null
-    private var imageList: ArrayList<ShopImageDataModel> = ArrayList()
+    private var imageList: ArrayList<String> = ArrayList()
     private var isShopLogoClicked = false
     private var isShopCoverImageClicked = false
     private var currentShopLogoUri: Uri? = null
@@ -74,34 +77,25 @@ class ShopProfileActivity : AppCompatActivity() {
 
         shopConfig?.shopModel?.coverUrls?.let {
             it.forEach { it1 ->
-                imageList.add(
-                    ShopImageDataModel(
-                        imageLink = it1
-                    )
-                )
+                imageList.add(it1)
             }
         }
 
         shopCoverImageAdapter =
             ShopCoverImageAdapter(imageList, object : ShopCoverImageAdapter.OnItemClickListener {
 
-                override fun onItemClick(shopImageList: List<ShopImageDataModel>?, position: Int) {
-                    Toast.makeText(applicationContext, "testing " + position, Toast.LENGTH_SHORT)
-                        .show()
+                override fun onItemClick(shopImageList: List<String>?, position: Int) {
+                    Toast.makeText(applicationContext, "testing " + position, Toast.LENGTH_SHORT).show()
+                    // todo go to a plain screen
                 }
 
-                override fun onDeleteClick(
-                    shopImageList: List<ShopImageDataModel>?,
-                    position: Int
-                ) {
-                    imageList.get(position).imageLink?.let { deleteImageList.add(it) }
+                override fun onDeleteClick(shopImageList: List<String>?, position: Int) {
                     imageList.removeAt(position)
                     shopCoverImageAdapter?.notifyDataSetChanged()
                 }
 
             })
-        binding.recyclerCoverPhoto.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerCoverPhoto.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerCoverPhoto.adapter = shopCoverImageAdapter
 
         binding.editName.setText(shopConfig?.shopModel?.name)
@@ -113,83 +107,29 @@ class ShopProfileActivity : AppCompatActivity() {
             .into(binding.imageLogo)
         binding.switchOrders.isChecked = shopConfig?.configurationModel?.isOrderTaken == 1
         binding.switchDelivery.isChecked = shopConfig?.configurationModel?.isDeliveryAvailable == 1
-
         binding.editName.setSelection(binding.editName.text.toString().length)
+        binding.editDeliveryPrice.setText(shopConfig?.configurationModel?.deliveryPrice.toString())
+
     }
 
     private fun setListener() {
         binding.buttonUpdate.setOnClickListener(View.OnClickListener {
-            /*
-            *  1. upload the photo to the firebase storage
-            *  2. delete the image link from the firebase -> skipping for now
-            *  3. update the latest shopConfiguration ->
-            *  4. update the shared preference
-            * */
 
-            var fileUploadResult = true
-
-            currentShopLogoUri.let {
-                var storageReference =
-                    mStorageRef?.child("profileImage/" + shopConfig?.shopModel?.id + "/" + it?.toFile()?.name + Calendar.getInstance().time)
-
-                it?.let { it1 ->
-                    storageReference?.putFile(it1)
-                        ?.addOnSuccessListener{
-                            val result = it.metadata!!.reference!!.downloadUrl;
-                            result.addOnSuccessListener {
-                                val imageLink = it.toString()
-                                shopConfig?.shopModel?.photoUrl=imageLink
-                            }
-                        }
-                        ?.addOnFailureListener {
-                            fileUploadResult = false
-                        }
-                }
-            }
-
-            imageList.forEach { item ->
-                item.imageUri?.let {
-                    var storageReference =
-                        mStorageRef?.child("coverImage/" + shopConfig?.shopModel?.id + "/" + it.toFile().name + Calendar.getInstance().time)
-
-                    storageReference?.putFile(it)
-                        ?.addOnSuccessListener {
-                            val result = it.metadata!!.reference!!.downloadUrl;
-                            result.addOnSuccessListener {
-                                val imageLink = it.toString()
-                                println(imageLink)
-                            }
-                        }
-                        ?.addOnFailureListener {
-                            fileUploadResult = false
-                        }
-                }
-            }
-
-            if (fileUploadResult) {
-                shopConfig?.shopModel?.name = binding.editName.text.toString()
-                shopConfig?.configurationModel?.isDeliveryAvailable =
-                    if (binding.switchOrders.isChecked) 1 else 0
-                shopConfig?.configurationModel?.isOrderTaken =
-                    if (binding.switchDelivery.isChecked) 1 else 0
-                var openingTime = binding.textOpeningTime.text.toString().split(Regex(" "), 0)
-                var closingTime = binding.textClosingTime.text.toString().split(Regex(" "), 0)
-                shopConfig?.configurationModel?.shopModel?.openingTime = openingTime.get(0) + ":00"
-                shopConfig?.configurationModel?.shopModel?.closingTime = closingTime.get(0) + ":00"
-
-                shopConfig?.configurationModel?.shopModel?.coverUrls?.clear()
-                imageList.forEach {
-                    it?.imageLink?.let { it1 ->
-                        shopConfig?.configurationModel?.shopModel?.coverUrls?.add(
-                            it1
-                        )
-                    }
-                }
-            }
-
+            shopConfig?.shopModel?.name = binding.editName.text.toString()
+            shopConfig?.configurationModel?.deliveryPrice = binding.editDeliveryPrice.text.toString().toDouble()
+            shopConfig?.configurationModel?.isDeliveryAvailable =
+                if (binding.switchOrders.isChecked) 1 else 0
+            shopConfig?.configurationModel?.isOrderTaken =
+                if (binding.switchDelivery.isChecked) 1 else 0
+            var openingTime = binding.textOpeningTime.text.toString().split(Regex(" "), 0)
+            var closingTime = binding.textClosingTime.text.toString().split(Regex(" "), 0)
+            shopConfig?.configurationModel?.shopModel?.openingTime = openingTime.get(0) + ":00"
+            shopConfig?.configurationModel?.shopModel?.closingTime = closingTime.get(0) + ":00"
+            shopConfig?.configurationModel?.shopModel?.coverUrls?.clear()
+            shopConfig?.configurationModel?.shopModel?.coverUrls?.addAll(imageList)
             shopConfig?.configurationModel?.shopModel = shopConfig?.shopModel
-            println("testing")
 
+            shopConfig?.configurationModel?.let { it1 -> viewModel.updateShopProfile(it1) }
         })
 
         binding.imageEditName.setOnClickListener(View.OnClickListener {
@@ -198,6 +138,14 @@ class ShopProfileActivity : AppCompatActivity() {
             else
                 binding.imageEditName.setImageResource(R.drawable.ic_edit)
             binding.editName.isEnabled = !(binding.editName.isEnabled)
+        })
+
+        binding.imageEditDeliveryPrice.setOnClickListener(View.OnClickListener {
+            if (!binding.editDeliveryPrice.isEnabled)
+                binding.imageEditDeliveryPrice.setImageResource(R.drawable.ic_check)
+            else
+                binding.imageEditDeliveryPrice.setImageResource(R.drawable.ic_edit)
+            binding.editDeliveryPrice.isEnabled = !(binding.editDeliveryPrice.isEnabled)
         })
 
         binding.switchOrders.setOnClickListener(View.OnClickListener { v ->
@@ -224,6 +172,8 @@ class ShopProfileActivity : AppCompatActivity() {
                 }, openingTime.hours, openingTime.minutes, false
             )
             timePickerDialog.show()
+            timePickerDialog.getButton(TimePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(applicationContext,android.R.color.tab_indicator_text))
+            timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
         })
 
         binding.textClosingTime.setOnClickListener(View.OnClickListener {
@@ -262,38 +212,84 @@ class ShopProfileActivity : AppCompatActivity() {
     }
 
     private fun setObserver() {
-        /*viewModel.performUpdateProfileStatus.observe(this, Observer { resource ->
+
+        viewModel.performUploadImageStatus.observe(this, androidx.lifecycle.Observer {resource ->
+            if(resource!=null){
+                when(resource.status){
+
+                    Resource.Status.SUCCESS -> {
+                        progressDialog.dismiss()
+
+                        resource.data?.let {
+                            if(isShopCoverImageClicked){
+                                imageList.add(resource.data)
+                                shopCoverImageAdapter?.notifyDataSetChanged()
+                                isShopCoverImageClicked=!isShopCoverImageClicked
+                            }else if(isShopLogoClicked){
+                                shopConfig?.shopModel?.photoUrl = resource.data
+                                Picasso.get().load(resource.data)
+                                    .placeholder(R.drawable.ic_shop)
+                                    .into(binding.imageLogo)
+                                isShopLogoClicked=!isShopLogoClicked
+                            }
+                        }
+
+                    }
+
+                    Resource.Status.ERROR -> {
+                        progressDialog.dismiss()
+                        Toast.makeText(applicationContext, "Try again!! Error Occurred", Toast.LENGTH_SHORT).show()
+                    }
+
+                    Resource.Status.OFFLINE_ERROR -> {
+                        progressDialog.dismiss()
+                        Toast.makeText(applicationContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                    }
+
+                    Resource.Status.LOADING -> {
+                        progressDialog.setMessage("Updating...")
+                        progressDialog.show()
+                    }
+                }
+            }
+        })
+
+        viewModel.performUpdateShopProfileStatus.observe(this, androidx.lifecycle.Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
-                        preferencesHelper.name = binding.editName.editableText.toString()
-                        preferencesHelper.email = binding.editEmail.editableText.toString()
-                        preferencesHelper.mobile = binding.editMobile.editableText.toString()
+
+                        preferencesHelper.getShop()?.let {shopConfigurationList ->
+
+                            for(i in shopConfigurationList)
+                                if(i.shopModel.id == shopConfig?.shopModel?.id)
+                                {
+                                    shopConfig?.shopModel?.let {
+                                        i.shopModel=it
+                                    }
+
+                                    shopConfig?.configurationModel?.let {
+                                        i.configurationModel=it
+                                    }
+                                }
+
+                            preferencesHelper.shop = Gson().toJson(shopConfigurationList)
+                        }
+
                         progressDialog.dismiss()
-                        Toast.makeText(
-                            applicationContext,
-                            "Profile Successfully Updated",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(applicationContext, "Profile Successfully Updated", Toast.LENGTH_SHORT).show()
+
                     }
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(
-                            applicationContext,
-                            "No Internet Connection",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(applicationContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                         resource.message?.let {
                             Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
                         } ?: run {
-                            Toast.makeText(
-                                applicationContext,
-                                "Something went wrong",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(applicationContext, "Update Failed Try again later", Toast.LENGTH_SHORT).show()
                         }
                     }
                     Resource.Status.LOADING -> {
@@ -302,7 +298,7 @@ class ShopProfileActivity : AppCompatActivity() {
                     }
                 }
             }
-        })*/
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -313,18 +309,21 @@ class ShopProfileActivity : AppCompatActivity() {
 
                 val fileUri = data?.data
                 val file: File? = ImagePicker.getFile(data)
-                val filePath: String? = ImagePicker.getFilePath(data)
+                var storageReference : StorageReference? =null
 
                 if (isShopLogoClicked) {
-                    currentShopLogoUri = fileUri
-                    binding.imageLogo.setImageURI(fileUri)
-                    isShopLogoClicked = !isShopLogoClicked
+                    storageReference =
+                        mStorageRef?.child("profileImage/" + shopConfig?.shopModel?.id + "/" + file?.name + Calendar.getInstance().time)
+
                 } else if (isShopCoverImageClicked) {
-                    // todo add to the cover image list
-                    var shopImageDataModel = ShopImageDataModel(imageUri = fileUri)
-                    imageList.add(shopImageDataModel)
-                    shopCoverImageAdapter?.notifyDataSetChanged()
-                    isShopCoverImageClicked = !isShopCoverImageClicked
+                    storageReference =
+                        mStorageRef?.child("coverImage/" + shopConfig?.shopModel?.id + "/" + file?.name + Calendar.getInstance().time)
+                }
+
+                if (storageReference != null) {
+                    if (fileUri != null) {
+                        viewModel.uploadPhotoToFireBase(storageReference,fileUri)
+                    }
                 }
             }
 
