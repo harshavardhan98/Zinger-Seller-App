@@ -48,17 +48,16 @@ class ReadyFragment : Fragment() {
     }
 
     private fun setObservers() {
+
         viewModel.orderByShopIdResponse.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Resource.Status.SUCCESS -> {
                     ordersList.clear()
                     if(!it.data?.data.isNullOrEmpty()){
                         it.data?.data?.let { it1 ->
-
                             //ordersList.addAll(it1)
                             ordersList.addAll(it1.filter { it.transactionModel.orderModel.orderStatus.equals(
                                 AppConstants.STATUS.READY.name) })
-
                         }
                         orderAdapter.notifyDataSetChanged()
                     }
@@ -67,6 +66,7 @@ class ReadyFragment : Fragment() {
                 // todo handle all other cases for view model
             }
         })
+
     }
 
     var ordersList: ArrayList<OrderItemList> = ArrayList()

@@ -62,8 +62,7 @@
                             <de.hdodenhof.circleimageview.CircleImageView
                                 android:id="@+id/image_company"
                                 android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:tint="@android:color/white" />
+                                android:layout_height="40dp"/>
                         </LinearLayout>
 
                         <TextView
@@ -72,6 +71,7 @@
                             android:layout_gravity="top"
                             android:gravity="center|start"
                             android:paddingTop="3dp"
+                            android:id="@+id/text_shop_name"
                             android:text="Sathyas Main Canteen"
                             android:textAppearance="@style/AppbarTitle"
                             android:textColor="@android:color/white" />
@@ -84,6 +84,7 @@
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabs"
+                    app:tabSelectedTextColor="@color/accent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

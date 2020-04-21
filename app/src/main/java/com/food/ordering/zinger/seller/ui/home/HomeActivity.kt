@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -32,6 +33,8 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.squareup.picasso.Picasso
+import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -46,15 +49,20 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var cartSnackBar: Snackbar
     private lateinit var errorSnackbar: Snackbar
     private var placeId = ""
+    private var shopConfig: ShopConfigurationModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        shopConfig = preferencesHelper.getShop()!!.filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
+
         initView(savedInstanceState)
         setListeners()
         setupMaterialDrawer()
         setObservers()
+        viewModel.getOrderByShopId(preferencesHelper.currentShop)
 
-        preferencesHelper.getShop()!![0].shopModel.id?.let { viewModel.getOrderByShopId(it) }
+
     }
 
     // This API end point is responsible for inserting the order details. It verifies the availability of all the items in the shop and calculates the total bill
@@ -75,6 +83,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         snackButton.background = null
         snackButton.setTextColor(ContextCompat.getColor(applicationContext, R.color.accent))
         binding.imageMenu.setOnClickListener(this)
+        binding.textShopName.text = shopConfig?.shopModel?.name
         progressDialog = ProgressDialog(this)
 
         val fragment = NewOrdersFragment()
@@ -89,6 +98,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .commit()
 
         setStatusBarHeight()
+
+        Picasso.get().load(shopConfig?.shopModel?.photoUrl).placeholder(R.drawable.ic_shop)
+            .into(binding.imageCompany)
     }
 
     private fun setListeners() {
@@ -136,6 +148,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         })
+
+        binding.imageCompany.setOnClickListener { v ->
+            showAccountListBottomSheet()
+        }
     }
 
     private fun setStatusBarHeight() {
@@ -158,7 +174,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         headerLayout.textCustomerName.text = preferencesHelper.name
         headerLayout.textEmail.text = preferencesHelper.email
         val textDrawable = TextDrawable.builder()
-            .buildRound(preferencesHelper.name?.get(0).toString().capitalize(), ContextCompat.getColor(this, R.color.accent))
+            .buildRound(
+                preferencesHelper.name?.get(0).toString().capitalize(),
+                ContextCompat.getColor(this, R.color.accent)
+            )
         headerLayout.imageProfilePic.setImageDrawable(textDrawable)
         //TODO handle this
         //binding.imageMenu.setImageDrawable(textDrawable);
@@ -168,8 +187,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         var identifier = 0L
         val profileItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("My Profile")
             .withIcon(R.drawable.ic_drawer_user)
-        val shopProfileItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("My Shop Profile")
-            .withIcon(R.drawable.ic_home)
+        val shopProfileItem =
+            PrimaryDrawerItem().withIdentifier(++identifier).withName("My Shop Profile")
+                .withIcon(R.drawable.ic_home)
         val ordersItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Your Orders")
             .withIcon(R.drawable.ic_drawer_past_rides)
         val contactUsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contact Us")
@@ -239,20 +259,37 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 null,
                 false
             )
+
         val dialog = BottomSheetDialog(this)
         dialog.setContentView(dialogBinding.root)
         dialog.show()
-        //TODO get account list from shared pref
+
         var accountList: ArrayList<ShopConfigurationModel> = ArrayList()
-        accountAdapter = AccountAdapter(accountList,object: AccountAdapter.OnItemClickListener{
+        preferencesHelper.getShop()?.let {
+
+            accountList.addAll(it)
+            for (i in accountList.indices) {
+                accountList[i].isSelected = accountList[i].shopModel.id == preferencesHelper.currentShop
+            }
+        }
+        accountAdapter = AccountAdapter(accountList, object : AccountAdapter.OnItemClickListener {
             override fun onItemClick(item: ShopConfigurationModel, position: Int) {
-                for(i in accountList.indices){
+                for (i in accountList.indices) {
                     accountList[i].isSelected = false
                 }
                 accountList[position].isSelected = true
                 accountAdapter.notifyDataSetChanged()
-                //TODO
-                //viewModel.changeAccount(shopId)
+
+                accountList[position].shopModel.id?.let {
+                    shopConfig = accountList[position]
+                    preferencesHelper.currentShop = it
+                    Picasso.get().load(accountList[position].shopModel.photoUrl)
+                        .placeholder(R.drawable.ic_shop)
+                        .into(binding.imageCompany)
+                    binding.textShopName.text = accountList[position].shopModel.name
+                    viewModel.getOrderByShopId(it)
+                }
+
                 dialog.dismiss()
             }
         })

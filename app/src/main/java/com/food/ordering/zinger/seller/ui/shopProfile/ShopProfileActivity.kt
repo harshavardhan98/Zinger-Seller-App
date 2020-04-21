@@ -54,7 +54,7 @@ class ShopProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_profile)
         // todo ask storage permission
-        // todo add delivery price change
+        // todo api request not working and going to black screen
         initView()
         setListener()
         setObserver()
@@ -189,6 +189,8 @@ class ShopProfileActivity : AppCompatActivity() {
                 }, closingTime.hours, closingTime.minutes, false
             )
             timePickerDialog.show()
+            timePickerDialog.getButton(TimePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(applicationContext,android.R.color.tab_indicator_text))
+            timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
         })
 
 

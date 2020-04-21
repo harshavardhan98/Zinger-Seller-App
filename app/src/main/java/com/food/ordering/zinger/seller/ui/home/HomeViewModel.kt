@@ -5,7 +5,4 @@ import com.food.ordering.zinger.seller.data.retrofit.ShopRepository
 
 
 class HomeViewModel(private val shopRepository: ShopRepository) : ViewModel() {
-
-
-
 }

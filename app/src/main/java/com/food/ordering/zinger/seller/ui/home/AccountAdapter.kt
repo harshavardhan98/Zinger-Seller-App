@@ -15,10 +15,7 @@ class AccountAdapter(
     private val accountList: List<ShopConfigurationModel>,
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<AccountAdapter.OrderViewHolder>() {
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): OrderViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val binding: ItemAccountBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             R.layout.item_account,
