@@ -47,7 +47,7 @@ data class ConfigurationModel(
     @SerializedName("merchantId")
     val merchantId: String,
     @SerializedName("shopModel")
-    val shopModel: ShopModel?
+    var shopModel: ShopModel?
 )
 
 data class RatingModel(
@@ -61,19 +61,19 @@ data class RatingModel(
 
 data class ShopModel(
     @SerializedName("closingTime")
-    val closingTime: String? = null,
+    var closingTime: String? = null,
     @SerializedName("coverUrls")
-    val coverUrls: List<String>? = null ,
+    val coverUrls: MutableList<String>? = null ,
     @SerializedName("id")
     val id: Int? = null,
     @SerializedName("mobile")
     val mobile: String? = null,
     @SerializedName("name")
-    val name: String? = null,
+    var name: String? = null,
     @SerializedName("openingTime")
-    val openingTime: String? = null,
+    var openingTime: String? = null,
     @SerializedName("photoUrl")
-    val photoUrl: String? = null,
+    var photoUrl: String? = null,
     @SerializedName("placeModel")
     val placeModel: PlaceModel? = null
 )

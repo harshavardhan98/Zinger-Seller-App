@@ -5,10 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.food.ordering.zinger.seller.data.local.Resource
-import com.food.ordering.zinger.seller.data.model.Response
-import com.food.ordering.zinger.seller.data.model.ShopConfigRequest
-import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
-import com.food.ordering.zinger.seller.data.model.UserModel
+import com.food.ordering.zinger.seller.data.model.*
 import com.food.ordering.zinger.seller.data.retrofit.ShopRepository
 import com.food.ordering.zinger.seller.data.retrofit.UserRespository
 import kotlinx.coroutines.launch
@@ -19,7 +16,7 @@ class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewMod
     val performUpdateShopProfileStatus: LiveData<Resource<Response<String>>>
         get() = performUpdateShopProfile
 
-    fun updateShopProfile(shopConfigRequest: ShopConfigRequest) {
+    fun updateShopProfile(shopConfigRequest: ConfigurationModel) {
         viewModelScope.launch {
             try {
                 performUpdateShopProfile.value = Resource.loading()

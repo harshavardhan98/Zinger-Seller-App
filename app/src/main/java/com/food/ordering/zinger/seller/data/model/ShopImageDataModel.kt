@@ -5,5 +5,5 @@ import android.net.Uri
 
 data class ShopImageDataModel (
     val imageUri: Uri?=null,
-    val imageLink: String?=null
+    var imageLink: String?=null
 )

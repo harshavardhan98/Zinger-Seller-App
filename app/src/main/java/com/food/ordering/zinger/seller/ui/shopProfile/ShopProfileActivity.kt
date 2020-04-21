@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
@@ -20,7 +21,11 @@ import com.food.ordering.zinger.seller.data.model.ShopImageDataModel
 import com.food.ordering.zinger.seller.databinding.ActivityShopProfileBinding
 import com.food.ordering.zinger.seller.utils.CommonUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
+import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
@@ -34,22 +39,28 @@ class ShopProfileActivity : AppCompatActivity() {
     private val viewModel: ShopProfileViewModel by viewModel()
     private lateinit var progressDialog: ProgressDialog
     private var shopConfig: ShopConfigurationModel? = null
-    private var shopCoverImageAdapter: ShopCoverImageAdapter? =null
-    private var imageList:ArrayList<ShopImageDataModel> = ArrayList()
+    private var shopCoverImageAdapter: ShopCoverImageAdapter? = null
+    private var imageList: ArrayList<ShopImageDataModel> = ArrayList()
     private var isShopLogoClicked = false
     private var isShopCoverImageClicked = false
     private var currentShopLogoUri: Uri? = null
+    private var deleteImageList: ArrayList<String> = ArrayList()
+    private var mStorageRef: StorageReference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_profile)
-
+        // todo ask storage permission
+        // todo add delivery price change
         initView()
         setListener()
         setObserver()
+
     }
 
     private fun initView() {
+
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shop_profile)
         progressDialog = ProgressDialog(this)
@@ -61,20 +72,36 @@ class ShopProfileActivity : AppCompatActivity() {
         }
 
 
-        shopConfig?.shopModel?.coverUrls?.let { it.forEach { it1 -> imageList.add(ShopImageDataModel(imageLink = it1)) } }
-
-        shopCoverImageAdapter = ShopCoverImageAdapter(imageList,object : ShopCoverImageAdapter.OnItemClickListener{
-
-            override fun onItemClick(item: List<ShopImageDataModel>?, position: Int) {
-                Toast.makeText(applicationContext,"testing "+position,Toast.LENGTH_SHORT).show()
+        shopConfig?.shopModel?.coverUrls?.let {
+            it.forEach { it1 ->
+                imageList.add(
+                    ShopImageDataModel(
+                        imageLink = it1
+                    )
+                )
             }
+        }
 
-            override fun onDeleteClick(item: List<ShopImageDataModel>?, position: Int) {
-                //TODO delete logic
-            }
+        shopCoverImageAdapter =
+            ShopCoverImageAdapter(imageList, object : ShopCoverImageAdapter.OnItemClickListener {
 
-        })
-        binding.recyclerCoverPhoto.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+                override fun onItemClick(shopImageList: List<ShopImageDataModel>?, position: Int) {
+                    Toast.makeText(applicationContext, "testing " + position, Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                override fun onDeleteClick(
+                    shopImageList: List<ShopImageDataModel>?,
+                    position: Int
+                ) {
+                    imageList.get(position).imageLink?.let { deleteImageList.add(it) }
+                    imageList.removeAt(position)
+                    shopCoverImageAdapter?.notifyDataSetChanged()
+                }
+
+            })
+        binding.recyclerCoverPhoto.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerCoverPhoto.adapter = shopCoverImageAdapter
 
         binding.editName.setText(shopConfig?.shopModel?.name)
@@ -92,6 +119,76 @@ class ShopProfileActivity : AppCompatActivity() {
 
     private fun setListener() {
         binding.buttonUpdate.setOnClickListener(View.OnClickListener {
+            /*
+            *  1. upload the photo to the firebase storage
+            *  2. delete the image link from the firebase -> skipping for now
+            *  3. update the latest shopConfiguration ->
+            *  4. update the shared preference
+            * */
+
+            var fileUploadResult = true
+
+            currentShopLogoUri.let {
+                var storageReference =
+                    mStorageRef?.child("profileImage/" + shopConfig?.shopModel?.id + "/" + it?.toFile()?.name + Calendar.getInstance().time)
+
+                it?.let { it1 ->
+                    storageReference?.putFile(it1)
+                        ?.addOnSuccessListener{
+                            val result = it.metadata!!.reference!!.downloadUrl;
+                            result.addOnSuccessListener {
+                                val imageLink = it.toString()
+                                shopConfig?.shopModel?.photoUrl=imageLink
+                            }
+                        }
+                        ?.addOnFailureListener {
+                            fileUploadResult = false
+                        }
+                }
+            }
+
+            imageList.forEach { item ->
+                item.imageUri?.let {
+                    var storageReference =
+                        mStorageRef?.child("coverImage/" + shopConfig?.shopModel?.id + "/" + it.toFile().name + Calendar.getInstance().time)
+
+                    storageReference?.putFile(it)
+                        ?.addOnSuccessListener {
+                            val result = it.metadata!!.reference!!.downloadUrl;
+                            result.addOnSuccessListener {
+                                val imageLink = it.toString()
+                                println(imageLink)
+                            }
+                        }
+                        ?.addOnFailureListener {
+                            fileUploadResult = false
+                        }
+                }
+            }
+
+            if (fileUploadResult) {
+                shopConfig?.shopModel?.name = binding.editName.text.toString()
+                shopConfig?.configurationModel?.isDeliveryAvailable =
+                    if (binding.switchOrders.isChecked) 1 else 0
+                shopConfig?.configurationModel?.isOrderTaken =
+                    if (binding.switchDelivery.isChecked) 1 else 0
+                var openingTime = binding.textOpeningTime.text.toString().split(Regex(" "), 0)
+                var closingTime = binding.textClosingTime.text.toString().split(Regex(" "), 0)
+                shopConfig?.configurationModel?.shopModel?.openingTime = openingTime.get(0) + ":00"
+                shopConfig?.configurationModel?.shopModel?.closingTime = closingTime.get(0) + ":00"
+
+                shopConfig?.configurationModel?.shopModel?.coverUrls?.clear()
+                imageList.forEach {
+                    it?.imageLink?.let { it1 ->
+                        shopConfig?.configurationModel?.shopModel?.coverUrls?.add(
+                            it1
+                        )
+                    }
+                }
+            }
+
+            shopConfig?.configurationModel?.shopModel = shopConfig?.shopModel
+            println("testing")
 
         })
 
@@ -131,7 +228,8 @@ class ShopProfileActivity : AppCompatActivity() {
 
         binding.textClosingTime.setOnClickListener(View.OnClickListener {
 
-            var closingTime = SimpleDateFormat("HH:mm:ss", Locale.US).parse(shopConfig?.shopModel?.closingTime)
+            var closingTime =
+                SimpleDateFormat("HH:mm:ss", Locale.US).parse(shopConfig?.shopModel?.closingTime)
 
             val timePickerDialog = TimePickerDialog(
                 this,
@@ -144,12 +242,22 @@ class ShopProfileActivity : AppCompatActivity() {
         })
 
 
-        binding.textLogo.setOnClickListener { v->
-                isShopLogoClicked = true
-                ImagePicker.with(this)
-                            .galleryOnly()
-                            .start()
+        binding.textLogo.setOnClickListener { v ->
+            isShopLogoClicked = true
+            ImagePicker.with(this)
+                .galleryOnly()
+                .crop()
+                .start()
         }
+
+        binding.textCoverPhoto.setOnClickListener { v ->
+            isShopCoverImageClicked = true;
+            ImagePicker.with(this)
+                .galleryOnly()
+                .crop()
+                .start()
+        }
+
 
     }
 
@@ -201,28 +309,22 @@ class ShopProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
 
-            if(requestCode==ImagePicker.REQUEST_CODE){
+            if (requestCode == ImagePicker.REQUEST_CODE) {
 
                 val fileUri = data?.data
                 val file: File? = ImagePicker.getFile(data)
                 val filePath: String? = ImagePicker.getFilePath(data)
 
-                if(isShopLogoClicked){
-                    currentShopLogoUri=fileUri
-
-//                    Picasso.get().load(filePath)
-//                                 .placeholder(R.drawable.ic_shop)
-//                                 .into(binding.imageLogo)
+                if (isShopLogoClicked) {
+                    currentShopLogoUri = fileUri
                     binding.imageLogo.setImageURI(fileUri)
-
                     isShopLogoClicked = !isShopLogoClicked
-                }
-                else if(isShopCoverImageClicked){
+                } else if (isShopCoverImageClicked) {
                     // todo add to the cover image list
-                    var shopImageDataModel = ShopImageDataModel(imageUri= fileUri)
+                    var shopImageDataModel = ShopImageDataModel(imageUri = fileUri)
                     imageList.add(shopImageDataModel)
                     shopCoverImageAdapter?.notifyDataSetChanged()
-                    isShopCoverImageClicked=!isShopCoverImageClicked
+                    isShopCoverImageClicked = !isShopCoverImageClicked
                 }
             }
 

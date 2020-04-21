@@ -99,24 +99,24 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:singleLine="true"
-                    android:id="@+id/edit_name"
-                    android:textColor="#000000"
                     android:fontFamily="@font/poppins_semibold"
                     android:hint="eg: Sathya Cafe"
+                    android:singleLine="true"
+                    android:textColor="#000000"
                     tools:text="Sathyas Main" />
 
                 <ImageView
                     android:id="@+id/image_edit_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="8dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_edit"/>
+                    android:paddingRight="8dp"
+                    android:src="@drawable/ic_edit" />
             </RelativeLayout>
 
             <LinearLayout
@@ -153,26 +153,26 @@
                             android:id="@+id/text_opening_time"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:layout_gravity="top"
                             android:layout_marginTop="8dp"
                             android:fontFamily="@font/poppins_semibold"
-                            android:layout_centerVertical="true"
                             android:gravity="center|start"
                             android:paddingStart="8dp"
                             android:paddingTop="8dp"
                             android:paddingEnd="8dp"
                             android:paddingBottom="8dp"
-                            tools:text="9:00pm"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            tools:text="9:00pm" />
 
                         <ImageView
                             android:id="@+id/image_edit_opening_time"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:paddingRight="8dp"
-                            android:layout_alignParentEnd="true"
-                            android:src="@drawable/ic_edit"/>
+                            android:src="@drawable/ic_edit" />
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -205,26 +205,26 @@
                             android:id="@+id/text_closing_time"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:layout_gravity="top"
                             android:layout_marginTop="8dp"
                             android:fontFamily="@font/poppins_semibold"
                             android:gravity="center|start"
-                            android:layout_centerVertical="true"
                             android:paddingStart="8dp"
                             android:paddingTop="8dp"
                             android:paddingEnd="8dp"
                             android:paddingBottom="8dp"
-                            tools:text="10:30pm"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            tools:text="10:30pm" />
 
                         <ImageView
                             android:id="@+id/image_edit_closing_time"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingRight="8dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/ic_edit"/>
+                            android:paddingRight="8dp"
+                            android:src="@drawable/ic_edit" />
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -253,17 +253,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_cover_photo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:itemCount="5"
                         android:orientation="horizontal"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_thumbnail"/>
+                        tools:itemCount="5"
+                        tools:listitem="@layout/item_thumbnail" />
                 </HorizontalScrollView>
 
                 <TextView
@@ -308,7 +308,8 @@
                     android:layout_height="64dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_shop"/>
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_shop" />
 
                 <TextView
                     android:id="@+id/text_logo"

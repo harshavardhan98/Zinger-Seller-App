@@ -35,7 +35,7 @@ interface CustomApi  {
 
     // shop repository
     @PATCH("/shop/config")
-    suspend fun updateShopConfiguration(@Body shopConfigRequest: ShopConfigRequest): Response<String>
+    suspend fun updateShopConfiguration(@Body shopConfigRequest: ConfigurationModel): Response<String>
 
 
     // Item Repository

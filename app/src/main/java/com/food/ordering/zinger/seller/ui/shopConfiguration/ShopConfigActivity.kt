@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
-import com.food.ordering.zinger.seller.data.model.ShopConfigRequest
+import com.food.ordering.zinger.seller.data.model.ConfigurationModel
 import com.food.ordering.zinger.seller.data.model.ShopModel
 import com.food.ordering.zinger.seller.databinding.ActivityMenuBinding
 import com.food.ordering.zinger.seller.databinding.ActivityShopConfigurationBinding
@@ -42,7 +42,7 @@ class ShopConfigActivity : AppCompatActivity() {
             coverUrl.add("www.test1.com")
             coverUrl.add("www.test2.com")
             var shopModel = ShopModel("23:00:00",coverUrl,1,"9176019334","Sathyas Main Canteen","08:00:00","www.url.com",null)
-            var shopConfig = ShopConfigRequest(10,1,1,"HARSHA_MID",shopModel)
+            var shopConfig = ConfigurationModel(10.0,1,1,"HARSHA_MID",shopModel)
             viewModel.updateShopConfiguration(shopConfig);
         })
     }
