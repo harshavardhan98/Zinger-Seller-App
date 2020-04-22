@@ -5,7 +5,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:name=".ZingerSeller"
@@ -21,7 +20,7 @@
         </activity>
         <activity android:name=".ui.otp.OTPActivity"/>
         <activity android:name=".ui.seller.SellerActivity" />
-        <activity android:name=".ui.order.OrderActivity" />
+        <activity android:name=".ui.menuItem.MenuItemActivity"/>
         <activity android:name=".ui.shopConfiguration.ShopConfigActivity" />
         <activity android:name=".ui.menu.MenuActivity" />
         <activity android:name=".ui.shopProfile.ShopProfileActivity" />

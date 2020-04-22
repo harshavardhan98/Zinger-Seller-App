@@ -101,6 +101,7 @@ class ShopProfileActivity : AppCompatActivity() {
         binding.recyclerCoverPhoto.adapter = shopCoverImageAdapter
 
         binding.editName.setText(shopConfig?.shopModel?.name)
+        // todo check if Locale.Default is correct
         var sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
         var sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
         binding.textOpeningTime.text = sdf2.format(sdf.parse(shopConfig?.shopModel?.openingTime))

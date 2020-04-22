@@ -85,7 +85,7 @@
 
 
 			<com.google.android.material.switchmaterial.SwitchMaterial
-				android:id="@+id/switch_delivery"
+				android:id="@+id/switch_item_available"
 				android:layout_width="wrap_content"
 				android:layout_height="40dp"
 				android:layout_gravity="start"

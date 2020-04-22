@@ -63,7 +63,7 @@ class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewMod
                 if (e is UnknownHostException) {
                     performUploadImage.value = Resource.offlineError()
                 } else {
-                    performUpdateShopProfile.value = Resource.error(e)
+                    performUploadImage.value = Resource.error(e)
                 }
 
             }

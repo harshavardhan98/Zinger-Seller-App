@@ -1,5 +1,6 @@
 package com.food.ordering.zinger.seller.ui.menu
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +9,9 @@ import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.ItemModel
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.retrofit.ItemRepository
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
 
@@ -31,6 +34,39 @@ class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
     private val unDeleteItem = MutableLiveData<Resource<Response<String>>>()
     val unDeleteItemResponse : LiveData<Resource<Response<String>>>
         get() = unDeleteItem
+
+    private val performUploadImage = MutableLiveData<Resource<String>>()
+    val performUploadImageStatus: LiveData<Resource<String>>
+        get() = performUploadImage
+
+    fun uploadPhotoToFireBase(storageReference: StorageReference, uri: Uri){
+
+        viewModelScope.launch {
+            try{
+                performUploadImage.value = Resource.loading()
+                storageReference.putFile(uri)
+                    .addOnSuccessListener{
+                        val result = it.metadata!!.reference!!.downloadUrl;
+                        result.addOnSuccessListener {
+                            val imageLink = it.toString()
+                            performUploadImage.value = Resource.success(imageLink)
+                        }
+                    }
+                    .addOnFailureListener {
+                        performUploadImage.value = Resource.error(message = "Error updating photo")
+                    }
+
+            }catch (e: Exception){
+                if (e is UnknownHostException) {
+                    performUploadImage.value = Resource.offlineError()
+                } else {
+                    performUploadImage.value = Resource.error(e)
+                }
+
+            }
+        }
+
+    }
 
     fun getMenu(shopId: Int){
         viewModelScope.launch {

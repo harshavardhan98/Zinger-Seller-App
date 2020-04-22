@@ -8,7 +8,6 @@ import android.os.Handler
 import android.text.Html
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,12 +16,9 @@ import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderItemListModel
-import com.food.ordering.zinger.seller.databinding.ActivityLoginBinding
 import com.food.ordering.zinger.seller.databinding.ActivityOrderHistoryBinding
-import com.food.ordering.zinger.seller.ui.home.HomeActivity
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderDetail.OrderDetailActivity
-import com.food.ordering.zinger.seller.ui.otp.OTPActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
@@ -37,7 +33,7 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
     private lateinit var binding: ActivityOrderHistoryBinding
     private val preferencesHelper: PreferencesHelper by inject()
     private val viewModel: OrderViewModel by viewModel()
-    private lateinit var orderAdapter: OrdersAdapter
+    private lateinit var orderAdapter: OrderHistoryAdapter
     private lateinit var progressDialog: ProgressDialog
     private var orderList: ArrayList<OrderItemListModel> = ArrayList()
     private lateinit var errorSnackBar: Snackbar
@@ -169,7 +165,7 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
     var isLastPage = false
     var page = 1
     private fun setupShopRecyclerView() {
-        orderAdapter = OrdersAdapter(orderList, object : OrdersAdapter.OnItemClickListener {
+        orderAdapter = OrderHistoryAdapter(orderList, object : OrderHistoryAdapter.OnItemClickListener {
             override fun onItemClick(item: OrderItemListModel?, position: Int) {
                 val intent = Intent(applicationContext, OrderDetailActivity::class.java)
                 intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(item))

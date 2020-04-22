@@ -7,12 +7,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.model.OrderItemListModel
-import com.food.ordering.zinger.seller.databinding.ItemOrderBinding
 import com.food.ordering.zinger.seller.databinding.ItemPastOrderBinding
 import java.lang.Exception
 import java.text.SimpleDateFormat
 
-class OrdersAdapter(private val orderList: List<OrderItemListModel>, private val listener: OnItemClickListener) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
+class OrderHistoryAdapter(private val orderList: List<OrderItemListModel>, private val listener: OnItemClickListener) : RecyclerView.Adapter<OrderHistoryAdapter.OrderViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int

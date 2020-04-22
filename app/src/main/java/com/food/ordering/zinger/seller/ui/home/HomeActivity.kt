@@ -21,6 +21,7 @@ import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBinding
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
+import com.food.ordering.zinger.seller.ui.menu.MenuActivity
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderHistory.OrderHistoryActivity
 import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
@@ -193,6 +194,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 .withIcon(R.drawable.ic_home)
         val ordersItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Your Orders")
             .withIcon(R.drawable.ic_drawer_past_rides)
+        val menuItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Menu")
+            .withIcon(R.drawable.ic_drawer_order)
         val contactUsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contact Us")
             .withIcon(R.drawable.ic_drawer_mail)
         val signOutItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Sign out")
@@ -210,6 +213,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 profileItem,
                 shopProfileItem,
                 ordersItem,
+                menuItem,
                 helpcenter,
                 contactUsItem,
                 DividerDrawerItem(),
@@ -224,6 +228,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 if (ordersItem.identifier == drawerItem.identifier) {
                     startActivity(Intent(applicationContext, OrderHistoryActivity::class.java))
+                }
+                if (menuItem.identifier == drawerItem.identifier) {
+                    startActivity(Intent(applicationContext, MenuActivity::class.java))
                 }
                 if (helpcenter.identifier == drawerItem.identifier) { //TODO open help activity
                 }

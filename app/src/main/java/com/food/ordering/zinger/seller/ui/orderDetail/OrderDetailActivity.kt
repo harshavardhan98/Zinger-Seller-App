@@ -47,7 +47,6 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         getArgs()
         initView()
         setListeners()
-        setObservers()
         errorSnackBar.setAction("Try again") {
         }
     }
@@ -123,26 +122,10 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setListeners() {
-
         binding.imageCall.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE),REQUEST_PHONE_CALL);
-            }
-            else
-            {
-                val intent = Intent(
-                    Intent.ACTION_DIAL,
-                    Uri.parse("tel:" + order.transactionModel.orderModel.userModel?.mobile)
-                )
-                startActivity(intent);
-            }
-
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + order.transactionModel.orderModel.userModel?.mobile))
+            startActivity(intent)
         }
-
-    }
-
-    private fun setObservers() {
-
     }
 
 
@@ -167,25 +150,4 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
-            REQUEST_PHONE_CALL -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" +order.transactionModel.orderModel.userModel?.mobile ));
-
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-                        startActivity(intent);
-                    }
-                }
-            }
-        }
-    }
-
-
 }

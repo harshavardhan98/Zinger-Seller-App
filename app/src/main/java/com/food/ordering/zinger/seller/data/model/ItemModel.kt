@@ -9,9 +9,9 @@ data class ItemModel(
     @SerializedName("id")
     val id: Int? = null,
     @SerializedName("isAvailable")
-    val isAvailable: Int?,
+    var isAvailable: Int?,
     @SerializedName("isVeg")
-    val isVeg: Int,
+    var isVeg: Int,
     @SerializedName("name")
     val name: String,
     @SerializedName("photoUrl")

@@ -38,7 +38,7 @@
                     android:layout_weight="1" />
 
                 <TextView
-                    android:id="@+id/text_your_orders"
+                    android:id="@+id/text_add_item"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -52,7 +52,7 @@
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
                     android:textColor="@android:color/black"
-                    android:text="Add Category"
+                    android:text="Add Item"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -64,25 +64,43 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
+                    android:id="@+id/text_category_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center|start"
                     android:paddingTop="3dp"
-                    android:text="Menu"
+                    android:text="Chinese"
                     android:layout_weight="1"
                     android:textAppearance="@style/AppbarTitle"
                     android:textColor="@android:color/black"
                     android:textSize="32sp" />
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_delivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:checked="false"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="start|center"
+                    android:text=""
+                    android:textSize="0dp"
+                    android:textStyle="bold"
+                    app:switchPadding="8dp"
+                    app:thumbTint="#4CAF50"
+                    app:trackTint="#CCCCCC" />
+
 
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_menu_items"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
-                tools:listitem="@layout/item_category"/>
+                tools:listitem="@layout/item_menu"/>
 
         </LinearLayout>
 
