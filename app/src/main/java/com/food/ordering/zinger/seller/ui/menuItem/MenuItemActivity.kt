@@ -73,6 +73,7 @@ class MenuItemActivity : AppCompatActivity() {
 
     private fun initView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item)
+        progressDialog = ProgressDialog(this)
         binding.textCategoryName.text = category
         mStorageRef = FirebaseStorage.getInstance().getReference();
     }
@@ -95,7 +96,49 @@ class MenuItemActivity : AppCompatActivity() {
 
     private fun setObserver() {
 
+        viewModel.menuRequestResponse.observe(this, androidx.lifecycle.Observer { resource ->
+            println("resource: "+resource)
+            if (resource != null) {
+                when (resource.status) {
+
+                    Resource.Status.SUCCESS -> {
+                        progressDialog.dismiss()
+
+                        resource.data?.let {
+                            menuItemList.clear()
+                            it.data?.filter { it.category==category }?.let { it1 -> menuItemList.addAll(it1) }
+                            menuAdapter.notifyDataSetChanged()
+                        }
+                    }
+
+                    Resource.Status.ERROR -> {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            applicationContext,
+                            "Try again!! Error Occurred",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    Resource.Status.OFFLINE_ERROR -> {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            applicationContext,
+                            "No Internet Connection",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    Resource.Status.LOADING -> {
+                        progressDialog.setMessage("Updating...")
+                        progressDialog.show()
+                    }
+                }
+            }
+        })
+
         viewModel.performUploadImageStatus.observe(this, androidx.lifecycle.Observer { resource ->
+            println("resource: "+resource)
             if (resource != null) {
                 when (resource.status) {
 
@@ -105,6 +148,8 @@ class MenuItemActivity : AppCompatActivity() {
                         resource.data?.let {
 
                             changedItemImageUrl = resource.data
+                            // todo change this later
+                            changedItemImageUrl = changedItemImageUrl.substring(0,45)
                             dialogBinding.imageItem.visibility = View.VISIBLE
                             Picasso.get().load(resource.data)
                                 .placeholder(R.drawable.ic_shop)
@@ -145,10 +190,7 @@ class MenuItemActivity : AppCompatActivity() {
 
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-
-                        resource.data?.let {
-                            menuItemList.addAll(itemListAddRequest)
-                        }
+                        preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
                     }
 
                     Resource.Status.ERROR -> {
@@ -185,11 +227,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.dismiss()
 
                         resource.data?.let {
-                            for(menu in menuItemList)
-                                if(menu.id == itemUpdateRequest?.id){
-                                    menuItemList.remove(menu)
-                                    itemUpdateRequest?.let { it1 -> menuItemList.add(it1) }
-                                }
+                            preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
                         }
                     }
 
@@ -225,13 +263,7 @@ class MenuItemActivity : AppCompatActivity() {
 
                         Resource.Status.SUCCESS -> {
                             progressDialog.dismiss()
-
-                            resource.data?.let {
-                                for(menu in menuItemList)
-                                    if(menu.id == deleteItemRequest){
-                                        menuItemList.remove(menu)
-                                    }
-                            }
+                            preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
                         }
 
                         Resource.Status.ERROR -> {
@@ -278,6 +310,7 @@ class MenuItemActivity : AppCompatActivity() {
                         deleteItemRequest = it
                         viewModel.deleteItem(it)
                     }
+                    menuAdapter.notifyDataSetChanged()
                 }
             })
 
@@ -383,7 +416,6 @@ class MenuItemActivity : AppCompatActivity() {
                     price,
                     null
                 )
-
                 viewModel.updateItem(itemUpdateRequest!!)
             }else{
 

@@ -133,6 +133,7 @@ class MenuActivity : AppCompatActivity() {
                 val intent = Intent(applicationContext, MenuItemActivity::class.java)
                 intent.putExtra(AppConstants.CATEGORY_ITEM_DETAIL,Gson().toJson(categoryItemListModel))
                 startActivity(intent)
+                finish()
             }
         })
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
