@@ -1,5 +1,6 @@
 package com.food.ordering.zinger.seller.ui.profile
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,13 +9,21 @@ import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.data.retrofit.UserRespository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.PhoneAuthCredential
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
 class ProfileViewModel(private val userRespository: UserRespository) : ViewModel() {
+
     private val performUpdateProfile = MutableLiveData<Resource<Response<String>>>()
     val performUpdateProfileStatus: LiveData<Resource<Response<String>>>
         get() = performUpdateProfile
+
+    private val verifyOtp = MutableLiveData<Resource<String>>()
+    val verifyOtpStatus: LiveData<Resource<String>>
+        get() = verifyOtp
 
     fun updateProfile(userModel: UserModel) {
         viewModelScope.launch {
@@ -35,4 +44,25 @@ class ProfileViewModel(private val userRespository: UserRespository) : ViewModel
             }
         }
     }
+
+    fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential,context: Context) {
+
+        var auth = FirebaseAuth.getInstance()
+        verifyOtp.value = Resource.loading()
+
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+
+                viewModelScope.launch {
+                    if(task.isSuccessful){
+                        verifyOtp.value = Resource.success("")
+                    }else{
+                        verifyOtp.value = Resource.error(message = "")
+                    }
+                }
+
+            }
+
+    }
+
 }

@@ -212,7 +212,7 @@
                             android:paddingEnd="8dp"
                             android:paddingBottom="8dp"
                             android:textSize="16sp"
-                            tools:text="9:00pm" />
+                            tools:text="9:00 PM" />
 
                         <ImageView
                             android:id="@+id/image_edit_opening_time"
@@ -264,7 +264,7 @@
                             android:paddingEnd="8dp"
                             android:paddingBottom="8dp"
                             android:textSize="16sp"
-                            tools:text="10:30pm" />
+                            tools:text="10:30 PM" />
 
                         <ImageView
                             android:id="@+id/image_edit_closing_time"

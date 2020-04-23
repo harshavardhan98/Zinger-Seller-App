@@ -36,7 +36,7 @@ class ShopCoverImageAdapter(
 
         fun bind(imageList: List<String>, position: Int, listener: OnItemClickListener) {
 
-            Picasso.get().load(imageList.get(position)).placeholder(R.drawable.ic_shop)
+            Picasso.get().load(imageList.get(position)).placeholder(R.drawable.shop_placeholder)
                 .into(binding.imageCover)
 
             binding.imageCover.setOnClickListener {

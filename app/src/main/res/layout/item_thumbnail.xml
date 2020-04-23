@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_shop"/>
+            android:src="@drawable/shop_placeholder"/>
 
         <ImageView
             android:id="@+id/image_close"
