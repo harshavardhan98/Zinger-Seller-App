@@ -130,37 +130,42 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="12sp" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/text_rupee_symbol"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="₹"
-                    android:textSize="18sp" />
+                    android:layout_centerVertical="true"
+                    android:paddingBottom="5dp"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edit_delivery_price"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:inputType="numberDecimal"
-                    android:singleLine="true"
+                    android:paddingLeft="20dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_semibold"/>
+                    android:enabled="false"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:hint="eg: 50"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    tools:text="50" />
 
                 <ImageView
                     android:id="@+id/image_edit_delivery_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:paddingRight="8dp"
                     android:src="@drawable/ic_edit" />
-            </LinearLayout>
+            </RelativeLayout>
+
 
 
             <LinearLayout
@@ -315,13 +320,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
-                    android:layout_marginTop="8dp"
                     android:drawableEnd="@drawable/ic_image_picker"
                     android:drawablePadding="8dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center|start"
-                    android:paddingStart="8dp"
                     android:paddingTop="8dp"
+                    android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="8dp"
                     android:text="Add image"

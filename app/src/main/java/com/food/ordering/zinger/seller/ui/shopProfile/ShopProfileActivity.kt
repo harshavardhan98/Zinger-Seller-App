@@ -212,7 +212,8 @@ class ShopProfileActivity : AppCompatActivity() {
             isShopLogoClicked = true
             ImagePicker.with(this)
                 .galleryOnly()
-                .crop()
+                .compress(1024)
+                .cropSquare()
                 .start()
         }
 
@@ -220,7 +221,8 @@ class ShopProfileActivity : AppCompatActivity() {
             isShopCoverImageClicked = true;
             ImagePicker.with(this)
                 .galleryOnly()
-                .crop()
+                .compress(1024)
+                .crop(16f, 9f)
                 .start()
         }
 

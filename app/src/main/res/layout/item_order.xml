@@ -107,7 +107,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/open_sans_bold"
-                        android:text="ITEMS"
+                        android:text="ITEMS (3)"
                         android:textColor="@android:color/tab_indicator_text"
                         android:textSize="10sp" />
 
@@ -161,11 +161,11 @@
 
 
             <TextView
-                android:id="@+id/text_view_more"
+                android:id="@+id/text_pick_up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="View More"
+                android:text="Pickup"
                 android:textSize="12sp" />
 
             <View

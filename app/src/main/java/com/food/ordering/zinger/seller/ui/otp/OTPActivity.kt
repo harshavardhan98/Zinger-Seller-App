@@ -7,6 +7,7 @@ import android.os.CountDownTimer
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.food.ordering.zinger.seller.R
@@ -63,6 +64,7 @@ class OTPActivity : AppCompatActivity() {
 
     private fun initView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_o_t_p)
+        binding.textHeading.text = getString(R.string.otp_header)+" "+number
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         auth = FirebaseAuth.getInstance()

@@ -44,6 +44,12 @@ class OrdersAdapter(private val orderList: List<OrderItemListModel>, private val
                 items += it.quantity.toString() + " X " + it.itemModel.name + "\n"
             }
             binding.textOrderItems.text = items
+
+            if(order.transactionModel.orderModel.deliveryLocation == null)
+                binding.textPickUp.text="DELIVERY"
+            else
+                binding.textPickUp.text="PICKUP"
+
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
             /*binding.buttonTrackRate.setOnClickListener {
                     listener.onUpdateClick(order, position)

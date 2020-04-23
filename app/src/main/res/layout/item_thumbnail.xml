@@ -7,13 +7,13 @@
     </data>
 
     <RelativeLayout
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="128dp"
+        android:layout_height="72dp"
         android:layout_margin="4dp">
 
         <ImageView
             android:id="@+id/image_cover"
-            android:layout_width="64dp"
+            android:layout_width="match_parent"
             android:layout_height="64dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_shop"/>
@@ -23,7 +23,6 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:padding="4dp"
-            android:layout_margin="4dp"
             android:tint="@color/colorAccent"
             android:background="@drawable/bg_rounded_alpha_black"
             android:src="@drawable/ic_close"

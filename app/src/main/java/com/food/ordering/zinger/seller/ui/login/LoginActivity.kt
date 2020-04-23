@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
                 intent.putExtra(AppConstants.PREFS_SELLER_MOBILE, "+91"+phoneNo)
                 startActivity(intent)
             } else {
-                Toast.makeText(applicationContext, "Phone number is incorrect!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Invalid phone number!", Toast.LENGTH_SHORT).show()
             }
         }
     }
