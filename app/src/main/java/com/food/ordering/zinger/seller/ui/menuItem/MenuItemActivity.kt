@@ -32,6 +32,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
+import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
@@ -80,6 +81,13 @@ class MenuItemActivity : AppCompatActivity() {
         binding.textCategoryName.text = category
         mStorageRef = FirebaseStorage.getInstance().getReference()
         binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.switchNotSelected))
+
+        preferencesHelper.role?.let {
+            if(it.equals(AppConstants.ROLE.SELLER.name)||it.equals(AppConstants.ROLE.DELIVERY.name)){
+                binding.textAddItem.visibility = View.GONE
+                binding.textAddItem.isEnabled = false
+            }
+        }
     }
 
     private fun setListener() {
@@ -319,7 +327,7 @@ class MenuItemActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
 
         menuAdapter =
-            MenuItemAdapter(this, menuItemList, object : MenuItemAdapter.OnItemClickListener {
+            MenuItemAdapter(this, menuItemList,preferencesHelper.role,object : MenuItemAdapter.OnItemClickListener {
                 override fun onEditClick(itemModel: ItemModel?, position: Int) {
                     showCategoryAdditionBottomSheet(itemModel)
                 }
@@ -408,6 +416,8 @@ class MenuItemActivity : AppCompatActivity() {
                 )
 
         } else {
+            dialogBinding.switchAvailability.isChecked = true
+            dialogBinding.switchAvailability.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
             dialogBinding.imageItem.visibility = View.GONE
             dialogBinding.textChangeImage.text = "ADD IMAGE"
         }

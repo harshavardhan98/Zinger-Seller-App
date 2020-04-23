@@ -5,6 +5,7 @@ import android.content.Intent
 import android.icu.util.ULocale
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -57,6 +58,14 @@ class MenuActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu)
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
+
+        preferencesHelper.role.let {
+            if((it==AppConstants.ROLE.SELLER.name)||(it==AppConstants.ROLE.DELIVERY.name)){
+                binding.textAddCategory.visibility = View.GONE
+                binding.textAddCategory.isEnabled = false
+            }
+
+        }
     }
 
     private fun setListener(){

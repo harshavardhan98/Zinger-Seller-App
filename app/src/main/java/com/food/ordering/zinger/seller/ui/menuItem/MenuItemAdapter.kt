@@ -3,6 +3,7 @@ package com.food.ordering.zinger.seller.ui.menuItem
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -12,13 +13,14 @@ import com.food.ordering.zinger.seller.data.model.CategoryItemListModel
 import com.food.ordering.zinger.seller.data.model.ItemModel
 import com.food.ordering.zinger.seller.databinding.ItemCategoryBinding
 import com.food.ordering.zinger.seller.databinding.ItemMenuBinding
+import com.food.ordering.zinger.seller.utils.AppConstants
 
 class MenuItemAdapter(
     private val context: Context,
     private val categoryList: List<ItemModel>,
+    private val role:String?,
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<MenuItemAdapter.MenuItemViewHolder>() {
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuItemViewHolder {
         val binding: ItemMenuBinding = DataBindingUtil.inflate(
@@ -27,7 +29,7 @@ class MenuItemAdapter(
             parent,
             false
         )
-        return MenuItemViewHolder(binding)
+        return MenuItemViewHolder(binding,role)
     }
 
     override fun onBindViewHolder(holder: MenuItemViewHolder, position: Int) {
@@ -38,7 +40,7 @@ class MenuItemAdapter(
         return categoryList.size
     }
 
-    class MenuItemViewHolder(var binding: ItemMenuBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MenuItemViewHolder(var binding: ItemMenuBinding,var role: String?) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
             menuItem: ItemModel,
@@ -74,6 +76,15 @@ class MenuItemAdapter(
                 binding.imageVeg.setImageDrawable(binding.root.context.getDrawable(R.drawable.ic_veg))
             } else {
                 binding.imageVeg.setImageDrawable(binding.root.context.getDrawable(R.drawable.ic_non_veg))
+            }
+
+            role?.let {
+                if(role.equals(AppConstants.ROLE.SELLER.name)||role.equals(AppConstants.ROLE.DELIVERY.name)){
+                    binding.imageEdit.visibility = View.GONE
+                    binding.imageEdit.isEnabled = false
+                    binding.imageDelete.visibility = View.GONE
+                    binding.imageDelete.isEnabled = false
+                }
             }
         }
     }

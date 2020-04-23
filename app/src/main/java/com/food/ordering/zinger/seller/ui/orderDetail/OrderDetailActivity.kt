@@ -42,7 +42,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
 
         // todo check if delivery location and delivery price are set for delivery orders
-        // todo date parsing check
+
 
         getArgs()
         initView()
@@ -72,10 +72,8 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     private fun updateUI(){
         binding.textUserName.text = order.transactionModel.orderModel.userModel?.name
         try {
-            val apiDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
             val appDateFormat = SimpleDateFormat("dd MMMM yyyy, hh:mm aaa")
-            val date = apiDateFormat.parse(order.transactionModel.orderModel.date.toString())
-            val dateString = appDateFormat.format(date)
+            val dateString = appDateFormat.format(order.transactionModel.orderModel.date)
             // todo UI does not have date
             //binding.textOrderTime.text = dateString
         }catch (e: Exception){

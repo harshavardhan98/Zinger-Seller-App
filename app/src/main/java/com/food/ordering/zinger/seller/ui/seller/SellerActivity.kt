@@ -13,7 +13,6 @@ import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.data.model.UserShopModel
 import com.food.ordering.zinger.seller.databinding.ActivitySellerBinding
 import com.food.ordering.zinger.seller.databinding.ActivityShopConfigurationBinding
-import com.food.ordering.zinger.seller.ui.shopConfiguration.ShopConfigViewModel
 import kotlinx.android.synthetic.main.activity_seller.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel

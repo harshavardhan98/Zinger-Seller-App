@@ -170,7 +170,7 @@
                     android:checked="false"
                     android:fontFamily="@font/open_sans_semibold"
                     android:gravity="start|center"
-                    android:text="Non - Vegetarian"
+                    android:text="Non-Veg"
                     android:textStyle="bold"
                     app:switchPadding="8dp"
                     app:thumbTint="#BBBBBB"

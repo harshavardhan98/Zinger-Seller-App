@@ -82,10 +82,9 @@ class ShopProfileActivity : AppCompatActivity() {
         shopConfig?.shopModel?.coverUrls?.let { imageList.addAll(it) }
 
         shopCoverImageAdapter =
-            ShopCoverImageAdapter(imageList, object : ShopCoverImageAdapter.OnItemClickListener {
+            ShopCoverImageAdapter(imageList,preferencesHelper.role,object : ShopCoverImageAdapter.OnItemClickListener {
 
                 override fun onItemClick(shopImageList: List<String>?, position: Int) {
-                    Toast.makeText(applicationContext, "testing " + position, Toast.LENGTH_SHORT).show()
                     var intent = Intent(applicationContext,DisplayActivity::class.java)
                     intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL,imageList.get(position))
                     startActivity(intent)
@@ -100,7 +99,6 @@ class ShopProfileActivity : AppCompatActivity() {
         binding.recyclerCoverPhoto.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerCoverPhoto.adapter = shopCoverImageAdapter
-
         binding.editName.setText(shopConfig?.shopModel?.name)
         var sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
         var sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
@@ -125,6 +123,29 @@ class ShopProfileActivity : AppCompatActivity() {
         binding.editName.setSelection(binding.editName.text.toString().length)
         binding.editDeliveryPrice.setText(shopConfig?.configurationModel?.deliveryPrice?.toInt().toString())
 
+        preferencesHelper.role?.let {
+            if(it==AppConstants.ROLE.SELLER.name || it==AppConstants.ROLE.DELIVERY.name){
+                binding.imageEditName.visibility = View.GONE
+                binding.imageEditDeliveryPrice.visibility = View.GONE
+                binding.imageEditOpeningTime.visibility = View.GONE
+                binding.imageEditClosingTime.visibility = View.GONE
+                binding.textLogo.visibility = View.GONE
+                binding.textCoverPhoto.visibility = View.GONE
+
+                binding.imageEditName.isEnabled = false
+                binding.imageEditDeliveryPrice.isEnabled = false
+                binding.imageEditOpeningTime.isEnabled = false
+                binding.imageEditClosingTime.isEnabled = false
+                binding.textLogo.isEnabled = false
+                binding.textCoverPhoto.isEnabled = false
+            }
+            if(it==AppConstants.ROLE.DELIVERY.name){
+                binding.switchOrders.isEnabled= false
+                binding.switchDelivery.isEnabled = false
+                binding.buttonUpdate.visibility = View.GONE
+                binding.buttonUpdate.isEnabled = false
+            }
+        }
 
     }
 
@@ -203,7 +224,7 @@ class ShopProfileActivity : AppCompatActivity() {
         })
 
 
-        binding.textOpeningTime.setOnClickListener(View.OnClickListener {
+        binding.imageEditOpeningTime.setOnClickListener(View.OnClickListener {
 
             var openingTime =
                 SimpleDateFormat("HH:mm:ss", Locale.US).parse(shopConfig?.shopModel?.openingTime)
@@ -227,7 +248,7 @@ class ShopProfileActivity : AppCompatActivity() {
                 .setTextColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
         })
 
-        binding.textClosingTime.setOnClickListener(View.OnClickListener {
+        binding.imageEditClosingTime.setOnClickListener(View.OnClickListener {
 
             var closingTime =
                 SimpleDateFormat("HH:mm:ss", Locale.US).parse(shopConfig?.shopModel?.closingTime)
