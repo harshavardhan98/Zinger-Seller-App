@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -23,6 +24,8 @@ import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.data.model.ShopImageDataModel
 import com.food.ordering.zinger.seller.data.model.ShopModel
 import com.food.ordering.zinger.seller.databinding.ActivityShopProfileBinding
+import com.food.ordering.zinger.seller.ui.display.DisplayActivity
+import com.food.ordering.zinger.seller.utils.AppConstants
 import com.food.ordering.zinger.seller.utils.CommonUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.tasks.OnSuccessListener
@@ -38,6 +41,7 @@ import java.text.SimpleDateFormat
 import java.util.*;
 import kotlin.collections.ArrayList
 
+
 class ShopProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShopProfileBinding
     private val preferencesHelper: PreferencesHelper by inject()
@@ -48,16 +52,12 @@ class ShopProfileActivity : AppCompatActivity() {
     private var imageList: ArrayList<String> = ArrayList()
     private var isShopLogoClicked = false
     private var isShopCoverImageClicked = false
-    private var currentShopLogoUri: Uri? = null
-    private var deleteImageList: ArrayList<String> = ArrayList()
     private var mStorageRef: StorageReference? = null
     private lateinit var updateConfigurationModel: ConfigurationModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_profile)
-        // todo ask storage permission
-        // todo api request not working and going to black screen
         initView()
         setListener()
         setObserver()
@@ -85,9 +85,10 @@ class ShopProfileActivity : AppCompatActivity() {
             ShopCoverImageAdapter(imageList, object : ShopCoverImageAdapter.OnItemClickListener {
 
                 override fun onItemClick(shopImageList: List<String>?, position: Int) {
-                    Toast.makeText(applicationContext, "testing " + position, Toast.LENGTH_SHORT)
-                        .show()
-                    // todo go to a plain screen
+                    Toast.makeText(applicationContext, "testing " + position, Toast.LENGTH_SHORT).show()
+                    var intent = Intent(applicationContext,DisplayActivity::class.java)
+                    intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL,imageList.get(position))
+                    startActivity(intent)
                 }
 
                 override fun onDeleteClick(shopImageList: List<String>?, position: Int) {
@@ -101,7 +102,6 @@ class ShopProfileActivity : AppCompatActivity() {
         binding.recyclerCoverPhoto.adapter = shopCoverImageAdapter
 
         binding.editName.setText(shopConfig?.shopModel?.name)
-        // todo check if Locale.Default is correct
         var sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
         var sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
         binding.textOpeningTime.text = sdf2.format(sdf.parse(shopConfig?.shopModel?.openingTime))
@@ -110,37 +110,80 @@ class ShopProfileActivity : AppCompatActivity() {
             .into(binding.imageLogo)
         binding.switchOrders.isChecked = shopConfig?.configurationModel?.isOrderTaken == 1
         binding.switchDelivery.isChecked = shopConfig?.configurationModel?.isDeliveryAvailable == 1
+
+        if(binding.switchOrders.isChecked)
+            binding.switchOrders.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
+        else
+            binding.switchOrders.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
+
+        if(binding.switchDelivery.isChecked)
+            binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
+        else
+            binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
+
+
         binding.editName.setSelection(binding.editName.text.toString().length)
-        binding.editDeliveryPrice.setText(shopConfig?.configurationModel?.deliveryPrice.toString())
+        binding.editDeliveryPrice.setText(shopConfig?.configurationModel?.deliveryPrice?.toInt().toString())
+
 
     }
 
     private fun setListener() {
+
+        binding.imageClose.setOnClickListener {
+            onBackPressed()
+        }
+
+        binding.switchDelivery.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+                binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
+            else
+                binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
+        }
+
+        binding.switchOrders.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+                binding.switchOrders.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
+            else
+                binding.switchOrders.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
+        }
+
+
         binding.buttonUpdate.setOnClickListener(View.OnClickListener {
 
-            var openingTime = binding.textOpeningTime.text.toString().split(Regex(" "), 0)
-            var closingTime = binding.textClosingTime.text.toString().split(Regex(" "), 0)
+            if(binding.editName.isEnabled){
+                Toast.makeText(this, "Please confirm name change", Toast.LENGTH_LONG).show()
+            }
+            else if(binding.editDeliveryPrice.isEnabled){
+                Toast.makeText(this, "Please confirm delivery price change", Toast.LENGTH_LONG).show()
+            }else{
 
-            val shopModel = ShopModel(
-                photoUrl = if(photoUrl.isNullOrEmpty())shopConfig?.shopModel?.photoUrl else photoUrl,
-                closingTime = closingTime.get(0) + ":00",
-                openingTime = openingTime.get(0) + ":00",
-                name = binding.editName.text.toString(),
-                coverUrls = imageList,
-                mobile = shopConfig?.shopModel?.mobile,
-                id = shopConfig?.shopModel?.id
-            )
+                var sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
+                var sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
+                var openingTime = sdf.format(sdf2.parse(binding.textOpeningTime.text.toString()))
+                var closingTime = sdf.format(sdf2.parse(binding.textClosingTime.text.toString()))
 
 
-            updateConfigurationModel = ConfigurationModel(
-                deliveryPrice = binding.editDeliveryPrice.text.toString().toDouble(),
-                isDeliveryAvailable = if (binding.switchOrders.isChecked) 1 else 0,
-                isOrderTaken = if (binding.switchDelivery.isChecked) 1 else 0,
-                shopModel = shopModel
-            )
+                val shopModel = ShopModel(
+                    photoUrl = if(photoUrl.isNullOrEmpty())shopConfig?.shopModel?.photoUrl else photoUrl,
+                    closingTime = closingTime,
+                    openingTime = openingTime,
+                    name = binding.editName.text.toString(),
+                    coverUrls = imageList,
+                    mobile = shopConfig?.shopModel?.mobile,
+                    id = shopConfig?.shopModel?.id
+                )
 
-            viewModel.updateShopProfile(updateConfigurationModel)
 
+                updateConfigurationModel = ConfigurationModel(
+                    deliveryPrice = binding.editDeliveryPrice.text.toString().toDouble(),
+                    isDeliveryAvailable = if (binding.switchDelivery.isChecked) 1 else 0,
+                    isOrderTaken = if (binding.switchOrders.isChecked) 1 else 0,
+                    shopModel = shopModel
+                )
+
+                viewModel.updateShopProfile(updateConfigurationModel)
+            }
         })
 
         binding.imageEditName.setOnClickListener(View.OnClickListener {
@@ -224,6 +267,14 @@ class ShopProfileActivity : AppCompatActivity() {
                 .compress(1024)
                 .crop(16f, 9f)
                 .start()
+        }
+
+        binding.imageLogo.setOnClickListener {
+
+            var intent = Intent(applicationContext,DisplayActivity::class.java)
+            var photoUrl = if(photoUrl.isNullOrEmpty())shopConfig?.shopModel?.photoUrl else photoUrl
+            intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL,photoUrl)
+            startActivity(intent)
         }
 
 

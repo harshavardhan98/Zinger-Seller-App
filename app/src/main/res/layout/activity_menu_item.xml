@@ -114,7 +114,8 @@
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_saveChanges"
+            android:id="@+id/button_save_changes"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -123,7 +124,6 @@
             android:text="Save Changes"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:visibility="gone"
             app:backgroundTint="@color/green" />
 
     </RelativeLayout>

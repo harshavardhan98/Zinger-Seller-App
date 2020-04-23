@@ -26,6 +26,7 @@ import com.food.ordering.zinger.seller.ui.otp.OTPActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
@@ -36,6 +37,8 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
+
+// todo seller based restriction must be implemented
 
 class MenuItemActivity : AppCompatActivity() {
 
@@ -75,12 +78,23 @@ class MenuItemActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item)
         progressDialog = ProgressDialog(this)
         binding.textCategoryName.text = category
-        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mStorageRef = FirebaseStorage.getInstance().getReference()
+        binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.switchNotSelected))
     }
 
     private fun setListener() {
 
+        binding.imageClose.setOnClickListener { onBackPressed() }
+
         binding.switchDelivery.setOnCheckedChangeListener { buttonView, isChecked ->
+
+            if(isChecked)
+                binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.switchSelected))
+            else
+                binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.switchNotSelected))
+
+
+            binding.buttonSaveChanges.visibility = View.VISIBLE
 
             for (menu in menuItemList) {
                 menu.isAvailable = if (isChecked) 1 else 0
@@ -92,12 +106,17 @@ class MenuItemActivity : AppCompatActivity() {
         binding.textAddItem.setOnClickListener {
             showCategoryAdditionBottomSheet()
         }
+
+        binding.buttonSaveChanges.setOnClickListener {
+            binding.buttonSaveChanges.visibility = View.GONE
+            // todo update a list of items
+        }
     }
 
     private fun setObserver() {
 
         viewModel.menuRequestResponse.observe(this, androidx.lifecycle.Observer { resource ->
-            println("resource: "+resource)
+            println("resource: " + resource)
             if (resource != null) {
                 when (resource.status) {
 
@@ -106,7 +125,8 @@ class MenuItemActivity : AppCompatActivity() {
 
                         resource.data?.let {
                             menuItemList.clear()
-                            it.data?.filter { it.category==category }?.let { it1 -> menuItemList.addAll(it1) }
+                            it.data?.filter { it.category == category }
+                                ?.let { it1 -> menuItemList.addAll(it1) }
                             menuAdapter.notifyDataSetChanged()
                         }
                     }
@@ -138,7 +158,7 @@ class MenuItemActivity : AppCompatActivity() {
         })
 
         viewModel.performUploadImageStatus.observe(this, androidx.lifecycle.Observer { resource ->
-            println("resource: "+resource)
+            println("resource: " + resource)
             if (resource != null) {
                 when (resource.status) {
 
@@ -149,7 +169,7 @@ class MenuItemActivity : AppCompatActivity() {
 
                             changedItemImageUrl = resource.data
                             // todo change this later
-                            changedItemImageUrl = changedItemImageUrl.substring(0,45)
+                            changedItemImageUrl = changedItemImageUrl.substring(0, 45)
                             dialogBinding.imageItem.visibility = View.VISIBLE
                             Picasso.get().load(resource.data)
                                 .placeholder(R.drawable.ic_shop)
@@ -184,7 +204,7 @@ class MenuItemActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.addItemResponse.observe(this,androidx.lifecycle.Observer { resource ->
+        viewModel.addItemResponse.observe(this, androidx.lifecycle.Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
 
@@ -219,7 +239,7 @@ class MenuItemActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.updateItemResponse.observe(this,androidx.lifecycle.Observer { resource ->
+        viewModel.updateItemResponse.observe(this, androidx.lifecycle.Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
 
@@ -257,40 +277,40 @@ class MenuItemActivity : AppCompatActivity() {
             }
         })
 
-         viewModel.deleteItemResponse.observe(this,androidx.lifecycle.Observer { resource ->
-                if (resource != null) {
-                    when (resource.status) {
+        viewModel.deleteItemResponse.observe(this, androidx.lifecycle.Observer { resource ->
+            if (resource != null) {
+                when (resource.status) {
 
-                        Resource.Status.SUCCESS -> {
-                            progressDialog.dismiss()
-                            preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
-                        }
+                    Resource.Status.SUCCESS -> {
+                        progressDialog.dismiss()
+                        preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
+                    }
 
-                        Resource.Status.ERROR -> {
-                            progressDialog.dismiss()
-                            Toast.makeText(
-                                applicationContext,
-                                "Try again!! Error Occurred",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                    Resource.Status.ERROR -> {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            applicationContext,
+                            "Try again!! Error Occurred",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
-                        Resource.Status.OFFLINE_ERROR -> {
-                            progressDialog.dismiss()
-                            Toast.makeText(
-                                applicationContext,
-                                "No Internet Connection",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                    Resource.Status.OFFLINE_ERROR -> {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            applicationContext,
+                            "No Internet Connection",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
-                        Resource.Status.LOADING -> {
-                            progressDialog.setMessage("Updating...")
-                            progressDialog.show()
-                        }
+                    Resource.Status.LOADING -> {
+                        progressDialog.setMessage("Updating...")
+                        progressDialog.show()
                     }
                 }
-            })
+            }
+        })
 
 
     }
@@ -306,11 +326,24 @@ class MenuItemActivity : AppCompatActivity() {
 
                 override fun onDeleteClick(itemModel: ItemModel?, position: Int) {
 
-                    itemModel?.id?.let {
-                        deleteItemRequest = it
-                        viewModel.deleteItem(it)
-                    }
-                    menuAdapter.notifyDataSetChanged()
+                    MaterialAlertDialogBuilder(this@MenuItemActivity)
+                        .setTitle("Delete Item")
+                        .setMessage("Do you want to delete " + itemModel?.name + " ?")
+                        .setPositiveButton("Yes") { dialog, _ ->
+                            itemModel?.id?.let {
+                                deleteItemRequest = it
+                                viewModel.deleteItem(it)
+                            }
+                            menuAdapter.notifyDataSetChanged()
+                        }
+                        .setNegativeButton("No") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                }
+
+                override fun onSwitchChange() {
+                    binding.buttonSaveChanges.visibility=View.VISIBLE
                 }
             })
 
@@ -321,7 +354,7 @@ class MenuItemActivity : AppCompatActivity() {
     }
 
     var itemListAddRequest = ArrayList<ItemModel>()
-    var itemUpdateRequest:ItemModel? = null
+    var itemUpdateRequest: ItemModel? = null
     private fun showCategoryAdditionBottomSheet(item: ItemModel? = null) {
 
         dialogBinding =
@@ -336,21 +369,45 @@ class MenuItemActivity : AppCompatActivity() {
         dialog.setContentView(dialogBinding.root)
         dialog.show()
 
-        if(item!=null) {
+        if (item != null) {
             dialogBinding.editItemName.setText(item?.name)
             dialogBinding.editItemPrice.setText(item?.price?.toInt().toString())
             dialogBinding.switchAvailability.isChecked = if (item?.isAvailable == 1) true else false
             dialogBinding.switchVeg.isChecked = if (item?.isVeg == 1) true else false
-            // todo change to ic_food
             dialogBinding.imageItem.visibility = View.VISIBLE
             item?.photoUrl.let {
-                Picasso.get().load(item?.photoUrl).placeholder(R.drawable.ic_shop)
+                Picasso.get().load(item?.photoUrl).placeholder(R.drawable.ic_food)
                     .into(dialogBinding.imageItem)
             }
             dialogBinding.buttonAddEdit.text = "UPDATE"
             dialogBinding.textChangeImage.text = "UPDATE IMAGE"
-        }
-        else{
+
+
+            if (dialogBinding.switchAvailability.isChecked)
+                dialogBinding.switchAvailability.thumbTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.switchSelected
+                    )
+                )
+            else
+                dialogBinding.switchAvailability.thumbTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(applicationContext, R.color.switchNotSelected)
+                )
+
+            if(dialogBinding.switchVeg.isChecked)
+                dialogBinding.switchVeg.thumbTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(applicationContext, R.color.nonVegetarianSelect)
+                )
+            else
+                dialogBinding.switchVeg.thumbTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.switchNotSelected
+                    )
+                )
+
+        } else {
             dialogBinding.imageItem.visibility = View.GONE
             dialogBinding.textChangeImage.text = "ADD IMAGE"
         }
@@ -360,18 +417,12 @@ class MenuItemActivity : AppCompatActivity() {
             if (isChecked) {
                 item?.isAvailable = 1
                 dialogBinding.switchAvailability.thumbTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        applicationContext,
-                        R.color.switchSelected
-                    )
+                    ContextCompat.getColor(applicationContext, R.color.switchSelected)
                 )
             } else {
                 item?.isAvailable = 0
                 dialogBinding.switchAvailability.thumbTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        applicationContext,
-                        R.color.switchNotSelected
-                    )
+                    ContextCompat.getColor(applicationContext, R.color.switchNotSelected)
                 )
             }
         }
@@ -402,9 +453,10 @@ class MenuItemActivity : AppCompatActivity() {
             var isVeg = if (dialogBinding.switchVeg.isChecked) 1 else 0
             var name = dialogBinding.editItemName.text.toString()
             var price = dialogBinding.editItemPrice.text.toString().toDouble()
-            var itemUrl = if(changedItemImageUrl.length==0) item?.photoUrl else changedItemImageUrl
+            var itemUrl =
+                if (changedItemImageUrl.length == 0) item?.photoUrl else changedItemImageUrl
 
-            if(item!=null) {
+            if (item != null) {
 
                 itemUpdateRequest = ItemModel(
                     category,
@@ -417,14 +469,14 @@ class MenuItemActivity : AppCompatActivity() {
                     null
                 )
                 viewModel.updateItem(itemUpdateRequest!!)
-            }else{
+            } else {
 
-                if(changedItemImageUrl.length==0) {
-                    Toast.makeText(this,"Add an image",Toast.LENGTH_SHORT).show()
-                }
-                else{
+                if (changedItemImageUrl.length == 0) {
+                    Toast.makeText(this, "Add an image", Toast.LENGTH_SHORT).show()
+                } else {
                     var shopModel = ShopModel(id = preferencesHelper.currentShop)
-                    var itemInsertRequest = ItemModel(category,
+                    var itemInsertRequest = ItemModel(
+                        category,
                         null,
                         isAvailable,
                         isVeg,
@@ -462,7 +514,8 @@ class MenuItemActivity : AppCompatActivity() {
                 val file: File? = ImagePicker.getFile(data)
                 var storageReference: StorageReference? = null
 
-                storageReference = mStorageRef?.child("itemImage/" + preferencesHelper.id + "/" + file?.name + Calendar.getInstance().time)
+                storageReference =
+                    mStorageRef?.child("itemImage/" + preferencesHelper.id + "/" + file?.name + Calendar.getInstance().time)
 
                 if (storageReference != null) {
                     if (fileUri != null) {
@@ -477,7 +530,6 @@ class MenuItemActivity : AppCompatActivity() {
             Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
     }
-
 
 
 }

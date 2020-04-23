@@ -31,6 +31,8 @@ object AppConstants {
     const val ORDER_DETAIL = "order_detail"
 
     const val CATEGORY_ITEM_DETAIL = "category_item_detail"
+    const val DISPLAY_IMAGE_DETAIL = "display_image_detail"
+
     const val REQUEST_PHONE_CALL = 987
     enum class STATUS{
         PENDING, TXN_FAILURE, PLACED, CANCELLED_BY_USER, ACCEPTED, CANCELLED_BY_SELLER, READY, OUT_FOR_DELIVERY, COMPLETED, DELIVERED, REFUND_INITIATED, REFUND_COMPLETED

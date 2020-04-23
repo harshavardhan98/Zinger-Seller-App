@@ -8,73 +8,76 @@
     </data>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:gravity="center|start"
-            android:text="Phone Number"
-            android:textColor="@color/colorAccent"
-            android:textSize="12sp" />
+            android:elevation="8dp"
+            android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/text_phone"
-            android:editable="false"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/poppins_semibold"
-            tools:text="9176019334" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center|start"
+                android:text="OTP"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:gravity="center|start"
-            android:text="OTP"
-            android:textColor="@color/colorAccent"
-            android:textSize="12sp" />
+            <com.food.ordering.zinger.seller.utils.OtpEditText
+                android:id="@+id/edit_otp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:cursorVisible="false"
+                android:digits="1234567890"
+                android:fontFamily="@font/poppins_semibold"
+                android:inputType="number"
+                android:maxLength="6"
+                android:textColor="@color/colorAccent"
+                android:textIsSelectable="false"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <com.food.ordering.zinger.seller.utils.OtpEditText
-            android:id="@+id/edit_otp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
-            android:cursorVisible="false"
-            android:digits="1234567890"
-            android:fontFamily="@font/poppins_semibold"
-            android:inputType="number"
-            android:maxLength="6"
-            android:textColor="@color/colorAccent"
-            android:textIsSelectable="false"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/text_resend_otp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
+                android:drawableStart="@drawable/ic_reload"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:gravity="center|start"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:text="@string/label_resend_otp"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_verify"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:text="@string/label_verify"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:backgroundTint="@color/colorAccent" />
-
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_verify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="Verify"
+                app:backgroundTint="@color/colorAccent" />
+        </LinearLayout>
 
     </LinearLayout>
+
 </layout>
