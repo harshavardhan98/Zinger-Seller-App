@@ -37,7 +37,6 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
     private lateinit var progressDialog: ProgressDialog
     private var orderList: ArrayList<OrderItemListModel> = ArrayList()
     private lateinit var errorSnackBar: Snackbar
-    private var timer: Timer? = null
     var pageCnt = 5
 
 

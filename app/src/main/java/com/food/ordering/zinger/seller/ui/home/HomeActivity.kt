@@ -202,6 +202,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .withIcon(R.drawable.ic_drawer_log_out)
         val helpcenter = PrimaryDrawerItem().withIdentifier(++identifier).withName("Help Center")
             .withIcon(R.drawable.ic_drawer_info)
+
+
+
         drawer = DrawerBuilder()
             .withActivity(this)
             .withDisplayBelowStatusBar(false)
