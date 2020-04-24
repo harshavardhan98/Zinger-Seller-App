@@ -46,7 +46,7 @@ data class OrderModel(
     @SerializedName("rating")
     val rating: Double?=null,
     @SerializedName("secretKey")
-    val secretKey: String?=null,
+    var secretKey: String?=null,
     @SerializedName("shopModel")
     val shopModel: ShopModel?=null,
     @SerializedName("userModel")

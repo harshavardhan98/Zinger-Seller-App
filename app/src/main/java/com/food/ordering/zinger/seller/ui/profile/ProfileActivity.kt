@@ -204,7 +204,7 @@ class ProfileActivity : AppCompatActivity() {
                         } ?: run {
                             Toast.makeText(
                                 applicationContext,
-                                "Something went wrong",
+                                "Something went wrong ",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

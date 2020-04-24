@@ -41,9 +41,6 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // todo check if delivery location and delivery price are set for delivery orders
-
-
         getArgs()
         initView()
         setListeners()

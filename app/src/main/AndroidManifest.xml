@@ -20,7 +20,6 @@
         <activity android:name=".ui.otp.OTPActivity" />
         <activity android:name=".ui.seller.SellerActivity" />
         <activity android:name=".ui.menuItem.MenuItemActivity" />
-        <activity android:name=".ui.shopConfiguration.ShopConfigActivity" />
         <activity android:name=".ui.menu.MenuActivity" />
         <activity android:name=".ui.shopProfile.ShopProfileActivity" />
         <activity android:name=".ui.profile.ProfileActivity" />

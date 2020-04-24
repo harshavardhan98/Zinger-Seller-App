@@ -332,7 +332,7 @@ class ShopProfileActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         Toast.makeText(
                             applicationContext,
-                            "Try again!! Error Occurred",
+                            "Try again!! Error Occurred \n"+resource.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }

@@ -286,6 +286,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         }
         accountAdapter = AccountAdapter(accountList, object : AccountAdapter.OnItemClickListener {
             override fun onItemClick(item: ShopConfigurationModel, position: Int) {
+                // todo change the rating of the shop in header layout
                 for (i in accountList.indices) {
                     accountList[i].isSelected = false
                 }
@@ -299,7 +300,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .placeholder(R.drawable.ic_shop)
                         .into(binding.imageCompany)
                     binding.textShopName.text = accountList[position].shopModel.name
-                    viewModel.getOrderByShopId(it)
+                    this@HomeActivity.recreate()
+                    //viewModel.getOrderByShopId(it)
                 }
 
                 dialog.dismiss()

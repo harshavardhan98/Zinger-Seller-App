@@ -184,6 +184,7 @@
                 android:weightSum="2">
 
                 <TextView
+					android:id="@+id/text_cancel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -201,6 +202,7 @@
                     android:visibility="visible" />
 
                 <TextView
+					android:id="@+id/text_update_status"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

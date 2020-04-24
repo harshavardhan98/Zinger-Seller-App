@@ -143,7 +143,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         Toast.makeText(
                             applicationContext,
-                            "Try again!! Error Occurred",
+                            "Try again!! Error Occurred "+resource.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -190,7 +190,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         Toast.makeText(
                             applicationContext,
-                            "Try again!! Error Occurred",
+                            "Try again!! Error Occurred "+resource.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -225,7 +225,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         Toast.makeText(
                             applicationContext,
-                            "Try again!! Error Occurred",
+                            "Try again!! Error Occurred "+resource.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -263,7 +263,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         Toast.makeText(
                             applicationContext,
-                            "Try again!! Error Occurred",
+                            "Try again!! Error Occurred "+resource.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -298,7 +298,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         Toast.makeText(
                             applicationContext,
-                            "Try again!! Error Occurred",
+                            "Try again!! Error Occurred "+resource.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }

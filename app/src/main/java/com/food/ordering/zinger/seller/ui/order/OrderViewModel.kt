@@ -38,8 +38,10 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
                 val response = orderRepository.getOrderById(orderId)
                 if(response.code==1)
                     orderByIdRequest.value=Resource.success(response)
-                else
-                    println("Something is wrong")
+                else{
+                    orderByIdRequest.value=Resource.error(message = response.message)
+                }
+
             }catch (e: Exception){
                 println(e.printStackTrace())
             }
@@ -56,9 +58,10 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
                     updateOrder.value = Resource.success(response)
                     getOrderByShopId(1)
                 }
-                else
+                else{
                     println("Something is wrong")
-
+                    updateOrder.value = Resource.error(message=response.message)
+                }
             }catch (e: Exception){
                 println(e.printStackTrace())
             }
@@ -94,8 +97,9 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
 
                 if(response.code==1)
                     orderByPagination.value = Resource.success(response)
-                else
-                    println("Something is wrong")
+                else{
+                    orderByShopId.value = Resource.error(message = response.message)
+                }
 
             }catch (e: Exception){
                 //println(e.printStackTrace())

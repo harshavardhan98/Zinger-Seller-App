@@ -118,7 +118,7 @@ class MenuActivity : AppCompatActivity() {
 
                     Resource.Status.ERROR ->{
                         progressDialog.dismiss()
-
+                        Toast.makeText(applicationContext, "Try again!! Error Occurred "+resource.message, Toast.LENGTH_SHORT).show()
                     }
 
                     Resource.Status.LOADING ->{
