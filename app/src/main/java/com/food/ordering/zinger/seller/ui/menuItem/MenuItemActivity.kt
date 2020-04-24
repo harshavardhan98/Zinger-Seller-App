@@ -27,6 +27,7 @@ import com.food.ordering.zinger.seller.utils.AppConstants
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
@@ -39,7 +40,7 @@ import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
-// todo seller based restriction must be implemented
+
 
 class MenuItemActivity : AppCompatActivity() {
 
@@ -179,6 +180,7 @@ class MenuItemActivity : AppCompatActivity() {
                             // todo change this later
                             changedItemImageUrl = changedItemImageUrl.substring(0, 45)
                             dialogBinding.imageItem.visibility = View.VISIBLE
+                            dialogBinding.textChangeImage.text = "UPDATE IMAGE"
                             Picasso.get().load(resource.data)
                                 .placeholder(R.drawable.ic_shop)
                                 .into(dialogBinding.imageItem)
@@ -459,11 +461,11 @@ class MenuItemActivity : AppCompatActivity() {
 
         dialogBinding.buttonAddEdit.setOnClickListener { v ->
 
-            var isAvailable = if (dialogBinding.switchAvailability.isChecked) 1 else 0
-            var isVeg = if (dialogBinding.switchVeg.isChecked) 1 else 0
-            var name = dialogBinding.editItemName.text.toString()
-            var price = dialogBinding.editItemPrice.text.toString().toDouble()
-            var itemUrl =
+            val isAvailable = if (dialogBinding.switchAvailability.isChecked) 1 else 0
+            val isVeg = if (dialogBinding.switchVeg.isChecked) 1 else 0
+            val name = dialogBinding.editItemName.text.toString()
+            val price = dialogBinding.editItemPrice.text.toString().toDouble()
+            val itemUrl =
                 if (changedItemImageUrl.length == 0) item?.photoUrl else changedItemImageUrl
 
             if (item != null) {
@@ -484,8 +486,8 @@ class MenuItemActivity : AppCompatActivity() {
                 if (changedItemImageUrl.length == 0) {
                     Toast.makeText(this, "Add an image", Toast.LENGTH_SHORT).show()
                 } else {
-                    var shopModel = ShopModel(id = preferencesHelper.currentShop)
-                    var itemInsertRequest = ItemModel(
+                    val shopModel = ShopModel(id = preferencesHelper.currentShop)
+                    val itemInsertRequest = ItemModel(
                         category,
                         null,
                         isAvailable,

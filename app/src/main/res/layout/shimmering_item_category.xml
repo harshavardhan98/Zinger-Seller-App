@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/layout_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_category_name"
+                    android:foreground="@color/shimmerColor"
+                    android:textColor="@android:color/tab_indicator_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="center|start"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="Chinese" />
+
+                <TextView
+                    android:id="@+id/text_number_of_items"
+                    android:layout_marginTop="8dp"
+                    android:foreground="@color/shimmerColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="start|center"
+                    android:minWidth="60dp"
+                    android:text="3 items"
+                    android:textColor="@android:color/tab_indicator_text"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:tint="@color/colorAccent"
+                android:src="@drawable/ic_right_arrow"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="top"
+            android:background="#f2f2f2" />
+
+    </LinearLayout>
+</layout>

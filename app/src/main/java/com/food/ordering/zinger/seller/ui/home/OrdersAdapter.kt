@@ -12,10 +12,20 @@ import com.food.ordering.zinger.seller.utils.AppConstants
 import java.lang.Exception
 import java.text.SimpleDateFormat
 
-class OrdersAdapter(private val orderList: List<OrderItemListModel>, private val listener: OnItemClickListener) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): OrderViewHolder {
-        val binding: ItemOrderBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_order, parent, false)
+class OrdersAdapter(
+    private val orderList: List<OrderItemListModel>,
+    private val listener: OnItemClickListener
+) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): OrderViewHolder {
+        val binding: ItemOrderBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.item_order,
+            parent,
+            false
+        )
         return OrderViewHolder(binding)
     }
 
@@ -40,48 +50,49 @@ class OrdersAdapter(private val orderList: List<OrderItemListModel>, private val
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            binding.textOrderPrice.text = "₹ " + order.transactionModel.orderModel.price?.toInt().toString()
+            binding.textOrderPrice.text =
+                "₹ " + order.transactionModel.orderModel.price?.toInt().toString()
             var items = ""
             order.orderItemsList.forEach {
                 items += it.quantity.toString() + " X " + it.itemModel.name + "\n"
             }
             binding.textOrderItems.text = items
 
-            if(order.transactionModel.orderModel.deliveryLocation == null)
-                binding.textPickUp.text="PICKUP"
+            if (order.transactionModel.orderModel.deliveryLocation == null)
+                binding.textPickUp.text = "PICKUP"
             else
-                binding.textPickUp.text="DELIVERY"
-            
+                binding.textPickUp.text = "DELIVERY"
 
 
-            when(order.transactionModel.orderModel.orderStatus){
+
+            when (order.transactionModel.orderModel.orderStatus) {
                 AppConstants.STATUS.PLACED.name -> {
                     binding.textUpdateStatus.text = "ACCEPT"
                 }
 
                 AppConstants.STATUS.ACCEPTED.name -> {
-                    if(order.transactionModel.orderModel.deliveryLocation==null)
-                        binding.textUpdateStatus.text= AppConstants.STATUS.READY.name
+                    if (order.transactionModel.orderModel.deliveryLocation == null)
+                        binding.textUpdateStatus.text = AppConstants.STATUS.READY.name
                     else
-                        binding.textUpdateStatus.text= AppConstants.STATUS.OUT_FOR_DELIVERY.name
+                        binding.textUpdateStatus.text = "OUT FOR DELIVERY"
                 }
 
                 AppConstants.STATUS.READY.name -> {
                     binding.textCancel.visibility = View.INVISIBLE
                     binding.textCancel.isEnabled = false
-                    binding.textUpdateStatus.text= "COMPLETE"
+                    binding.textUpdateStatus.text = "COMPLETE"
                 }
 
                 AppConstants.STATUS.OUT_FOR_DELIVERY.name -> {
                     binding.textCancel.visibility = View.INVISIBLE
                     binding.textCancel.isEnabled = false
-                    binding.textUpdateStatus.text= AppConstants.STATUS.DELIVERED.name
+                    binding.textUpdateStatus.text = AppConstants.STATUS.DELIVERED.name
                 }
             }
 
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
-            binding.textUpdateStatus.setOnClickListener { listener.onUpdateClick(order,position) }
-            binding.textCancel.setOnClickListener { listener.onCancelClick(order,position) }
+            binding.textUpdateStatus.setOnClickListener { listener.onUpdateClick(order, position) }
+            binding.textCancel.setOnClickListener { listener.onCancelClick(order, position) }
 
         }
 
@@ -90,7 +101,7 @@ class OrdersAdapter(private val orderList: List<OrderItemListModel>, private val
     interface OnItemClickListener {
         fun onItemClick(orderItemListModel: OrderItemListModel?, position: Int)
         fun onUpdateClick(orderItemListModel: OrderItemListModel?, position: Int)
-        fun onCancelClick(orderItemListModel: OrderItemListModel?,position: Int)
+        fun onCancelClick(orderItemListModel: OrderItemListModel?, position: Int)
     }
 
     /* * Update order status

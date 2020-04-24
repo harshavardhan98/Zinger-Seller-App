@@ -42,17 +42,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="12dp"
                     android:background="@drawable/bg_rounded"
                     android:drawableStart="@drawable/ic_add"
                     android:drawablePadding="8dp"
                     android:fontFamily="sans-serif"
                     android:gravity="center|start"
+                    android:paddingStart="8dp"
                     android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
                     android:paddingBottom="4dp"
-                    android:textColor="@android:color/black"
                     android:text="Add Category"
+                    android:textColor="@android:color/black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -63,27 +63,71 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_weight="1"
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center|start"
                     android:paddingTop="3dp"
                     android:text="Menu"
-                    android:layout_weight="1"
                     android:textAppearance="@style/AppbarTitle"
                     android:textColor="@android:color/black"
                     android:textSize="32sp" />
 
             </LinearLayout>
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_category"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
-                tools:listitem="@layout/item_category"/>
+                tools:listitem="@layout/item_category" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/layout_states"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                    <include layout="@layout/shimmering_item_category" />
+
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:visibility="gone" />
+
 
         </LinearLayout>
 
