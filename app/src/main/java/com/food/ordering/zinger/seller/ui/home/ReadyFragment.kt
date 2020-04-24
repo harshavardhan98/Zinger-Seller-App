@@ -97,9 +97,9 @@ class ReadyFragment : Fragment() {
                     binding.animationView.loop(true)
                     binding.animationView.setAnimation("order_failed_animation.json")
                     binding.animationView.playAnimation()
-                    errorSnackBar.setText("Something went wrong")
+                    errorSnackBar.setText("Error: "+it.message)
 
-                    Toast.makeText(context,"Something went wrong. Error:\n"+it.message, Toast.LENGTH_LONG).show()
+                    //Toast.makeText(context,"Something went wrong. Error:\n"+it.message, Toast.LENGTH_LONG).show()
 
                 }
 
@@ -206,7 +206,7 @@ class ReadyFragment : Fragment() {
         dialogBinding.buttonConfirm.setOnClickListener {
             if(dialogBinding.editSecretKey.text.toString().isNotEmpty() && dialogBinding.editSecretKey.text.toString().length==6
                 && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))){
-                var orderModel = OrderModel(id=orderItemListModel!!.transactionModel.orderModel.id)
+                val orderModel = OrderModel(id=orderItemListModel!!.transactionModel.orderModel.id)
 
                 if(orderItemListModel!!.transactionModel.orderModel.deliveryLocation==null)
                     orderModel.orderStatus=AppConstants.STATUS.COMPLETED.name
