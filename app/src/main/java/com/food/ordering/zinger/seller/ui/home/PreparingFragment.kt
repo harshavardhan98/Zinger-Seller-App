@@ -3,6 +3,7 @@ package com.food.ordering.zinger.seller.ui.home
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderDetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
@@ -36,6 +38,7 @@ class PreparingFragment : Fragment() {
     private val viewModel: OrderViewModel by sharedViewModel()
     private val preferencesHelper: PreferencesHelper by inject()
     private lateinit var progressDialog: ProgressDialog
+    private lateinit var errorSnackBar: Snackbar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +58,13 @@ class PreparingFragment : Fragment() {
     private fun initView() {
         updateUI()
         progressDialog = ProgressDialog(activity)
-        //TODO swipe refresh layout on refresh
+        errorSnackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_INDEFINITE)
+        errorSnackBar.setAction("Try Again"){
+            viewModel.getOrderByShopId(preferencesHelper.currentShop)
+        }
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.getOrderByShopId(preferencesHelper.currentShop)
+        }
     }
 
     private fun setObservers() {
@@ -63,7 +72,8 @@ class PreparingFragment : Fragment() {
         viewModel.orderByShopIdResponse.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Resource.Status.SUCCESS -> {
-                    progressDialog.dismiss()
+
+                    binding.swipeRefreshLayout.isRefreshing = false
                     ordersList.clear()
                     if(!it.data?.data.isNullOrEmpty()){
                         it.data?.data?.let { it1 ->
@@ -71,25 +81,53 @@ class PreparingFragment : Fragment() {
                         }
                         orderAdapter.notifyDataSetChanged()
                     }
+                    binding.layoutStates.visibility = View.GONE
+                    binding.animationView.visibility = View.GONE
+                    binding.animationView.cancelAnimation()
+                    errorSnackBar.dismiss()
                 }
                 Resource.Status.ERROR ->{
-                    progressDialog.dismiss()
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    binding.layoutStates.visibility = View.GONE
+                    binding.animationView.visibility = View.VISIBLE
+                    binding.animationView.loop(true)
+                    binding.animationView.setAnimation("order_failed_animation.json")
+                    binding.animationView.playAnimation()
+                    errorSnackBar.setText("Something went wrong")
+
                     Toast.makeText(context,"Something went wrong. Error:\n"+it.message, Toast.LENGTH_LONG).show()
                 }
 
                 Resource.Status.LOADING ->{
-                    progressDialog.setMessage("Fetching orders...")
-                    progressDialog.show()
+                    ordersList.clear()
+                    orderAdapter.notifyDataSetChanged()
+                    if (!binding.swipeRefreshLayout.isRefreshing) {
+                        binding.layoutStates.visibility = View.VISIBLE
+                        binding.animationView.visibility = View.GONE
+                    }
+                    errorSnackBar.dismiss()
                 }
 
                 Resource.Status.OFFLINE_ERROR ->{
-                    progressDialog.dismiss()
-                    Toast.makeText(context,"Offline error", Toast.LENGTH_LONG).show()
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    binding.layoutStates.visibility = View.GONE
+                    binding.animationView.visibility = View.VISIBLE
+                    binding.animationView.loop(true)
+                    binding.animationView.setAnimation("no_internet_connection_animation.json")
+                    binding.animationView.playAnimation()
+                    errorSnackBar.setText("No Internet Connection")
+                    Handler().postDelayed({ errorSnackBar.show() }, 500)
                 }
 
                 Resource.Status.EMPTY -> {
-                    progressDialog.dismiss()
-                    Toast.makeText(context,"No orders", Toast.LENGTH_LONG).show()
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    binding.layoutStates.visibility = View.GONE
+                    binding.animationView.visibility = View.VISIBLE
+                    binding.animationView.loop(true)
+                    binding.animationView.setAnimation("empty_animation.json")
+                    binding.animationView.playAnimation()
+                    errorSnackBar.setText("No Orders available")
+                    Handler().postDelayed({ errorSnackBar.show() }, 500)
                 }
             }
         })
@@ -143,7 +181,7 @@ class PreparingFragment : Fragment() {
 
                 var orderModel = OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id)
 
-                if(orderItemListModel!!.transactionModel.orderModel.deliveryPrice==null)
+                if(orderItemListModel.transactionModel.orderModel.deliveryLocation==null)
                     orderModel.orderStatus=AppConstants.STATUS.READY.name
                 else
                     orderModel.orderStatus=AppConstants.STATUS.OUT_FOR_DELIVERY.name

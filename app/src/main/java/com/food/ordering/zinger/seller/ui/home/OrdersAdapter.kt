@@ -73,7 +73,7 @@ class OrdersAdapter(private val orderList: List<OrderItemListModel>, private val
                 }
 
                 AppConstants.STATUS.OUT_FOR_DELIVERY.name -> {
-                    binding.textCancel.visibility = View.GONE
+                    binding.textCancel.visibility = View.INVISIBLE
                     binding.textCancel.isEnabled = false
                     binding.textUpdateStatus.text= AppConstants.STATUS.DELIVERED.name
                 }
