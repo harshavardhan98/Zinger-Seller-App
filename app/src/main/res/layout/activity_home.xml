@@ -48,11 +48,11 @@
                                 android:layout_height="24dp"
                                 android:layout_gravity="center"
                                 android:layout_marginEnd="16dp"
+                                android:layout_marginRight="16dp"
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/ic_menu_white_24dp"
                                 android:tint="@android:color/white"
-                                android:visibility="visible"
-								android:layout_marginRight="16dp" />
+                                android:visibility="visible" />
 
                             <View
                                 android:layout_width="0dp"
@@ -62,19 +62,41 @@
                             <de.hdodenhof.circleimageview.CircleImageView
                                 android:id="@+id/image_company"
                                 android:layout_width="40dp"
-                                android:layout_height="40dp"/>
+                                android:layout_height="40dp" />
                         </LinearLayout>
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="top"
-                            android:gravity="center|start"
-                            android:paddingTop="3dp"
-                            android:id="@+id/text_shop_name"
-                            android:text="Sathyas Main Canteen"
-                            android:textAppearance="@style/AppbarTitle"
-                            android:textColor="@android:color/white" />
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/text_shop_name"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top"
+                                android:layout_weight="1"
+                                android:gravity="center|start"
+                                android:paddingEnd="16dp"
+                                android:paddingTop="3dp"
+                                tools:text="Sathyas Main Canteen"
+                                android:textAppearance="@style/AppbarTitle"
+                                android:textColor="@android:color/white" />
+
+                            <TextView
+                                android:id="@+id/text_shop_rating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:drawableStart="@drawable/ic_star_white"
+                                android:drawablePadding="4dp"
+                                android:fontFamily="@font/open_sans_bold"
+                                android:gravity="right"
+                                tools:text=" 4.5"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
 
                     </LinearLayout>
@@ -84,29 +106,30 @@
 
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabs"
-                    app:tabSelectedTextColor="@color/accent"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    app:tabSelectedTextColor="@color/accent">
 
                     <com.google.android.material.tabs.TabItem
-						android:id="@+id/tab_item_new"
-						android:text="New Orders"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"/>
-					<com.google.android.material.tabs.TabItem
-						android:id="@+id/tab_item_preparing"
-						android:text="Preparing"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"/>
+                        android:id="@+id/tab_item_new"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="New Orders" />
 
-					<com.google.android.material.tabs.TabItem
-						android:id="@+id/tab_item_ready"
-						android:text="Ready"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"/>
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/tab_item_preparing"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preparing" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/tab_item_ready"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ready" />
 
 
-				</com.google.android.material.tabs.TabLayout>
+                </com.google.android.material.tabs.TabLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
 
@@ -114,7 +137,7 @@
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

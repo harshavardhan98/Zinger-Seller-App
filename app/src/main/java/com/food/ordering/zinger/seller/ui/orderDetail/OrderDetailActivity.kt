@@ -53,8 +53,11 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         setObservers()
     }
 
-    private fun getArgs(){
-        order = Gson().fromJson(intent.getStringExtra(AppConstants.ORDER_DETAIL), OrderItemListModel::class.java)
+    private fun getArgs() {
+        order = Gson().fromJson(
+            intent.getStringExtra(AppConstants.ORDER_DETAIL),
+            OrderItemListModel::class.java
+        )
     }
 
     private fun initView() {
@@ -66,40 +69,44 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
 
         var status = order.transactionModel.orderModel.orderStatus
         // CANCELLED_BY_SELLER,CANCELLED_BY_USER, DELIVERED, COMPLETED
-        var terminalStates = arrayOf<String>(AppConstants.STATUS.COMPLETED.name,AppConstants.STATUS.DELIVERED.name,
-                                    AppConstants.STATUS.CANCELLED_BY_USER.name,AppConstants.STATUS.CANCELLED_BY_SELLER.name)
+        var terminalStates = arrayOf<String>(
+            AppConstants.STATUS.COMPLETED.name,
+            AppConstants.STATUS.DELIVERED.name,
+            AppConstants.STATUS.REFUND_INITIATED.name,
+            AppConstants.STATUS.REFUND_INITIATED.name,
+            AppConstants.STATUS.CANCELLED_BY_USER.name,
+            AppConstants.STATUS.CANCELLED_BY_SELLER.name
+        )
 
-        if(terminalStates.contains(status))
-        {
+        if (terminalStates.contains(status)) {
             binding.textCancel.visibility = View.GONE
             binding.textCancel.isEnabled = false
             binding.textUpdateStatus.visibility = View.GONE
             binding.textUpdateStatus.isEnabled = false
-        }
-        else if(status== AppConstants.STATUS.OUT_FOR_DELIVERY.name || status== AppConstants.STATUS.READY.name){
+        } else if (status == AppConstants.STATUS.OUT_FOR_DELIVERY.name || status == AppConstants.STATUS.READY.name) {
             binding.textCancel.visibility = View.GONE
             binding.textCancel.isEnabled = false
         }
 
-        when(order.transactionModel.orderModel.orderStatus){
+        when (order.transactionModel.orderModel.orderStatus) {
             AppConstants.STATUS.PLACED.name -> {
                 binding.textUpdateStatus.text = "ACCEPT"
             }
             AppConstants.STATUS.ACCEPTED.name -> {
-                if(order.transactionModel.orderModel.deliveryLocation==null)
-                    binding.textUpdateStatus.text= AppConstants.STATUS.READY.name
+                if (order.transactionModel.orderModel.deliveryLocation == null)
+                    binding.textUpdateStatus.text = AppConstants.STATUS.READY.name
                 else
-                    binding.textUpdateStatus.text= AppConstants.STATUS.OUT_FOR_DELIVERY.name
+                    binding.textUpdateStatus.text = AppConstants.STATUS.OUT_FOR_DELIVERY.name
             }
             AppConstants.STATUS.READY.name -> {
                 binding.textCancel.visibility = View.INVISIBLE
                 binding.textCancel.isEnabled = false
-                binding.textUpdateStatus.text= "COMPLETE"
+                binding.textUpdateStatus.text = "COMPLETE"
             }
             AppConstants.STATUS.OUT_FOR_DELIVERY.name -> {
                 binding.textCancel.visibility = View.INVISIBLE
                 binding.textCancel.isEnabled = false
-                binding.textUpdateStatus.text= AppConstants.STATUS.DELIVERED.name
+                binding.textUpdateStatus.text = AppConstants.STATUS.DELIVERED.name
             }
         }
 
@@ -107,49 +114,50 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         updateUI()
     }
 
-    private fun updateUI(){
+    private fun updateUI() {
         binding.textUserName.text = order.transactionModel.orderModel.userModel?.name
         try {
             val appDateFormat = SimpleDateFormat("dd MMMM yyyy, hh:mm aaa")
             val dateString = appDateFormat.format(order.transactionModel.orderModel.date)
-            // todo UI does not have date
-            //binding.textOrderTime.text = dateString
-        }catch (e: Exception){
+            binding.textLastUpdateTime.text = dateString
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         //binding.textOrderPrice.text = "₹ " + order.transactionModel.orderModel.price.toInt().toString()
 
-        binding.textOrderId.text = "#"+order.transactionModel.orderModel.id
-        binding.textTransactionId.text = "#"+order.transactionModel.transactionId
-        binding.textTotalPrice.text = "₹"+ order.transactionModel.orderModel.price?.toInt().toString()
-        binding.textPaymentMode.text = "Paid via "+order.transactionModel.paymentMode
-        if(!order.transactionModel.orderModel.cookingInfo.isNullOrEmpty()){
+        binding.textOrderId.text = "#" + order.transactionModel.orderModel.id
+        binding.textTransactionId.text = "#" + order.transactionModel.transactionId
+        binding.textTotalPrice.text =
+            "₹" + order.transactionModel.orderModel.price?.toInt().toString()
+        binding.textPaymentMode.text = "Paid via " + order.transactionModel.paymentMode
+        if (!order.transactionModel.orderModel.cookingInfo.isNullOrEmpty()) {
             binding.textInfo.text = order.transactionModel.orderModel.cookingInfo
-        }else{
+        } else {
             binding.textInfo.visibility = View.GONE
         }
-        if(!order.transactionModel.orderModel.deliveryLocation.isNullOrEmpty()){
+        if (!order.transactionModel.orderModel.deliveryLocation.isNullOrEmpty()) {
             binding.textDeliveryLocation.text = order.transactionModel.orderModel.deliveryLocation
-        }else{
+        } else {
             binding.textDeliveryLocation.text = "Pick up from restaurant"
         }
         var itemTotal = 0.0
         order.orderItemsList.forEach {
-            itemTotal+=it.price
+            itemTotal += it.price
         }
-        binding.textItemTotalPrice.text = "₹"+itemTotal.toInt().toString()
-        if(order.transactionModel.orderModel.deliveryPrice!=null){
-            if(order.transactionModel.orderModel.deliveryPrice!!>0.0){
-                binding.textDeliveryPrice.text = "₹"+ order.transactionModel.orderModel.deliveryPrice!!.toInt().toString()
-            }else{
+        binding.textItemTotalPrice.text = "₹" + itemTotal.toInt().toString()
+        if (order.transactionModel.orderModel.deliveryPrice != null) {
+            if (order.transactionModel.orderModel.deliveryPrice!! > 0.0) {
+                binding.textDeliveryPrice.text =
+                    "₹" + order.transactionModel.orderModel.deliveryPrice!!.toInt().toString()
+            } else {
                 binding.layoutDeliveryCharge.visibility = View.GONE
             }
-        }else{
+        } else {
             binding.layoutDeliveryCharge.visibility = View.GONE
         }
 
-        if(order.transactionModel.orderModel.rating!=null){
-            if(order.transactionModel.orderModel.rating!!>0.0){
+        if (order.transactionModel.orderModel.rating != null) {
+            if (order.transactionModel.orderModel.rating!! > 0.0) {
                 binding.layoutRating.visibility = View.VISIBLE
                 binding.textRating.text = order.transactionModel.orderModel.rating.toString()
             }
@@ -159,36 +167,45 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setListeners() {
         binding.imageCall.setOnClickListener {
-            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + order.transactionModel.orderModel.userModel?.mobile))
+            val intent = Intent(
+                Intent.ACTION_DIAL,
+                Uri.parse("tel:" + order.transactionModel.orderModel.userModel?.mobile)
+            )
             startActivity(intent)
         }
 
         binding.textCancel.setOnClickListener {
-            val orderModel = OrderModel(id = order.transactionModel.orderModel.id,orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name )
+            val orderModel = OrderModel(
+                id = order.transactionModel.orderModel.id,
+                orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
+            )
             viewModel.updateOrder(orderModel)
         }
 
         binding.textUpdateStatus.setOnClickListener {
-            when(order.transactionModel.orderModel.orderStatus){
+            when (order.transactionModel.orderModel.orderStatus) {
 
                 AppConstants.STATUS.PLACED.name -> {
-                    val orderModel = OrderModel(id = order.transactionModel.orderModel.id,orderStatus = AppConstants.STATUS.ACCEPTED.name)
+                    val orderModel = OrderModel(
+                        id = order.transactionModel.orderModel.id,
+                        orderStatus = AppConstants.STATUS.ACCEPTED.name
+                    )
                     viewModel.updateOrder(orderModel)
                 }
 
                 AppConstants.STATUS.ACCEPTED.name -> {
                     var orderModel = OrderModel(id = order.transactionModel.orderModel.id)
 
-                    if(order.transactionModel.orderModel.deliveryLocation==null)
-                        orderModel.orderStatus=AppConstants.STATUS.READY.name
+                    if (order.transactionModel.orderModel.deliveryLocation == null)
+                        orderModel.orderStatus = AppConstants.STATUS.READY.name
                     else
-                        orderModel.orderStatus=AppConstants.STATUS.OUT_FOR_DELIVERY.name
+                        orderModel.orderStatus = AppConstants.STATUS.OUT_FOR_DELIVERY.name
 
                     viewModel.updateOrder(orderModel)
                 }
 
                 AppConstants.STATUS.READY.name,
-                AppConstants.STATUS.OUT_FOR_DELIVERY.name ->{
+                AppConstants.STATUS.OUT_FOR_DELIVERY.name -> {
                     showSecretKeyBottomSheet(order)
                 }
             }
@@ -199,49 +216,60 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setupShopRecyclerView() {
         orderList.addAll(order.orderItemsList)
-        orderAdapter = OrderItemAdapter(applicationContext, orderList, object : OrderItemAdapter.OnItemClickListener {
-            override fun onItemClick(item: OrderItems?, position: Int) {
-                //val intent = Intent(applicationContext, RestaurantActivity::class.java)
-                //intent.putExtra("shop", item)
-                //startActivity(intent)
-            }
-        })
-        binding.recyclerOrderItems.layoutManager = LinearLayoutManager(this@OrderDetailActivity, LinearLayoutManager.VERTICAL, false)
+        orderAdapter = OrderItemAdapter(
+            applicationContext,
+            orderList,
+            object : OrderItemAdapter.OnItemClickListener {
+                override fun onItemClick(item: OrderItems?, position: Int) {
+                    //val intent = Intent(applicationContext, RestaurantActivity::class.java)
+                    //intent.putExtra("shop", item)
+                    //startActivity(intent)
+                }
+            })
+        binding.recyclerOrderItems.layoutManager =
+            LinearLayoutManager(this@OrderDetailActivity, LinearLayoutManager.VERTICAL, false)
         binding.recyclerOrderItems.adapter = orderAdapter
     }
 
-    private fun setObservers(){
+    private fun setObservers() {
 
 
-        viewModel.orderByIdResponse.observe(this, Observer {resource ->
-            if(resource!=null){
+        viewModel.orderByIdResponse.observe(this, Observer { resource ->
+            if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
                         var intent = getIntent()
-                        intent.putExtra(AppConstants.ORDER_DETAIL,Gson().toJson(resource.data?.data))
+                        intent.putExtra(
+                            AppConstants.ORDER_DETAIL,
+                            Gson().toJson(resource.data?.data)
+                        )
                         startActivity(intent)
                         finish()
                     }
 
-                    Resource.Status.ERROR ->{
+                    Resource.Status.ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(this,"Something went wrong. Error:\n"+resource.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            "Something went wrong. Error:\n" + resource.message,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
-                    Resource.Status.LOADING ->{
+                    Resource.Status.LOADING -> {
                         progressDialog.setMessage("Updating orders...")
                         progressDialog.show()
                     }
 
-                    Resource.Status.OFFLINE_ERROR ->{
+                    Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(this,"Offline Error", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Offline Error", Toast.LENGTH_LONG).show()
                     }
 
                     Resource.Status.EMPTY -> {
                         progressDialog.dismiss()
-                        Toast.makeText(this,"Empty Order", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Empty Order", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -249,8 +277,8 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         })
 
 
-        viewModel.updateOrderResponse.observe(this, Observer{ resource ->
-            if(resource!=null){
+        viewModel.updateOrderResponse.observe(this, Observer { resource ->
+            if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
@@ -258,24 +286,28 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                         //order.transactionModel.orderModel.id?.let { viewModel.getOrderById(it) }
                     }
 
-                    Resource.Status.ERROR ->{
+                    Resource.Status.ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(this,"Something went wrong. Error: "+resource.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            "Something went wrong. Error: " + resource.message,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
-                    Resource.Status.LOADING ->{
+                    Resource.Status.LOADING -> {
                         progressDialog.setMessage("Updating orders...")
                         progressDialog.show()
                     }
 
-                    Resource.Status.OFFLINE_ERROR ->{
+                    Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(this,"No internet Connection", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "No internet Connection", Toast.LENGTH_LONG).show()
                     }
 
                     Resource.Status.EMPTY -> {
                         progressDialog.dismiss()
-                        Toast.makeText(this,"Empty Order", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Empty Order", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -292,21 +324,23 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun showSecretKeyBottomSheet(orderItemListModel: OrderItemListModel){
+    private fun showSecretKeyBottomSheet(orderItemListModel: OrderItemListModel) {
         val dialogBinding: BottomSheetSecretKeyBinding =
             DataBindingUtil.inflate(layoutInflater, R.layout.bottom_sheet_secret_key, null, false)
         val dialog = BottomSheetDialog(this)
         dialog.setContentView(dialogBinding.root)
         dialog.show()
         dialogBinding.buttonConfirm.setOnClickListener {
-            if(dialogBinding.editSecretKey.text.toString().isNotEmpty() && dialogBinding.editSecretKey.text.toString().length==6
-                && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))){
-                val orderModel = OrderModel(id=orderItemListModel.transactionModel.orderModel.id)
+            if (dialogBinding.editSecretKey.text.toString()
+                    .isNotEmpty() && dialogBinding.editSecretKey.text.toString().length == 6
+                && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))
+            ) {
+                val orderModel = OrderModel(id = orderItemListModel.transactionModel.orderModel.id)
 
-                if(orderItemListModel.transactionModel.orderModel.deliveryLocation==null)
-                    orderModel.orderStatus=AppConstants.STATUS.COMPLETED.name
+                if (orderItemListModel.transactionModel.orderModel.deliveryLocation == null)
+                    orderModel.orderStatus = AppConstants.STATUS.COMPLETED.name
                 else
-                    orderModel.orderStatus=AppConstants.STATUS.DELIVERED.name
+                    orderModel.orderStatus = AppConstants.STATUS.DELIVERED.name
 
                 orderModel.secretKey = dialogBinding.editSecretKey.text.toString()
                 viewModel.updateOrder(orderModel)

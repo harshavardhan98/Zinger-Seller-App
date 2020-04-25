@@ -7,7 +7,7 @@
 
     </data>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.home.ReadyFragment">
@@ -63,10 +63,10 @@
             android:id="@+id/animation_view"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             android:layout_marginTop="40dp"
             android:visibility="gone" />
 
 
-    </FrameLayout>
+    </RelativeLayout>
 </layout>

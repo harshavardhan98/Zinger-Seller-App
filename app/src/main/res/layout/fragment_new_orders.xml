@@ -66,9 +66,9 @@
             android:id="@+id/animation_view"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             android:layout_marginTop="40dp"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
     </RelativeLayout>
 </layout>

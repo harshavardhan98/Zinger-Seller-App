@@ -143,7 +143,6 @@ class  NewOrdersFragment : Fragment() {
 
                     Resource.Status.ERROR ->{
                         progressDialog.dismiss()
-                        Toast.makeText(context,"Something went wrong. Error:\n"+resource.message, Toast.LENGTH_LONG).show()
                     }
 
                     Resource.Status.LOADING ->{

@@ -142,6 +142,26 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/text_last_update_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="#F7F7F7"
+                    android:drawableStart="@drawable/ic_date"
+                    android:drawablePadding="16dp"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="center|start"
+                    android:padding="16dp"
+                    android:textStyle="bold"
+                    tools:text="24 March 2020, 07:59 pm" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EAEAEA" />
+
+
+                <TextView
                     android:id="@+id/text_delivery_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

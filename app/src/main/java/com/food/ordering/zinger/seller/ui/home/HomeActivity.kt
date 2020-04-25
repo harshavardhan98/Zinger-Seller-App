@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amulyakhare.textdrawable.TextDrawable
 import com.food.ordering.zinger.seller.R
@@ -27,6 +28,7 @@ import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderHistory.OrderHistoryActivity
 import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
 import com.food.ordering.zinger.seller.ui.shopProfile.ShopProfileActivity
+import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -57,15 +59,14 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        shopConfig = preferencesHelper.getShop()!!.filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
+        shopConfig = preferencesHelper.getShop()!!
+            .filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
 
         initView(savedInstanceState)
         setListeners()
         setupMaterialDrawer()
         setObservers()
         viewModel.getOrderByShopId(preferencesHelper.currentShop)
-
-
     }
 
     // This API end point is responsible for inserting the order details. It verifies the availability of all the items in the shop and calculates the total bill
@@ -87,9 +88,21 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         snackButton.setTextColor(ContextCompat.getColor(applicationContext, R.color.accent))
         binding.imageMenu.setOnClickListener(this)
         binding.textShopName.text = shopConfig?.shopModel?.name
+        binding.textShopRating.text = shopConfig?.ratingModel?.rating.toString()+"("+shopConfig?.ratingModel?.userCount+")"
         progressDialog = ProgressDialog(this)
 
-        val fragment = NewOrdersFragment()
+
+        var fragment = Fragment()
+        preferencesHelper.role?.let {
+            if (it == AppConstants.ROLE.DELIVERY.name) {
+                binding.tabs.visibility = View.GONE
+                fragment = ReadyFragment()
+            } else {
+                binding.tabs.visibility = View.VISIBLE
+                fragment = NewOrdersFragment()
+            }
+        }
+
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
                 R.anim.fade_in,
@@ -182,8 +195,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 ContextCompat.getColor(this, R.color.accent)
             )
         headerLayout.imageProfilePic.setImageDrawable(textDrawable)
-        //TODO handle this
-        //binding.imageMenu.setImageDrawable(textDrawable);
     }
 
     private fun setupMaterialDrawer() {
@@ -281,7 +292,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
             accountList.addAll(it)
             for (i in accountList.indices) {
-                accountList[i].isSelected = accountList[i].shopModel.id == preferencesHelper.currentShop
+                accountList[i].isSelected =
+                    accountList[i].shopModel.id == preferencesHelper.currentShop
             }
         }
         accountAdapter = AccountAdapter(accountList, object : AccountAdapter.OnItemClickListener {
@@ -300,6 +312,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .placeholder(R.drawable.ic_shop)
                         .into(binding.imageCompany)
                     binding.textShopName.text = accountList[position].shopModel.name
+                    binding.textShopRating.text = accountList[position].ratingModel.rating.toString() + "("+ accountList[position].ratingModel.userCount+")"
                     this@HomeActivity.recreate()
                     //viewModel.getOrderByShopId(it)
                 }

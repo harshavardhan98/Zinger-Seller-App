@@ -16,9 +16,10 @@
         <ImageView
             android:id="@+id/image_display_image"
             android:src="@drawable/ic_shop"
+            android:scaleType="fitCenter"
             android:gravity="center"
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>

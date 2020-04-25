@@ -29,9 +29,7 @@ import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
-/**
- * A simple [Fragment] subclass.
- */
+
 class ReadyFragment : Fragment() {
 
     lateinit var binding:FragmentReadyBinding
@@ -78,9 +76,17 @@ class ReadyFragment : Fragment() {
                     if(!it.data?.data.isNullOrEmpty()){
                         it.data?.data?.let { it1 ->
                             //ordersList.addAll(it1)
-                            ordersList.addAll(it1.filter { it.transactionModel.orderModel.orderStatus.equals(
-                                AppConstants.STATUS.READY.name)||it.transactionModel.orderModel.orderStatus.equals(
-                                AppConstants.STATUS.OUT_FOR_DELIVERY.name) })
+                            preferencesHelper.role?.let {
+                                if(it == AppConstants.ROLE.DELIVERY.name){
+                                    ordersList.addAll(it1.filter { it.transactionModel.orderModel.orderStatus.equals(
+                                        AppConstants.STATUS.OUT_FOR_DELIVERY.name) })
+                                }else{
+                                    ordersList.addAll(it1.filter { it.transactionModel.orderModel.orderStatus.equals(
+                                        AppConstants.STATUS.READY.name)||it.transactionModel.orderModel.orderStatus.equals(
+                                        AppConstants.STATUS.OUT_FOR_DELIVERY.name) })
+                                }
+                            }
+
                         }
                         orderAdapter.notifyDataSetChanged()
                     }
