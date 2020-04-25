@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.view.menu.MenuAdapter
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
@@ -40,6 +41,14 @@ import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
+/*
+*  1. When no items are available
+*       1.1 show empty screen with add items in the middle
+*       1.2. Hide the availability switch
+*
+*  2. when all items are available the availability switch must be set to true else false
+*
+* */
 
 
 class MenuItemActivity : AppCompatActivity() {
@@ -83,6 +92,18 @@ class MenuItemActivity : AppCompatActivity() {
         mStorageRef = FirebaseStorage.getInstance().getReference()
         binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.switchNotSelected))
 
+        if(menuItemList.isEmpty()){
+            binding.switchDelivery.visibility = View.GONE
+            binding.textAddItem.visibility = View.GONE
+            binding.textAddFirstItem.visibility = View.VISIBLE
+            binding.animationView.visibility = View.VISIBLE
+            binding.animationView.loop(true)
+            binding.animationView.setAnimation("empty_animation.json")
+            binding.animationView.playAnimation()
+        }
+        else if(menuItemList.filter { it.isAvailable == 0 }.size==0)
+            binding.switchDelivery.isChecked = true
+
         preferencesHelper.role?.let {
             if(it.equals(AppConstants.ROLE.SELLER.name)||it.equals(AppConstants.ROLE.DELIVERY.name)){
                 binding.textAddItem.visibility = View.GONE
@@ -116,6 +137,11 @@ class MenuItemActivity : AppCompatActivity() {
             showCategoryAdditionBottomSheet()
         }
 
+        binding.textAddFirstItem.setOnClickListener {
+            showCategoryAdditionBottomSheet()
+        }
+
+
         binding.buttonSaveChanges.setOnClickListener {
             binding.buttonSaveChanges.visibility = View.GONE
             // todo update a list of items
@@ -136,6 +162,27 @@ class MenuItemActivity : AppCompatActivity() {
                             menuItemList.clear()
                             it.data?.filter { it.category == category }
                                 ?.let { it1 -> menuItemList.addAll(it1) }
+
+                            if(menuItemList.isEmpty()){
+                                binding.switchDelivery.visibility = View.GONE
+                                binding.textAddItem.visibility = View.GONE
+                                binding.textAddFirstItem.visibility = View.VISIBLE
+                                binding.animationView.visibility = View.VISIBLE
+                                binding.animationView.loop(true)
+                                binding.animationView.setAnimation("empty_animation.json")
+                                binding.animationView.playAnimation()
+                            }else{
+                                binding.switchDelivery.visibility = View.VISIBLE
+                                binding.textAddItem.visibility = View.VISIBLE
+                                binding.textAddFirstItem.visibility = View.GONE
+                                binding.animationView.visibility = View.GONE
+                                binding.animationView.cancelAnimation()
+
+                                if(it.data?.filter { it.isAvailable == 0 }?.size==0)
+                                        binding.switchDelivery.isChecked = true
+
+                            }
+
                             menuAdapter.notifyDataSetChanged()
                         }
                     }
@@ -182,7 +229,7 @@ class MenuItemActivity : AppCompatActivity() {
                             dialogBinding.imageItem.visibility = View.VISIBLE
                             dialogBinding.textChangeImage.text = "UPDATE IMAGE"
                             Picasso.get().load(resource.data)
-                                .placeholder(R.drawable.ic_shop)
+                                .placeholder(R.drawable.ic_food)
                                 .into(dialogBinding.imageItem)
                         }
 
@@ -464,11 +511,17 @@ class MenuItemActivity : AppCompatActivity() {
             val isAvailable = if (dialogBinding.switchAvailability.isChecked) 1 else 0
             val isVeg = if (dialogBinding.switchVeg.isChecked) 1 else 0
             val name = dialogBinding.editItemName.text.toString()
-            val price = dialogBinding.editItemPrice.text.toString().toDouble()
+            var price = -1.0
+            if(dialogBinding.editItemPrice.text.toString().length>0 && dialogBinding.editItemPrice.text.toString().matches(Regex("\\d+"))){
+                price = dialogBinding.editItemPrice.text.toString().toDouble()
+            }
             val itemUrl =
                 if (changedItemImageUrl.length == 0) item?.photoUrl else changedItemImageUrl
 
-            if (item != null) {
+            if(dialogBinding.editItemPrice.text.toString().length == 0 ||  price == -1.0){
+                Toast.makeText(this, "Please fill the item name and price details", Toast.LENGTH_SHORT).show()
+            }
+            else if (item != null) {
 
                 itemUpdateRequest = ItemModel(
                     category,
@@ -481,6 +534,7 @@ class MenuItemActivity : AppCompatActivity() {
                     null
                 )
                 viewModel.updateItem(itemUpdateRequest!!)
+                dialog.dismiss()
             } else {
 
                 if (changedItemImageUrl.length == 0) {
@@ -500,17 +554,15 @@ class MenuItemActivity : AppCompatActivity() {
                     itemListAddRequest = ArrayList<ItemModel>()
                     itemListAddRequest.add(itemInsertRequest)
                     viewModel.addItem(itemListAddRequest)
+                    dialog.dismiss()
                 }
-
-
             }
-            dialog.dismiss()
         }
 
         dialogBinding.textChangeImage.setOnClickListener { v ->
             ImagePicker.with(this)
                 .galleryOnly()
-                .crop()
+                .cropSquare()
                 .start()
         }
 

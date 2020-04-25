@@ -59,7 +59,7 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
         snackButton.setCompoundDrawables(null, null, null, null)
         snackButton.background = null
         snackButton.setTextColor(ContextCompat.getColor(applicationContext, R.color.accent))
-        val text = "<font color=#000000>Manage and track<br>your </font> <font color=#FF4141>orders</font>"
+        val text = "<font color=#000000>Manage and track</font> <font color=#FF4141>orders</font>"
         binding.titleOrders.text = Html.fromHtml(text)
         //binding.layoutSearch.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         setupShopRecyclerView()

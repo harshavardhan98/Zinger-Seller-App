@@ -86,7 +86,7 @@ class OrdersAdapter(
                 AppConstants.STATUS.OUT_FOR_DELIVERY.name -> {
                     binding.textCancel.visibility = View.INVISIBLE
                     binding.textCancel.isEnabled = false
-                    binding.textUpdateStatus.text = AppConstants.STATUS.DELIVERED.name
+                    binding.textUpdateStatus.text = "DELIVER"
                 }
             }
 

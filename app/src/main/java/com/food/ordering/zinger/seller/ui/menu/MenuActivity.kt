@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -208,13 +209,24 @@ class MenuActivity : AppCompatActivity() {
         dialog.show()
 
         dialogBinding.buttonConfirm.setOnClickListener {
-            var category = CategoryItemListModel(
-                dialogBinding.editCategory.text.toString().toUpperCase(),
-                ArrayList()
-            )
-            categoryItemList.add(category)
-            categoryAdapter.notifyDataSetChanged()
-            dialog.dismiss()
+
+            if(dialogBinding.editCategory.text.toString().length==0 ||
+                !dialogBinding.editCategory.text.toString().matches(Regex("^[a-zA-Z]*\$")))
+            {
+                Toast.makeText(this,"Category name is empty or incorrect format ",Toast.LENGTH_LONG).show()
+
+            }else{
+                val category = CategoryItemListModel(
+                    dialogBinding.editCategory.text.toString().toUpperCase(),
+                    ArrayList()
+                )
+                categoryItemList.add(category)
+                categoryAdapter.notifyDataSetChanged()
+                dialog.dismiss()
+                val intent = Intent(applicationContext, MenuItemActivity::class.java)
+                intent.putExtra(AppConstants.CATEGORY_ITEM_DETAIL, Gson().toJson(category))
+                startActivity(intent)
+            }
         }
     }
 

@@ -126,6 +126,37 @@
             android:textStyle="bold"
             app:backgroundTint="@color/green" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:layout_marginTop="40dp" />
+
+        <TextView
+            android:id="@+id/text_add_first_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_rounded"
+            android:visibility="gone"
+            android:drawableStart="@drawable/ic_add"
+            android:drawablePadding="8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center|start"
+            android:layout_centerHorizontal="true"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp"
+            android:layout_marginTop="16dp"
+            android:text="Add First Item"
+            android:layout_below="@id/animation_view"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
     </RelativeLayout>
 
 </layout>

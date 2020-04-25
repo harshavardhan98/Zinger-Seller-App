@@ -57,6 +57,8 @@
                     android:layout_marginEnd="16dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:hint="eg: Idly"
+                    android:inputType="text"
+                    android:singleLine="true"
                     tools:text="Chicken noodles" />
 
                 <TextView
@@ -71,27 +73,35 @@
                     android:textColor="@color/colorAccent"
                     android:textSize="12sp" />
 
-                <LinearLayout
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:orientation="horizontal">
+                    android:layout_marginEnd="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:paddingBottom="5dp"
                         android:text="₹"
-                        android:textSize="18sp" />
+                        android:textColor="#000000"
+                        android:textSize="20sp" />
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_item_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:enabled="false"
                         android:fontFamily="@font/poppins_semibold"
-                        android:hint="20"
+                        android:hint="eg: 50"
+                        android:paddingLeft="20dp"
+                        android:singleLine="true"
+                        android:inputType="number"
+                        android:textColor="#000000"
                         tools:text="50" />
-                </LinearLayout>
+                </RelativeLayout>
 
                 <TextView
                     android:layout_width="match_parent"

@@ -107,16 +107,6 @@
 
                     <include layout="@layout/shimmering_item_category" />
 
-                    <include layout="@layout/shimmering_item_category" />
-
-                    <include layout="@layout/shimmering_item_category" />
-
-                    <include layout="@layout/shimmering_item_category" />
-
-                    <include layout="@layout/shimmering_item_category" />
-
-                    <include layout="@layout/shimmering_item_category" />
-
                 </LinearLayout>
             </com.facebook.shimmer.ShimmerFrameLayout>
 

@@ -156,6 +156,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             binding.layoutDeliveryCharge.visibility = View.GONE
         }
 
+        binding.layoutRating.visibility = View.INVISIBLE
         if (order.transactionModel.orderModel.rating != null) {
             if (order.transactionModel.orderModel.rating!! > 0.0) {
                 binding.layoutRating.visibility = View.VISIBLE

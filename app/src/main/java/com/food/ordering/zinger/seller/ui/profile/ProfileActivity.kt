@@ -68,6 +68,9 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun setListener() {
 
+        binding.imageClose.setOnClickListener {
+            onBackPressed()
+        }
         countDownTimer = object : CountDownTimer(10000, 1000) {
 
             override fun onTick(millisUntilFinished: Long) {

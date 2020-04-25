@@ -88,7 +88,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         snackButton.setTextColor(ContextCompat.getColor(applicationContext, R.color.accent))
         binding.imageMenu.setOnClickListener(this)
         binding.textShopName.text = shopConfig?.shopModel?.name
-        binding.textShopRating.text = shopConfig?.ratingModel?.rating.toString()+"("+shopConfig?.ratingModel?.userCount+")"
+        binding.textShopRating.text = shopConfig?.ratingModel?.rating.toString()+" ("+shopConfig?.ratingModel?.userCount+")"
         progressDialog = ProgressDialog(this)
 
 
@@ -195,6 +195,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 ContextCompat.getColor(this, R.color.accent)
             )
         headerLayout.imageProfilePic.setImageDrawable(textDrawable)
+
     }
 
     private fun setupMaterialDrawer() {
@@ -202,11 +203,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         val profileItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("My Profile")
             .withIcon(R.drawable.ic_drawer_user)
         val shopProfileItem =
-            PrimaryDrawerItem().withIdentifier(++identifier).withName("My Shop Profile")
+            PrimaryDrawerItem().withIdentifier(++identifier).withName("Shop Profile")
                 .withIcon(R.drawable.ic_home)
-        val ordersItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Your Orders")
+        val ordersItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Past Orders")
             .withIcon(R.drawable.ic_drawer_past_rides)
-        val menuItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Menu")
+        val menuItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Shop Menu")
             .withIcon(R.drawable.ic_drawer_order)
         val contactUsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contact Us")
             .withIcon(R.drawable.ic_drawer_mail)
@@ -312,7 +313,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .placeholder(R.drawable.ic_shop)
                         .into(binding.imageCompany)
                     binding.textShopName.text = accountList[position].shopModel.name
-                    binding.textShopRating.text = accountList[position].ratingModel.rating.toString() + "("+ accountList[position].ratingModel.userCount+")"
+                    binding.textShopRating.text = accountList[position].ratingModel.rating.toString() + " ("+ accountList[position].ratingModel.userCount+")"
                     this@HomeActivity.recreate()
                     //viewModel.getOrderByShopId(it)
                 }
@@ -335,7 +336,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-
+        shopConfig = preferencesHelper.getShop()!!.filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
+        binding.textShopName.text = shopConfig?.shopModel?.name
+        binding.textShopRating.text = shopConfig?.ratingModel?.rating.toString()+" ("+shopConfig?.ratingModel?.userCount+")"
         updateHeaderLayoutUI()
     }
 
