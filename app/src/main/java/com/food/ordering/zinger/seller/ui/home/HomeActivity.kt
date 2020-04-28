@@ -31,6 +31,7 @@ import com.food.ordering.zinger.seller.ui.orderHistory.OrderHistoryActivity
 import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
 import com.food.ordering.zinger.seller.ui.shopProfile.ShopProfileActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -297,22 +298,23 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         })
 
         viewModel.getShopDetailResponse.observe(this, Observer { resource ->
-            if(resource!=null){
-                when(resource.status){
+            if (resource != null) {
+                when (resource.status) {
                     Resource.Status.SUCCESS -> {
-                        if (resource.data?.data!=null){
+                        if (resource.data?.data != null) {
                             var latestShopDetail = resource.data.data
                             var shopConfigurationList = preferencesHelper.getShop()
                             if (shopConfigurationList != null) {
-                                for(shop in shopConfigurationList){
-                                    if(shop.shopModel.id == latestShopDetail.shopModel.id)
+                                for (shop in shopConfigurationList) {
+                                    if (shop.shopModel.id == latestShopDetail.shopModel.id)
                                         shop.shopModel = latestShopDetail.shopModel
-                                        shop.configurationModel = latestShopDetail.configurationModel
-                                        shop.ratingModel = latestShopDetail.ratingModel
+                                    shop.configurationModel = latestShopDetail.configurationModel
+                                    shop.ratingModel = latestShopDetail.ratingModel
                                 }
                                 preferencesHelper.shop = Gson().toJson(shopConfigurationList)
                                 shopConfig = preferencesHelper.getShop()!!
-                                    .filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
+                                    .filter { it.shopModel.id == preferencesHelper.currentShop }
+                                    .get(0)
                                 binding.textShopName.text = shopConfig?.shopModel?.name
                                 binding.textShopRating.text =
                                     shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
@@ -320,10 +322,14 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                     Resource.Status.ERROR -> {
-                        Toast.makeText(this,"Failed to fetch latest shop details",Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            "Failed to fetch latest shop details",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                     Resource.Status.OFFLINE_ERROR -> {
-                        Toast.makeText(this,"Device Offline",Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Device Offline", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -417,28 +423,36 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun setUpFCM() {
-        preferencesHelper.isFCMTokenUpdated.let {
-            if (it == false) {
-                preferencesHelper.fcmToken = FirebaseInstanceId.getInstance().getToken()
-
-                preferencesHelper.fcmToken?.let {
-                    val fcmTokenList = ArrayList<String>()
-                    fcmTokenList.add(it)
-                    val userModelRequest = UserModel(
-                        id = preferencesHelper.id,
-                        name = preferencesHelper.name,
-                        email = preferencesHelper.email,
-                        mobile = preferencesHelper.mobile,
-                        notificationToken = fcmTokenList
-                    )
-                    viewModel.updateProfile(userModel = userModelRequest)
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("FCM", "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
                 }
-            }
-        }
+                // Get new Instance ID token
+                val token = task.result?.token
+                if(preferencesHelper.fcmToken!=token) {
+                    preferencesHelper.fcmToken = token
+                    val msg = "FCM TOKEN " + token
+                    Log.d("FCM", msg)
+                    preferencesHelper.fcmToken?.let { fcmToken ->
+                        val userModelRequest = UserModel(
+                            id = preferencesHelper.id,
+                            name = preferencesHelper.name,
+                            email = preferencesHelper.email,
+                            mobile = preferencesHelper.mobile,
+                            notificationToken = arrayListOf(fcmToken)
+                        )
+                        viewModel.updateProfile(userModel = userModelRequest)
+                    }
+                }
+            })
 
-        if(preferencesHelper.isFCMTopicSubScribed==null || preferencesHelper.isFCMTopicSubScribed==false){
+
+        if (preferencesHelper.isFCMTopicSubScribed == null || preferencesHelper.isFCMTopicSubScribed == false) {
             preferencesHelper.getShop()?.forEach {
-                FirebaseMessaging.getInstance().subscribeToTopic(it.shopModel.name?.split(" ")?.get(0)+it.shopModel.id);
+                FirebaseMessaging.getInstance()
+                    .subscribeToTopic(it.shopModel.name?.split(" ")?.get(0) + it.shopModel.id);
             }
             preferencesHelper.isFCMTopicSubScribed = true
         }
