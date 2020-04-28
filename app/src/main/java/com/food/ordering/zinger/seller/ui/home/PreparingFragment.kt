@@ -26,6 +26,7 @@ import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderDetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -67,7 +68,7 @@ class PreparingFragment : Fragment() {
         snackButton.setCompoundDrawables(null, null, null, null)
         snackButton.background = null
         snackButton.setTextColor(ContextCompat.getColor(context!!, R.color.accent))
-        errorSnackBar.setAction("Try Again"){
+        errorSnackBar.setAction("Try Again") {
             viewModel.getOrderByShopId(preferencesHelper.currentShop)
         }
         errorSnackBar.dismiss()
@@ -84,23 +85,30 @@ class PreparingFragment : Fragment() {
 
                     binding.swipeRefreshLayout.isRefreshing = false
                     ordersList.clear()
-                    if(!it.data.isNullOrEmpty()){
+                    if (!it.data.isNullOrEmpty()) {
                         it.data?.let { it1 ->
-                            ordersList.addAll(it1.filter { it.orderStatusModel.last().orderStatus.equals(AppConstants.STATUS.ACCEPTED.name) })
+                            ordersList.addAll(it1.filter {
+                                it.orderStatusModel.last().orderStatus.equals(
+                                    AppConstants.STATUS.ACCEPTED.name
+                                )
+                            })
                         }
-                        ordersList.forEach { it.transactionModel.orderModel.orderStatus = it.orderStatusModel.last().orderStatus }
+                        ordersList.forEach {
+                            it.transactionModel.orderModel.orderStatus =
+                                it.orderStatusModel.last().orderStatus
+                        }
                         orderAdapter.notifyDataSetChanged()
                     }
-                    if(ordersList.isEmpty())
+                    if (ordersList.isEmpty())
                         showEmptyStateAnimation()
-                    else{
+                    else {
                         binding.layoutStates.visibility = View.GONE
                         binding.animationView.visibility = View.GONE
                         binding.animationView.cancelAnimation()
                         errorSnackBar.dismiss()
                     }
                 }
-                Resource.Status.ERROR ->{
+                Resource.Status.ERROR -> {
                     binding.swipeRefreshLayout.isRefreshing = false
                     binding.layoutStates.visibility = View.GONE
                     binding.animationView.visibility = View.VISIBLE
@@ -109,10 +117,14 @@ class PreparingFragment : Fragment() {
                     binding.animationView.playAnimation()
                     errorSnackBar.setText("Something went wrong")
 
-                    Toast.makeText(context,"Something went wrong. Error:\n"+it.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "Something went wrong. Error:\n" + it.message,
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
 
-                Resource.Status.LOADING ->{
+                Resource.Status.LOADING -> {
                     ordersList.clear()
                     orderAdapter.notifyDataSetChanged()
                     if (!binding.swipeRefreshLayout.isRefreshing) {
@@ -122,7 +134,7 @@ class PreparingFragment : Fragment() {
                     errorSnackBar.dismiss()
                 }
 
-                Resource.Status.OFFLINE_ERROR ->{
+                Resource.Status.OFFLINE_ERROR -> {
                     binding.swipeRefreshLayout.isRefreshing = false
                     binding.layoutStates.visibility = View.GONE
                     binding.animationView.visibility = View.VISIBLE
@@ -139,32 +151,36 @@ class PreparingFragment : Fragment() {
             }
         })
 
-        homeViewModel.updateOrderResponse.observe(viewLifecycleOwner,Observer{resource ->
-            if(resource!=null){
+        homeViewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer { resource ->
+            if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
                         viewModel.getOrderByShopId(preferencesHelper.currentShop)
                     }
 
-                    Resource.Status.ERROR ->{
+                    Resource.Status.ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"Something went wrong. Error:\n"+resource.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            "Something went wrong. Error:\n" + resource.message,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
-                    Resource.Status.LOADING ->{
+                    Resource.Status.LOADING -> {
                         progressDialog.setMessage("Updating orders...")
                         progressDialog.show()
                     }
 
-                    Resource.Status.OFFLINE_ERROR ->{
+                    Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"Offline error", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Offline error", Toast.LENGTH_LONG).show()
                     }
 
                     Resource.Status.EMPTY -> {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"No orders", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "No orders", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -177,36 +193,62 @@ class PreparingFragment : Fragment() {
     var ordersList: ArrayList<OrderItemListModel> = ArrayList()
     lateinit var orderAdapter: OrdersAdapter
     private fun updateUI() {
-        println("Order list size "+ordersList.size)
-        orderAdapter = OrdersAdapter(ordersList, object: OrdersAdapter.OnItemClickListener{
+        println("Order list size " + ordersList.size)
+        orderAdapter = OrdersAdapter(ordersList, object : OrdersAdapter.OnItemClickListener {
             override fun onItemClick(item: OrderItemListModel?, position: Int) {
                 val intent = Intent(context, OrderDetailActivity::class.java)
                 intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(item))
                 startActivity(intent)
             }
+
             override fun onUpdateClick(orderItemListModel: OrderItemListModel?, position: Int) {
 
-                var orderModel = OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id)
+                var orderModel =
+                    OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id)
+                var msg = ""
+                if (orderItemListModel.transactionModel.orderModel.deliveryLocation == null) {
+                    orderModel.orderStatus = AppConstants.STATUS.READY.name
+                    msg =  getString(R.string.pickup_order_request)
+                } else {
+                    orderModel.orderStatus = AppConstants.STATUS.OUT_FOR_DELIVERY.name
+                    msg =  getString(R.string.delivery_order_request)
+                }
 
-                if(orderItemListModel.transactionModel.orderModel.deliveryLocation==null)
-                    orderModel.orderStatus=AppConstants.STATUS.READY.name
-                else
-                    orderModel.orderStatus=AppConstants.STATUS.OUT_FOR_DELIVERY.name
-
-                homeViewModel.updateOrder(orderModel)
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(getString(R.string.confirm_order_status_update))
+                    .setMessage(msg)
+                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        homeViewModel.updateOrder(orderModel)
+                    }
+                    .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                    .show()
             }
+
             override fun onCancelClick(orderItemListModel: OrderItemListModel?, position: Int) {
-                val orderModel = OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id,orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name )
-                homeViewModel.updateOrder(orderModel)
+
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(getString(R.string.confirm_order_status_update))
+                    .setMessage(R.string.cancel_order_request)
+                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        val orderModel = OrderModel(
+                            id = orderItemListModel!!.transactionModel.orderModel.id,
+                            orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
+                        )
+                        homeViewModel.updateOrder(orderModel)
+                    }
+                    .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                    .show()
+
             }
 
         })
-        binding.recyclerOrders.layoutManager = LinearLayoutManager(context!!,LinearLayoutManager.VERTICAL,false)
+        binding.recyclerOrders.layoutManager =
+            LinearLayoutManager(context!!, LinearLayoutManager.VERTICAL, false)
         binding.recyclerOrders.adapter = orderAdapter
         orderAdapter.notifyDataSetChanged()
     }
 
-    fun showEmptyStateAnimation(){
+    fun showEmptyStateAnimation() {
         binding.swipeRefreshLayout.isRefreshing = false
         binding.layoutStates.visibility = View.GONE
         binding.animationView.visibility = View.VISIBLE

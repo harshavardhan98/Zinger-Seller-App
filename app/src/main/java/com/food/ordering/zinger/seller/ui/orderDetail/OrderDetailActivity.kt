@@ -28,6 +28,7 @@ import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.food.ordering.zinger.seller.utils.AppConstants.REQUEST_PHONE_CALL
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -67,7 +68,8 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         progressDialog.setCancelable(false)
 
 
-        var status = order.transactionModel.orderModel.orderStatus
+        var status = order.orderStatusModel.last().orderStatus
+        order.transactionModel.orderModel.orderStatus = status
         // CANCELLED_BY_SELLER,CANCELLED_BY_USER, DELIVERED, COMPLETED
         var terminalStates = arrayOf<String>(
             AppConstants.STATUS.COMPLETED.name,
@@ -88,7 +90,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             binding.textCancel.isEnabled = false
         }
 
-        when (order.transactionModel.orderModel.orderStatus) {
+        when (status) {
             AppConstants.STATUS.PLACED.name -> {
                 binding.textUpdateStatus.text = "ACCEPT"
             }
@@ -177,37 +179,73 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 Intent.ACTION_DIAL,
                 Uri.parse("tel:" + order.transactionModel.orderModel.userModel?.mobile)
             )
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
+            finish()
         }
 
         binding.textCancel.setOnClickListener {
-            val orderModel = OrderModel(
-                id = order.transactionModel.orderModel.id,
-                orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
-            )
-            viewModel.updateOrder(orderModel)
+            MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.confirm_order_status_update))
+                .setMessage(getString(R.string.cancel_order_request))
+                .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                    val orderModel = OrderModel(
+                        id = order.transactionModel.orderModel.id,
+                        orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
+                    )
+                    viewModel.updateOrder(orderModel)
+                }
+                .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                .show()
+
         }
 
         binding.textUpdateStatus.setOnClickListener {
             when (order.transactionModel.orderModel.orderStatus) {
 
                 AppConstants.STATUS.PLACED.name -> {
-                    val orderModel = OrderModel(
-                        id = order.transactionModel.orderModel.id,
-                        orderStatus = AppConstants.STATUS.ACCEPTED.name
-                    )
-                    viewModel.updateOrder(orderModel)
+
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle(getString(R.string.confirm_order_status_update))
+                        .setMessage(getString(R.string.accept_order_request))
+                        .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                            val orderModel = OrderModel(
+                                id = order.transactionModel.orderModel.id,
+                                orderStatus = AppConstants.STATUS.ACCEPTED.name
+                            )
+                            viewModel.updateOrder(orderModel)
+
+                        }
+                        .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                        .show()
+
+
                 }
 
                 AppConstants.STATUS.ACCEPTED.name -> {
+
                     var orderModel = OrderModel(id = order.transactionModel.orderModel.id)
-
-                    if (order.transactionModel.orderModel.deliveryLocation == null)
+                    var msg=""
+                    if (order.transactionModel.orderModel.deliveryLocation == null){
                         orderModel.orderStatus = AppConstants.STATUS.READY.name
-                    else
+                        msg =  getString(R.string.pickup_order_request)
+                    }
+                    else{
                         orderModel.orderStatus = AppConstants.STATUS.OUT_FOR_DELIVERY.name
+                        msg =  getString(R.string.delivery_order_request)
+                    }
 
-                    viewModel.updateOrder(orderModel)
+
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle(getString(R.string.confirm_order_status_update))
+                        .setMessage(msg)
+                        .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                            viewModel.updateOrder(orderModel)
+                        }
+                        .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                        .show()
+
+
                 }
 
                 AppConstants.STATUS.READY.name,
@@ -264,7 +302,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                     Resource.Status.LOADING -> {
-                        progressDialog.setMessage("Fetching latest order status...")
+                        progressDialog.setMessage("Fetching data...")
                         progressDialog.show()
                     }
 
@@ -288,8 +326,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                        // todo get order by id must be done
-                        //order.transactionModel.orderModel.id?.let { viewModel.getOrderById(it) }
+                        order.transactionModel.orderModel.id?.let { viewModel.getOrderById(it) }
                     }
 
                     Resource.Status.ERROR -> {

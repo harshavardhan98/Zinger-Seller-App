@@ -24,6 +24,7 @@ import com.food.ordering.zinger.seller.databinding.FragmentNewOrdersBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderDetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -82,7 +83,7 @@ class NewOrdersFragment : Fragment() {
                         binding.swipeRefreshLayout.isRefreshing = false
                         //progressDialog.dismiss()
                         ordersList.clear()
-                        if (resource.data.isNullOrEmpty()) {
+                        if (!resource.data.isNullOrEmpty()) {
                             resource.data?.let { it1 ->
                                 ordersList.addAll(it1.filter {
                                     it.orderStatusModel.last().orderStatus.equals(
@@ -192,7 +193,15 @@ class NewOrdersFragment : Fragment() {
                     id = orderItemListModel!!.transactionModel.orderModel.id,
                     orderStatus = AppConstants.STATUS.ACCEPTED.name
                 )
-                homeViewModel.updateOrder(orderModel)
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(getString(R.string.confirm_order_status_update))
+                    .setMessage(getString(R.string.accept_order_request))
+                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        homeViewModel.updateOrder(orderModel)
+                    }
+                    .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                    .show()
+
             }
 
             override fun onCancelClick(orderItemListModel: OrderItemListModel?, position: Int) {
@@ -200,7 +209,16 @@ class NewOrdersFragment : Fragment() {
                     id = orderItemListModel!!.transactionModel.orderModel.id,
                     orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
                 )
-                homeViewModel.updateOrder(orderModel)
+
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(getString(R.string.confirm_order_status_update))
+                    .setMessage(getString(R.string.cancel_order_request))
+                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        homeViewModel.updateOrder(orderModel)
+                    }
+                    .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                    .show()
+
             }
         })
         binding.recyclerOrders.layoutManager =

@@ -10,6 +10,14 @@
     <string name="hint_search_outlets_or_dish">Search Outlets or Dish</string>
     <string name="otp_header">Enter the six digit OTP which has been sent to your mobile number: </string>
 
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_order_status_update">Order Status Update</string>
+    <string name="accept_order_request">Do you want to accept the order?</string>
+    <string name="pickup_order_request">Is the order ready for pickup?</string>
+    <string name="delivery_order_request">Is the order ready for delivery?</string>
+    <string name="cancel_order_request">"Do you want to cancel the order?"</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
