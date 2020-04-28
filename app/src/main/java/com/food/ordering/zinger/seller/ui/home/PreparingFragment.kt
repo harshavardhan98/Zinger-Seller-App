@@ -211,7 +211,7 @@ class PreparingFragment : Fragment() {
         binding.animationView.loop(true)
         binding.animationView.setAnimation("empty_animation.json")
         binding.animationView.playAnimation()
-        errorSnackBar.setText("No Orders with preparing status")
+        errorSnackBar.setText("No Orders accepted yet")
         Handler().postDelayed({ errorSnackBar.show() }, 500)
     }
 

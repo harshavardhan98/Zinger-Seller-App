@@ -34,11 +34,12 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class ReadyFragment : Fragment() {
 
-    lateinit var binding:FragmentReadyBinding
+    lateinit var binding: FragmentReadyBinding
     private val viewModel: OrderViewModel by sharedViewModel()
     private val preferencesHelper: PreferencesHelper by inject()
     private lateinit var progressDialog: ProgressDialog
     private lateinit var errorSnackBar: Snackbar
+    private lateinit var updateErrorSnackbar: Snackbar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,11 +60,12 @@ class ReadyFragment : Fragment() {
         updateUI()
         progressDialog = ProgressDialog(activity)
         errorSnackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_INDEFINITE)
+        updateErrorSnackbar = Snackbar.make(binding.root, " ", Snackbar.LENGTH_INDEFINITE)
         val snackButton: Button = errorSnackBar.view.findViewById(R.id.snackbar_action)
         snackButton.setCompoundDrawables(null, null, null, null)
         snackButton.background = null
         snackButton.setTextColor(ContextCompat.getColor(context!!, R.color.accent))
-        errorSnackBar.setAction("Try Again"){
+        errorSnackBar.setAction("Try Again") {
             viewModel.getOrderByShopId(preferencesHelper.currentShop)
         }
         errorSnackBar.dismiss()
@@ -80,46 +82,56 @@ class ReadyFragment : Fragment() {
                 Resource.Status.SUCCESS -> {
                     binding.swipeRefreshLayout.isRefreshing = false
                     ordersList.clear()
-                    if(!it.data?.data.isNullOrEmpty()){
+                    if (!it.data?.data.isNullOrEmpty()) {
                         it.data?.data?.let { it1 ->
                             //ordersList.addAll(it1)
                             preferencesHelper.role?.let {
-                                if(it == AppConstants.ROLE.DELIVERY.name){
-                                    ordersList.addAll(it1.filter { it.orderStatusModel.last().orderStatus.equals(
-                                        AppConstants.STATUS.OUT_FOR_DELIVERY.name) })
-                                }else{
-                                    ordersList.addAll(it1.filter { it.orderStatusModel.last().orderStatus.equals(
-                                        AppConstants.STATUS.READY.name)||it.orderStatusModel.last().orderStatus.equals(
-                                        AppConstants.STATUS.OUT_FOR_DELIVERY.name) })
+                                if (it == AppConstants.ROLE.DELIVERY.name) {
+                                    ordersList.addAll(it1.filter {
+                                        it.orderStatusModel.last().orderStatus.equals(
+                                            AppConstants.STATUS.OUT_FOR_DELIVERY.name
+                                        )
+                                    })
+                                } else {
+                                    ordersList.addAll(it1.filter {
+                                        it.orderStatusModel.last().orderStatus.equals(
+                                            AppConstants.STATUS.READY.name
+                                        ) || it.orderStatusModel.last().orderStatus.equals(
+                                            AppConstants.STATUS.OUT_FOR_DELIVERY.name
+                                        )
+                                    })
                                 }
-                                ordersList.forEach { it.transactionModel.orderModel.orderStatus = it.orderStatusModel.last().orderStatus }
+                                ordersList.forEach {
+                                    it.transactionModel.orderModel.orderStatus =
+                                        it.orderStatusModel.last().orderStatus
+                                }
                             }
                         }
                         orderAdapter.notifyDataSetChanged()
                     }
-                    if(ordersList.isEmpty())
+                    if (ordersList.isEmpty())
                         showEmptyStateAnimation()
-                    else{
+                    else {
                         binding.layoutStates.visibility = View.GONE
                         binding.animationView.visibility = View.GONE
                         binding.animationView.cancelAnimation()
                         errorSnackBar.dismiss()
                     }
                 }
-                Resource.Status.ERROR ->{
+                Resource.Status.ERROR -> {
                     binding.swipeRefreshLayout.isRefreshing = false
                     binding.layoutStates.visibility = View.GONE
                     binding.animationView.visibility = View.VISIBLE
                     binding.animationView.loop(true)
                     binding.animationView.setAnimation("order_failed_animation.json")
                     binding.animationView.playAnimation()
-                    errorSnackBar.setText("Error: "+it.message)
+                    errorSnackBar.setText("Error: " + it.message)
 
                     //Toast.makeText(context,"Something went wrong. Error:\n"+it.message, Toast.LENGTH_LONG).show()
 
                 }
 
-                Resource.Status.LOADING ->{
+                Resource.Status.LOADING -> {
                     ordersList.clear()
                     orderAdapter.notifyDataSetChanged()
                     if (!binding.swipeRefreshLayout.isRefreshing) {
@@ -129,7 +141,7 @@ class ReadyFragment : Fragment() {
                     errorSnackBar.dismiss()
                 }
 
-                Resource.Status.OFFLINE_ERROR ->{
+                Resource.Status.OFFLINE_ERROR -> {
                     binding.swipeRefreshLayout.isRefreshing = false
                     binding.layoutStates.visibility = View.GONE
                     binding.animationView.visibility = View.VISIBLE
@@ -142,39 +154,43 @@ class ReadyFragment : Fragment() {
 
                 Resource.Status.EMPTY -> {
                     showEmptyStateAnimation()
-
                 }
 
 
             }
         })
 
-        viewModel.updateOrderResponse.observe(viewLifecycleOwner,Observer{resource ->
-            if(resource!=null){
+        viewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer { resource ->
+            if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
                         viewModel.getOrderByShopId(preferencesHelper.currentShop)
                     }
 
-                    Resource.Status.ERROR ->{
+                    Resource.Status.ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"Something went wrong. Error:\n"+resource.message, Toast.LENGTH_LONG).show()
+                        resource.message?.let {
+                            if (it.toLowerCase().contains("secret")) {
+                                updateErrorSnackbar.setText(resource.message)
+                                updateErrorSnackbar.show()
+                            }
+                        }
                     }
 
-                    Resource.Status.LOADING ->{
+                    Resource.Status.LOADING -> {
                         progressDialog.setMessage("Updating orders...")
                         progressDialog.show()
                     }
 
-                    Resource.Status.OFFLINE_ERROR ->{
+                    Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"Offline error", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Offline error", Toast.LENGTH_LONG).show()
                     }
 
                     Resource.Status.EMPTY -> {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"No orders", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "No orders", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -186,8 +202,8 @@ class ReadyFragment : Fragment() {
     var ordersList: ArrayList<OrderItemListModel> = ArrayList()
     lateinit var orderAdapter: OrdersAdapter
     private fun updateUI() {
-        println("Order list size "+ordersList.size)
-        orderAdapter = OrdersAdapter(ordersList, object: OrdersAdapter.OnItemClickListener{
+        println("Order list size " + ordersList.size)
+        orderAdapter = OrdersAdapter(ordersList, object : OrdersAdapter.OnItemClickListener {
             override fun onItemClick(item: OrderItemListModel?, position: Int) {
                 val intent = Intent(context, OrderDetailActivity::class.java)
                 intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(item))
@@ -201,27 +217,32 @@ class ReadyFragment : Fragment() {
             override fun onCancelClick(orderItemListModel: OrderItemListModel?, position: Int) {
             }
         })
-        binding.recyclerOrders.layoutManager = LinearLayoutManager(context!!,
-            LinearLayoutManager.VERTICAL,false)
+        binding.recyclerOrders.layoutManager = LinearLayoutManager(
+            context!!,
+            LinearLayoutManager.VERTICAL, false
+        )
         binding.recyclerOrders.adapter = orderAdapter
         orderAdapter.notifyDataSetChanged()
     }
 
-    private fun showSecretKeyBottomSheet(orderItemListModel: OrderItemListModel){
+    private fun showSecretKeyBottomSheet(orderItemListModel: OrderItemListModel) {
         val dialogBinding: BottomSheetSecretKeyBinding =
             DataBindingUtil.inflate(layoutInflater, R.layout.bottom_sheet_secret_key, null, false)
         val dialog = BottomSheetDialog(context!!)
         dialog.setContentView(dialogBinding.root)
         dialog.show()
         dialogBinding.buttonConfirm.setOnClickListener {
-            if(dialogBinding.editSecretKey.text.toString().isNotEmpty() && dialogBinding.editSecretKey.text.toString().length==6
-                && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))){
-                val orderModel = OrderModel(id=orderItemListModel!!.transactionModel.orderModel.id)
+            if (dialogBinding.editSecretKey.text.toString()
+                    .isNotEmpty() && dialogBinding.editSecretKey.text.toString().length == 6
+                && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))
+            ) {
+                val orderModel =
+                    OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id)
 
-                if(orderItemListModel!!.transactionModel.orderModel.deliveryLocation==null)
-                    orderModel.orderStatus=AppConstants.STATUS.COMPLETED.name
+                if (orderItemListModel!!.transactionModel.orderModel.deliveryLocation == null)
+                    orderModel.orderStatus = AppConstants.STATUS.COMPLETED.name
                 else
-                    orderModel.orderStatus=AppConstants.STATUS.DELIVERED.name
+                    orderModel.orderStatus = AppConstants.STATUS.DELIVERED.name
 
                 orderModel.secretKey = dialogBinding.editSecretKey.text.toString()
                 viewModel.updateOrder(orderModel)
@@ -231,20 +252,21 @@ class ReadyFragment : Fragment() {
     }
 
 
-    fun showEmptyStateAnimation(){
+    fun showEmptyStateAnimation() {
         binding.swipeRefreshLayout.isRefreshing = false
         binding.layoutStates.visibility = View.GONE
         binding.animationView.visibility = View.VISIBLE
         binding.animationView.loop(true)
         binding.animationView.setAnimation("empty_animation.json")
         binding.animationView.playAnimation()
-        errorSnackBar.setText("No Orders with ready status available")
+        errorSnackBar.setText("No Orders is ready for pickup or delivery")
         Handler().postDelayed({ errorSnackBar.show() }, 500)
     }
 
     override fun onPause() {
         super.onPause()
         errorSnackBar.dismiss()
+        updateErrorSnackbar.dismiss()
     }
 
 }
