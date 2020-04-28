@@ -5,15 +5,15 @@ import retrofit2.Retrofit
 
 class ItemRepository(private val retrofit: Retrofit) {
 
-    val rf = retrofit.create(CustomApi::class.java)
+    val service = retrofit.create(CustomApi::class.java)
 
-    suspend fun getShopMenu(shopId: Int) = rf.getShopMenu(shopId);
+    suspend fun getShopMenu(shopId: Int) = service.getShopMenu(shopId);
 
-    suspend fun addItem(item: List<ItemModel>) = rf.addItem(item)
+    suspend fun addItem(item: List<ItemModel>) = service.addItem(item)
 
-    suspend fun updateItem(item: ItemModel) = rf.updateItem(item)
+    suspend fun updateItem(item: ItemModel) = service.updateItem(item)
 
-    suspend fun deleteItem(itemId: Int) = rf.deleteItem(itemId)
+    suspend fun deleteItem(itemId: Int) = service.deleteItem(itemId)
 
-    suspend fun unDeleteItem(itemId: Int) = rf.unDeleteItem(itemId)
+    suspend fun unDeleteItem(itemId: Int) = service.unDeleteItem(itemId)
 }

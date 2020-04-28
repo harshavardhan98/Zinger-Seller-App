@@ -5,10 +5,10 @@ import retrofit2.Retrofit
 
 class ShopRepository(private val retrofit: Retrofit) {
 
-    val retrofitVar =retrofit.create(CustomApi::class.java)
+    val service =retrofit.create(CustomApi::class.java)
 
-    suspend fun updateShopConfiguration(shopConfigRequest: ConfigurationModel) = retrofitVar.updateShopConfiguration(shopConfigRequest)
+    suspend fun updateShopConfiguration(shopConfigRequest: ConfigurationModel) = service.updateShopConfiguration(shopConfigRequest)
 
-    suspend fun getShopDetailsById(shopId: Int) = retrofitVar.getShopDetailsById(shopId = shopId)
+    suspend fun getShopDetailsById(shopId: Int) = service.getShopDetailsById(shopId = shopId)
 
 }

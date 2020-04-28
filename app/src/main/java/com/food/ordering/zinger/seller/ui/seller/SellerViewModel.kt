@@ -11,6 +11,7 @@ import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.data.model.UserShopModel
 import com.food.ordering.zinger.seller.data.retrofit.SellerRepository
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 import kotlin.Exception
 
@@ -48,12 +49,16 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
             try {
                 getSeller.value = Resource.loading()
                 val response = sellerRepository.getSeller(shopId)
-                if (response.code == 1)
+                if (!response.data.isNullOrEmpty())
                     getSeller.value = Resource.success(response)
                 else
-                    println("wrong" + response.toString())
+                    getSeller.value = Resource.empty()
             } catch (e: Exception) {
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    getSeller.value = Resource.offlineError()
+                } else {
+                    getSeller.value = Resource.error(e)
+                }
             }
         }
     }
@@ -67,10 +72,14 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
                 if (response.code == 1)
                     inviteSeller.value = Resource.success(response)
                 else
-                    println("wrong" + response.toString())
+                    inviteSeller.value = Resource.error(message = response.message)
 
             } catch (e: Exception) {
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    inviteSeller.value = Resource.offlineError()
+                } else {
+                    inviteSeller.value = Resource.error(e)
+                }
             }
         }
     }
@@ -84,10 +93,14 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
                 if (response.code == 1)
                     verifyInvite.value = Resource.success(response)
                 else
-                    println("wrong" + response.toString())
+                    verifyInvite.value = Resource.error(message = response.message)
 
             } catch (e: Exception) {
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    verifyInvite.value = Resource.offlineError()
+                } else {
+                    verifyInvite.value = Resource.error(e)
+                }
             }
         }
     }
@@ -102,10 +115,14 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
                 if (response.code == 1)
                     acceptInvite.value = Resource.success(response)
                 else
-                    println("wrong" + response.toString())
+                    acceptInvite.value = Resource.error(message = response.message)
 
             } catch (e: Exception) {
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    acceptInvite.value = Resource.offlineError()
+                } else {
+                    acceptInvite.value = Resource.error(e)
+                }
             }
         }
 
@@ -121,10 +138,14 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
                 if (response.code == 1)
                     deleteInvite.value = Resource.success(response)
                 else
-                    println("wrong" + response.toString())
+                    deleteInvite.value = Resource.error(message = response.message)
 
             } catch (e: Exception) {
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    deleteInvite.value = Resource.offlineError()
+                } else {
+                    deleteInvite.value = Resource.error(e)
+                }
             }
         }
     }
@@ -139,10 +160,14 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
                 if (response.code == 1)
                     notifyInvite.value = Resource.success(response)
                 else
-                    println("wrong" + response.toString())
+                    notifyInvite.value = Resource.error(message = response.message)
 
             } catch (e: Exception) {
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    notifyInvite.value = Resource.offlineError()
+                } else {
+                    notifyInvite.value = Resource.error(e)
+                }
             }
         }
 

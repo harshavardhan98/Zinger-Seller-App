@@ -13,39 +13,39 @@ import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
-class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
+class MenuViewModel(private val itemRepository: ItemRepository) : ViewModel() {
 
     private val menuRequest = MutableLiveData<Resource<Response<List<ItemModel>>>>()
-    val menuRequestResponse : LiveData<Resource<Response<List<ItemModel>>>>
-    get() = menuRequest
+    val menuRequestResponse: LiveData<Resource<Response<List<ItemModel>>>>
+        get() = menuRequest
 
     private val addItem = MutableLiveData<Resource<Response<String>>>()
-    val addItemResponse : LiveData<Resource<Response<String>>>
-    get() = addItem
+    val addItemResponse: LiveData<Resource<Response<String>>>
+        get() = addItem
 
     private val updateItem = MutableLiveData<Resource<Response<String>>>()
-    val updateItemResponse : LiveData<Resource<Response<String>>>
+    val updateItemResponse: LiveData<Resource<Response<String>>>
         get() = updateItem
 
     private val deleteItem = MutableLiveData<Resource<Response<String>>>()
-    val deleteItemResponse : LiveData<Resource<Response<String>>>
+    val deleteItemResponse: LiveData<Resource<Response<String>>>
         get() = deleteItem
 
     private val unDeleteItem = MutableLiveData<Resource<Response<String>>>()
-    val unDeleteItemResponse : LiveData<Resource<Response<String>>>
+    val unDeleteItemResponse: LiveData<Resource<Response<String>>>
         get() = unDeleteItem
 
     private val performUploadImage = MutableLiveData<Resource<String>>()
     val performUploadImageStatus: LiveData<Resource<String>>
         get() = performUploadImage
 
-    fun uploadPhotoToFireBase(storageReference: StorageReference, uri: Uri){
+    fun uploadPhotoToFireBase(storageReference: StorageReference, uri: Uri) {
 
         viewModelScope.launch {
-            try{
+            try {
                 performUploadImage.value = Resource.loading()
                 storageReference.putFile(uri)
-                    .addOnSuccessListener{
+                    .addOnSuccessListener {
                         val result = it.metadata!!.reference!!.downloadUrl;
                         result.addOnSuccessListener {
                             val imageLink = it.toString()
@@ -56,7 +56,7 @@ class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
                         performUploadImage.value = Resource.error(message = "Error updating photo")
                     }
 
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     performUploadImage.value = Resource.offlineError()
                 } else {
@@ -68,87 +68,84 @@ class MenuViewModel(private val itemRepository: ItemRepository): ViewModel() {
 
     }
 
-    fun getMenu(shopId: Int){
+    fun getMenu(shopId: Int) {
         viewModelScope.launch {
-            try{
+            try {
                 menuRequest.value = Resource.loading()
                 val response = itemRepository.getShopMenu(shopId)
-                if(response.code==1)
-                    menuRequest.value =Resource.success(response)
-                else
-                    System.out.println("wrong: "+response)
-            }catch (e: Exception){
-                println(e.printStackTrace())
+
+                if (!response.data.isNullOrEmpty()) {
+                    menuRequest.value = Resource.success(response)
+                } else {
+                    menuRequest.value = Resource.empty()
+                }
+
+            } catch (e: Exception) {
+                if (e is UnknownHostException) {
+                    menuRequest.value = Resource.offlineError()
+                } else {
+                    menuRequest.value = Resource.error(e)
+                }
             }
         }
     }
 
-    fun addItem(item: List<ItemModel>){
+    fun addItem(item: List<ItemModel>) {
         viewModelScope.launch {
-            try{
+            try {
                 addItem.value = Resource.loading()
                 val response = itemRepository.addItem(item)
-                if(response.code==1)
+                if (response.code==1) {
                     addItem.value = Resource.success(response)
-                else
-                    System.out.println("wrong: "+response)
-            }catch (e: Exception){
-                println(e.printStackTrace())
+                } else
+                    addItem.value = Resource.error(message = response.message)
+            } catch (e: Exception) {
+                if (e is UnknownHostException) {
+                    addItem.value = Resource.offlineError()
+                } else {
+                    addItem.value = Resource.error(e)
+                }
             }
         }
     }
 
-    fun updateItem(item: ItemModel){
+    fun updateItem(item: ItemModel) {
         viewModelScope.launch {
             try {
                 updateItem.value = Resource.loading()
                 val response = itemRepository.updateItem(item)
-                if(response.code==1)
+                if (response.code==1)
                     updateItem.value = Resource.success(response)
                 else
-                    System.out.println("wrong: "+response)
-
-            }catch (e: Exception){
-                println(e.printStackTrace())
+                    updateItem.value = Resource.error(message = response.message)
+            } catch (e: Exception) {
+                if (e is UnknownHostException) {
+                    updateItem.value = Resource.offlineError()
+                } else {
+                    updateItem.value = Resource.error(e)
+                }
             }
         }
     }
 
-    fun deleteItem(itemId: Int){
+    fun deleteItem(itemId: Int) {
         viewModelScope.launch {
-            try{
+            try {
                 deleteItem.value = Resource.loading()
                 val response = itemRepository.deleteItem(itemId)
 
-                if(response.code==1)
+                if (response.code == 1)
                     deleteItem.value = Resource.success(response)
                 else
-                    System.out.println("wrong: "+response)
+                    deleteItem.value = Resource.error(message = response.message)
 
-            }catch (e: Exception){
-                println(e.printStackTrace())
+            } catch (e: Exception) {
+                if (e is UnknownHostException) {
+                    deleteItem.value = Resource.offlineError()
+                } else {
+                    deleteItem.value = Resource.error(e)
+                }
             }
         }
     }
-
-    fun unDeleteItem(itemId: Int){
-        viewModelScope.launch {
-            try{
-                unDeleteItem.value = Resource.loading()
-                val response = itemRepository.unDeleteItem(itemId)
-
-                if(response.code==1)
-                    unDeleteItem.value = Resource.success(response)
-                else
-                    println("wrong: "+response)
-
-            }catch (e: Exception){
-                println(e.printStackTrace())
-            }
-        }
-
-    }
-
-
-
 }

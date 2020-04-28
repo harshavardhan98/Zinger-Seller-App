@@ -25,9 +25,9 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
         Log.d("FCM", "Content: ${remoteMessage?.data}")
         createNotificationChannel()
         remoteMessage.data.let {
-            sendNotification("test",remoteMessage.data.toString())
+            // todo pass orderId as id
+            sendNotification(123,"test",remoteMessage.data.toString())
         }
-
     }
 
 
@@ -48,7 +48,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendNotification(title: String?, message: String?){
+    private fun sendNotification(id: Int,title: String?, message: String?){
         val builder = NotificationCompat.Builder(applicationContext, "7698")
             .setSmallIcon(R.drawable.ic_zinger_notification_icon)
             .setContentTitle(title)
@@ -57,9 +57,9 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                 NotificationCompat.BigTextStyle()
                 .bigText(message))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
         with(NotificationManagerCompat.from(applicationContext)) {
-            // TODO change id
-            notify(123, builder.build())
+            notify(id, builder.build())
         }
     }
 

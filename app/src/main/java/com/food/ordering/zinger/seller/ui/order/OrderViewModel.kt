@@ -52,9 +52,12 @@ class OrderViewModel(private val orderRepository: OrderRepository,
                 else{
                     orderByIdRequest.value=Resource.error(message = response.message)
                 }
-
             }catch (e: Exception){
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    orderByIdRequest.value = Resource.offlineError()
+                } else {
+                    orderByIdRequest.value = Resource.error(e)
+                }
             }
         }
     }
@@ -69,11 +72,14 @@ class OrderViewModel(private val orderRepository: OrderRepository,
                     updateOrder.value = Resource.success(response)
                 }
                 else{
-                    println("Something is wrong")
                     updateOrder.value = Resource.error(message=response.message)
                 }
             }catch (e: Exception){
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    updateOrder.value = Resource.offlineError()
+                } else {
+                    updateOrder.value = Resource.error(e)
+                }
             }
         }
     }
@@ -86,14 +92,17 @@ class OrderViewModel(private val orderRepository: OrderRepository,
                 orderByShopId.value = Resource.loading()
                 val response = orderRepository.getOrderByShopId(shopId)
 
-                if(response.code==1)
+                if(!response.data.isNullOrEmpty())
                     orderByShopId.value = Resource.success(response)
-                else {
-                    orderByShopId.value = Resource.error(message = response.message)
-                }
+                else
+                    orderByShopId.value = Resource.empty()
 
             }catch (e: Exception){
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    orderByShopId.value = Resource.offlineError()
+                } else {
+                    orderByShopId.value = Resource.error(e)
+                }
             }
         }
     }
@@ -104,15 +113,17 @@ class OrderViewModel(private val orderRepository: OrderRepository,
                 orderByPagination.value = Resource.loading()
 
                 val response = orderRepository.getOrderByPagination(shopId,pageNum,pageCnt)
-
-                if(response.code==1)
+                if(!response.data.isNullOrEmpty())
                     orderByPagination.value = Resource.success(response)
                 else{
-                    orderByShopId.value = Resource.error(message = response.message)
+                    orderByPagination.value = Resource.empty()
                 }
-
             }catch (e: Exception){
-                //println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    orderByPagination.value = Resource.offlineError()
+                } else {
+                    orderByPagination.value = Resource.error(e)
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.retrofit.OrderRepository
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 class OrderDetailViewModel(private val orderRepository: OrderRepository):ViewModel(){
 
@@ -34,7 +35,11 @@ class OrderDetailViewModel(private val orderRepository: OrderRepository):ViewMod
                 }
 
             }catch (e: Exception){
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    orderByIdRequest.value = Resource.offlineError()
+                } else {
+                    orderByIdRequest.value = Resource.error(e)
+                }
             }
         }
     }
@@ -49,11 +54,14 @@ class OrderDetailViewModel(private val orderRepository: OrderRepository):ViewMod
                     updateOrder.value = Resource.success(response)
                 }
                 else{
-                    println("Something is wrong")
                     updateOrder.value = Resource.error(message=response.message)
                 }
             }catch (e: Exception){
-                println(e.printStackTrace())
+                if (e is UnknownHostException) {
+                    updateOrder.value = Resource.offlineError()
+                } else {
+                    updateOrder.value = Resource.error(e)
+                }
             }
         }
     }

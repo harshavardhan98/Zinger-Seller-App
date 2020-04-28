@@ -416,7 +416,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .show()
     }
 
-    public fun setUpFCM() {
+    fun setUpFCM() {
         preferencesHelper.isFCMTokenUpdated.let {
             if (it == false) {
                 preferencesHelper.fcmToken = FirebaseInstanceId.getInstance().getToken()

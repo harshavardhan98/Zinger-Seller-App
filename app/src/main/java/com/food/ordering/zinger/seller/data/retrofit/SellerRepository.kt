@@ -5,18 +5,18 @@ import retrofit2.Retrofit
 
 class SellerRepository(private val retrofit: Retrofit) {
 
-    val retrofiVar = retrofit.create(CustomApi::class.java)
+    val service = retrofit.create(CustomApi::class.java)
 
-    suspend fun getSeller(shopId: String) = retrofiVar.getSellers(shopId)
+    suspend fun getSeller(shopId: String) = service.getSellers(shopId)
 
-    suspend fun inviteSeller(userShopModel: UserShopModel) = retrofiVar.inviteSeller(userShopModel)
+    suspend fun inviteSeller(userShopModel: UserShopModel) = service.inviteSeller(userShopModel)
 
-    suspend fun verifyInvite(shopId: Int, mobile: String) = retrofiVar.verifyInvite(shopId, mobile)
+    suspend fun verifyInvite(shopId: Int, mobile: String) = service.verifyInvite(shopId, mobile)
 
-    suspend fun acceptInvite(userShopModel: UserShopModel) = retrofiVar.acceptInvite(userShopModel)
+    suspend fun acceptInvite(userShopModel: UserShopModel) = service.acceptInvite(userShopModel)
 
-    suspend fun deleteInvite(userShopModel: UserShopModel) = retrofiVar.deleteInvite(userShopModel)
+    suspend fun deleteInvite(userShopModel: UserShopModel) = service.deleteInvite(userShopModel)
 
-    suspend fun notifyInvite(userShopModel: UserShopModel) = retrofiVar.notifyInvite(userShopModel)
+    suspend fun notifyInvite(userShopModel: UserShopModel) = service.notifyInvite(userShopModel)
 
 }
