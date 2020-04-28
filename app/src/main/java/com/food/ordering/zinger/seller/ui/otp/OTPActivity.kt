@@ -100,7 +100,6 @@ class OTPActivity : AppCompatActivity() {
                     binding.editOtp.setText("")
                     otpSent = false
                     binding.textResendOtp.isEnabled = true
-                    //TODO OTP shake animation
                 }
 
                 override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
@@ -237,9 +236,11 @@ class OTPActivity : AppCompatActivity() {
                     val user = task.result?.user
                     preferencesHelper.oauthId = user?.uid
                     preferencesHelper.mobile = user?.phoneNumber?.substring(3)
+                    var fcmTokenList = ArrayList<String>()
+                    fcmTokenList.add("TEST_TOKEN")
                     val loginRequest = user?.uid?.let {
                         user.phoneNumber?.let { it1 ->
-                            UserModel(oauthId = it, mobile = it1.substring(3))
+                            UserModel(oauthId = it, mobile = it1.substring(3),notificationToken = fcmTokenList)
                         }
                     }
                     loginRequest?.let { viewModel.login(it) } ?: run {

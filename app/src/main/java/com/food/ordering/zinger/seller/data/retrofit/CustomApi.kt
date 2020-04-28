@@ -37,6 +37,8 @@ interface CustomApi  {
     @PATCH("/shop/config")
     suspend fun updateShopConfiguration(@Body shopConfigRequest: ConfigurationModel): Response<String>
 
+    @GET("/shop/{shopId}")
+    suspend fun getShopDetailsById(@Path("shopId") shopId: Int): Response<ShopConfigurationModel>
 
     // Item Repository
     @GET("/menu/shop/{shopId}")
@@ -58,7 +60,7 @@ interface CustomApi  {
     // Order Repository
 
     @GET("/order/{orderId}")
-    suspend fun getOrderById(@Path("orderId") orderId: Int): Response<TransactionModel>
+    suspend fun getOrderById(@Path("orderId") orderId: Int): Response<OrderItemListModel>
 
     @GET("/order/seller/{shopId}/{pageNum}/{pageCnt}")
     suspend fun getOrderByPagination(@Path("shopId") shopId: Int,@Path("pageNum") pageNum: Int,@Path("pageCnt") pageCnt: Int): Response<List<OrderItemListModel>>

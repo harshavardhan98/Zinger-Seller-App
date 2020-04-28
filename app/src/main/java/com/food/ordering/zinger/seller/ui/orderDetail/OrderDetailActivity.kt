@@ -167,6 +167,11 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setListeners() {
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            order.transactionModel.orderModel.id?.let { viewModel.getOrderById(it) }
+        }
+
         binding.imageCall.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_DIAL,
@@ -259,7 +264,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                     Resource.Status.LOADING -> {
-                        progressDialog.setMessage("Updating orders...")
+                        progressDialog.setMessage("Fetching latest order status...")
                         progressDialog.show()
                     }
 

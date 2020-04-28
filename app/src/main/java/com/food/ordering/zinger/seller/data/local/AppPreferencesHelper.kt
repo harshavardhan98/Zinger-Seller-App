@@ -13,6 +13,11 @@ interface AppPreferencesHelper {
     val shop: String?
     val currentShop: Int?
     val id: Int?
+    val fcmToken: String?
+
+
+    var isFCMTokenUpdated: Boolean?
+    var isFCMTopicSubScribed: Boolean?
 
     fun saveUser(id: Int?,name: String?,email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?)
 

@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { MenuViewModel(get())}
-    viewModel { OrderViewModel(get()) }
+    viewModel { OrderViewModel(get(),get(),get()) }
     viewModel { SellerViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { OTPViewModel(get()) }

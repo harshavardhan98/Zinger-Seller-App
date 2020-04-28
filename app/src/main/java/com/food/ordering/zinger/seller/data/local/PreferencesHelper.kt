@@ -52,15 +52,33 @@ class PreferencesHelper(context: Context) : AppPreferencesHelper {
         get() = sellerPreferences.getInt(AppConstants.PREFS_CURRENT_SHOP_ID, 0)
         set(value) = sellerPreferences.edit().putInt(AppConstants.PREFS_CURRENT_SHOP_ID, value).apply()
 
-    override fun saveUser(id: Int?,name: String?, email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?) {
+    override var fcmToken: String?
+        get() = sellerPreferences.getString(AppConstants.PREFS_SELLER_FCM_TOKEN,"test")
+        set(value) = sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_FCM_TOKEN, value).apply()
+
+    override var isFCMTokenUpdated: Boolean?
+        get() = loginPreferences.getBoolean(AppConstants.PREFS_IS_FCM_TOKEN_GENERATED,false)
+        set(value) {
+            if(value!=null)
+                loginPreferences.edit().putBoolean(AppConstants.PREFS_IS_FCM_TOKEN_GENERATED,value).apply()
+        }
+
+    override var isFCMTopicSubScribed: Boolean?
+        get() = loginPreferences.getBoolean(AppConstants.PREFS_IS_FCM_TOPIC_SUBSCRIBED,false)
+        set(value) {
+            if(value!=null)
+                loginPreferences.edit().putBoolean(AppConstants.PREFS_IS_FCM_TOPIC_SUBSCRIBED,value).apply()
+        }
+
+    override fun saveUser(id: Int?, name: String?, email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?) {
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_NAME, name).apply()
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_EMAIL, email).apply()
-        sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_MOBILE, mobile).apply()
+        //sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_MOBILE, mobile).apply()
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_ROLE, role).apply()
         if (id != null) {
             loginPreferences.edit().putInt(AppConstants.PREFS_SELLER_ID,id).apply()
         }
-        loginPreferences.edit().putString(AppConstants.PREFS_AUTH_TOKEN, oauthId).apply()
+        //loginPreferences.edit().putString(AppConstants.PREFS_AUTH_TOKEN, oauthId).apply()
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_PLACE, shop).apply()
     }
 

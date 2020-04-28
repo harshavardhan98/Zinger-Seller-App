@@ -9,4 +9,6 @@ class ShopRepository(private val retrofit: Retrofit) {
 
     suspend fun updateShopConfiguration(shopConfigRequest: ConfigurationModel) = retrofitVar.updateShopConfiguration(shopConfigRequest)
 
+    suspend fun getShopDetailsById(shopId: Int) = retrofitVar.getShopDetailsById(shopId = shopId)
+
 }

@@ -15,11 +15,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amulyakhare.textdrawable.TextDrawable
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
+import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
+import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBinding
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
@@ -34,6 +37,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
@@ -66,8 +72,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         setListeners()
         setupMaterialDrawer()
         setObservers()
-        viewModel.getOrderByShopId(preferencesHelper.currentShop)
+        setUpFCM()
+
+        viewModel.getShopDetail(preferencesHelper.currentShop)
+        println("testing")
     }
+
 
     // This API end point is responsible for inserting the order details. It verifies the availability of all the items in the shop and calculates the total bill
     //  * amount.  After verifying
@@ -88,7 +98,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         snackButton.setTextColor(ContextCompat.getColor(applicationContext, R.color.accent))
         binding.imageMenu.setOnClickListener(this)
         binding.textShopName.text = shopConfig?.shopModel?.name
-        binding.textShopRating.text = shopConfig?.ratingModel?.rating.toString()+" ("+shopConfig?.ratingModel?.userCount+")"
+        binding.textShopRating.text =
+            shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
         progressDialog = ProgressDialog(this)
 
 
@@ -272,6 +283,55 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setObservers() {
 
+        viewModel.performUpdateProfileStatus.observe(this, Observer { resource ->
+            if (resource != null) {
+                when (resource.status) {
+                    Resource.Status.SUCCESS -> {
+                        preferencesHelper.isFCMTokenUpdated = true;
+                    }
+                    Resource.Status.ERROR -> {
+                        preferencesHelper.isFCMTokenUpdated = false
+                    }
+                    Resource.Status.OFFLINE_ERROR -> {
+                        preferencesHelper.isFCMTokenUpdated = false
+                    }
+                }
+            }
+        })
+
+        viewModel.getShopDetailResponse.observe(this, Observer { resource ->
+            if(resource!=null){
+                when(resource.status){
+                    Resource.Status.SUCCESS -> {
+                        if (resource.data?.data!=null){
+                            var latestShopDetail = resource.data.data
+                            var shopConfigurationList = preferencesHelper.getShop()
+                            if (shopConfigurationList != null) {
+                                for(shop in shopConfigurationList){
+                                    if(shop.shopModel.id == latestShopDetail.shopModel.id)
+                                        shop.shopModel = latestShopDetail.shopModel
+                                        shop.configurationModel = latestShopDetail.configurationModel
+                                        shop.ratingModel = latestShopDetail.ratingModel
+                                }
+                                preferencesHelper.shop = Gson().toJson(shopConfigurationList)
+                                shopConfig = preferencesHelper.getShop()!!
+                                    .filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
+                                binding.textShopName.text = shopConfig?.shopModel?.name
+                                binding.textShopRating.text =
+                                    shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
+                            }
+                        }
+                    }
+                    Resource.Status.ERROR -> {
+                        Toast.makeText(this,"Failed to fetch latest shop details",Toast.LENGTH_LONG).show()
+                    }
+                    Resource.Status.OFFLINE_ERROR -> {
+                        Toast.makeText(this,"Device Offline",Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        })
+
     }
 
     lateinit var accountAdapter: AccountAdapter
@@ -313,7 +373,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .placeholder(R.drawable.ic_shop)
                         .into(binding.imageCompany)
                     binding.textShopName.text = accountList[position].shopModel.name
-                    binding.textShopRating.text = accountList[position].ratingModel.rating.toString() + " ("+ accountList[position].ratingModel.userCount+")"
+                    binding.textShopRating.text =
+                        accountList[position].ratingModel.rating.toString() + " (" + accountList[position].ratingModel.userCount + ")"
                     this@HomeActivity.recreate()
                     //viewModel.getOrderByShopId(it)
                 }
@@ -336,9 +397,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        shopConfig = preferencesHelper.getShop()!!.filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
+        viewModel.getOrderByShopId(preferencesHelper.currentShop)
+        shopConfig = preferencesHelper.getShop()!!
+            .filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
         binding.textShopName.text = shopConfig?.shopModel?.name
-        binding.textShopRating.text = shopConfig?.ratingModel?.rating.toString()+" ("+shopConfig?.ratingModel?.userCount+")"
+        binding.textShopRating.text =
+            shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
         updateHeaderLayoutUI()
     }
 
@@ -353,5 +417,34 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
             .setNegativeButton("No") { dialog, which -> dialog.dismiss() }
             .show()
+    }
+
+    public fun setUpFCM() {
+        preferencesHelper.isFCMTokenUpdated.let {
+            if (it == false) {
+                preferencesHelper.fcmToken = FirebaseInstanceId.getInstance().getToken()
+
+                preferencesHelper.fcmToken?.let {
+                    val fcmTokenList = ArrayList<String>()
+                    fcmTokenList.add(it)
+                    val userModelRequest = UserModel(
+                        id = preferencesHelper.id,
+                        name = preferencesHelper.name,
+                        email = preferencesHelper.email,
+                        mobile = preferencesHelper.mobile,
+                        notificationToken = fcmTokenList
+                    )
+                    viewModel.updateProfile(userModel = userModelRequest)
+                }
+            }
+        }
+
+        if(preferencesHelper.isFCMTopicSubScribed==null || preferencesHelper.isFCMTopicSubScribed==false){
+            preferencesHelper.getShop()?.forEach {
+                FirebaseMessaging.getInstance().subscribeToTopic(it.shopModel.name?.split(" ")?.get(0)+it.shopModel.id);
+            }
+            preferencesHelper.isFCMTopicSubScribed = true
+        }
+
     }
 }

@@ -27,7 +27,7 @@ android {
             }
 
             //buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
-            buildConfigField "String", "CUSTOM_BASE_URL", '"https://d33e5086.ngrok.io/"'
+            buildConfigField "String", "CUSTOM_BASE_URL", '"https://a00f8fcf.ngrok.io/"'
         }
         release {
             minifyEnabled false
@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'jp.wasabeef:recyclerview-animators:3.0.0'
     implementation 'com.airbnb.android:lottie:3.4.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.6'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.firebase:firebase-storage:19.1.1'

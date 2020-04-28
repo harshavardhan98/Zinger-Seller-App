@@ -78,13 +78,14 @@ class ReadyFragment : Fragment() {
                             //ordersList.addAll(it1)
                             preferencesHelper.role?.let {
                                 if(it == AppConstants.ROLE.DELIVERY.name){
-                                    ordersList.addAll(it1.filter { it.transactionModel.orderModel.orderStatus.equals(
+                                    ordersList.addAll(it1.filter { it.orderStatusModel.last().orderStatus.equals(
                                         AppConstants.STATUS.OUT_FOR_DELIVERY.name) })
                                 }else{
-                                    ordersList.addAll(it1.filter { it.transactionModel.orderModel.orderStatus.equals(
-                                        AppConstants.STATUS.READY.name)||it.transactionModel.orderModel.orderStatus.equals(
+                                    ordersList.addAll(it1.filter { it.orderStatusModel.last().orderStatus.equals(
+                                        AppConstants.STATUS.READY.name)||it.orderStatusModel.last().orderStatus.equals(
                                         AppConstants.STATUS.OUT_FOR_DELIVERY.name) })
                                 }
+                                ordersList.forEach { it.transactionModel.orderModel.orderStatus = it.orderStatusModel.last().orderStatus }
                             }
 
                         }

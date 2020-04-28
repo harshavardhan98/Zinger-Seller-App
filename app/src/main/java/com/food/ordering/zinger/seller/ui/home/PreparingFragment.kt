@@ -77,8 +77,9 @@ class PreparingFragment : Fragment() {
                     ordersList.clear()
                     if(!it.data?.data.isNullOrEmpty()){
                         it.data?.data?.let { it1 ->
-                            ordersList.addAll(it1.filter { it.transactionModel.orderModel.orderStatus.equals(AppConstants.STATUS.ACCEPTED.name) })
+                            ordersList.addAll(it1.filter { it.orderStatusModel.last().orderStatus.equals(AppConstants.STATUS.ACCEPTED.name) })
                         }
+                        ordersList.forEach { it.transactionModel.orderModel.orderStatus = it.orderStatusModel.last().orderStatus }
                         orderAdapter.notifyDataSetChanged()
                     }
                     binding.layoutStates.visibility = View.GONE

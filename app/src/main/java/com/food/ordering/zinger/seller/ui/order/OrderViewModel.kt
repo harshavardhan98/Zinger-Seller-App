@@ -5,18 +5,25 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.food.ordering.zinger.seller.data.local.Resource
-import com.food.ordering.zinger.seller.data.model.OrderItemListModel
-import com.food.ordering.zinger.seller.data.model.OrderModel
-import com.food.ordering.zinger.seller.data.model.Response
-import com.food.ordering.zinger.seller.data.model.TransactionModel
+import com.food.ordering.zinger.seller.data.model.*
 import com.food.ordering.zinger.seller.data.retrofit.OrderRepository
+import com.food.ordering.zinger.seller.data.retrofit.ShopRepository
+import com.food.ordering.zinger.seller.data.retrofit.UserRespository
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import kotlin.Exception
 
-class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
+class OrderViewModel(private val orderRepository: OrderRepository,
+                     private val userRespository: UserRespository,
+                     private val shopRepository: ShopRepository):ViewModel() {
 
-    private val orderByIdRequest = MutableLiveData<Resource<Response<TransactionModel>>>()
-    val orderByIdResponse : LiveData<Resource<Response<TransactionModel>>>
+
+    private val performUpdateProfile = MutableLiveData<Resource<Response<String>>>()
+    val performUpdateProfileStatus: LiveData<Resource<Response<String>>>
+        get() = performUpdateProfile
+
+    private val orderByIdRequest = MutableLiveData<Resource<Response<OrderItemListModel>>>()
+    val orderByIdResponse : LiveData<Resource<Response<OrderItemListModel>>>
     get() = orderByIdRequest
 
     private val orderByShopId = MutableLiveData<Resource<Response<List<OrderItemListModel>>>>()
@@ -30,6 +37,10 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
     private val orderByPagination = MutableLiveData<Resource<Response<List<OrderItemListModel>>>>()
     val orderByPaginationResponse : LiveData<Resource<Response<List<OrderItemListModel>>>>
         get() = orderByPagination
+
+    private val getShopDetail = MutableLiveData<Resource<Response<ShopConfigurationModel>>>()
+    val getShopDetailResponse : LiveData<Resource<Response<ShopConfigurationModel>>>
+        get() = getShopDetail
 
     fun getOrderById(orderId: Int){
         viewModelScope.launch {
@@ -107,6 +118,44 @@ class OrderViewModel(private val orderRepository: OrderRepository):ViewModel() {
         }
     }
 
+    fun updateProfile(userModel: UserModel) {
+        viewModelScope.launch {
+            try {
+                performUpdateProfile.value = Resource.loading()
+                val response = userRespository.updateProfile(userModel)
+                if (response.code == 1)
+                    performUpdateProfile.value = Resource.success(response)
+                else
+                    performUpdateProfile.value = Resource.error(message = response.message)
+            } catch (e: Exception) {
+                println("fetch stats failed ${e.message}")
+                if (e is UnknownHostException) {
+                    performUpdateProfile.value = Resource.offlineError()
+                } else {
+                    performUpdateProfile.value = Resource.error(e)
+                }
+            }
+        }
+    }
 
+    fun getShopDetail(id: Int){
+        viewModelScope.launch {
+            try{
+                getShopDetail.value = Resource.loading()
+                val response = shopRepository.getShopDetailsById(id)
+                if(response.code == 1)
+                    getShopDetail.value =Resource.success(response)
+                else
+                    getShopDetail.value = Resource.error(message = response.message)
+            }catch (e: Exception) {
+                println("fetch stats failed ${e.message}")
+                if (e is UnknownHostException) {
+                    getShopDetail.value = Resource.offlineError()
+                } else {
+                    getShopDetail.value = Resource.error(e)
+                }
+            }
+        }
+    }
 
 }

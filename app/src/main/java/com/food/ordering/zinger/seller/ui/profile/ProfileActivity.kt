@@ -234,12 +234,17 @@ class ProfileActivity : AppCompatActivity() {
                         val name = binding.editName.editableText.toString()
                         val email = binding.editEmail.editableText.toString()
                         val mobile = binding.editMobile.editableText.toString()
+                        val fcmToken = ArrayList<String>()
+
+                        preferencesHelper.fcmToken?.let { fcmToken.add(it) }
+                        
                         viewModel.updateProfile(
                             UserModel(
                                 id = preferencesHelper.id,
                                 name = name,
                                 email = email,
-                                mobile = mobile
+                                mobile = mobile,
+                                notificationToken = fcmToken
                             )
                         )
                         countDownTimer.cancel()

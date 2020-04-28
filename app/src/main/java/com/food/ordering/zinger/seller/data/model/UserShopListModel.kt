@@ -14,7 +14,7 @@ data class ShopConfigurationModel(
     @SerializedName("configurationModel")
     var configurationModel: ConfigurationModel,
     @SerializedName("ratingModel")
-    val ratingModel: RatingModel,
+    var ratingModel: RatingModel,
     @SerializedName("shopModel")
     var shopModel: ShopModel,
     var isSelected: Boolean = false
@@ -33,7 +33,9 @@ data class UserModel(
     @SerializedName("oauthId")
     val oauthId: String? = null,
     @SerializedName("role")
-    val role: String? = null
+    val role: String? = null,
+    @SerializedName("notificationToken")
+    val notificationToken: ArrayList<String>? = null
 )
 
 

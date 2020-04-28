@@ -28,7 +28,7 @@ import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 
-class  NewOrdersFragment : Fragment() {
+class NewOrdersFragment : Fragment() {
 
     lateinit var binding: FragmentNewOrdersBinding
     private val viewModel: OrderViewModel by sharedViewModel()
@@ -55,7 +55,7 @@ class  NewOrdersFragment : Fragment() {
         updateUI()
         progressDialog = ProgressDialog(activity)
         errorSnackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_INDEFINITE)
-        errorSnackBar.setAction("Try Again"){
+        errorSnackBar.setAction("Try Again") {
             viewModel.getOrderByShopId(preferencesHelper.currentShop)
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -67,15 +67,20 @@ class  NewOrdersFragment : Fragment() {
 
 
         viewModel.orderByShopIdResponse.observe(viewLifecycleOwner, Observer { resource ->
-            if(resource!=null){
+            if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         binding.swipeRefreshLayout.isRefreshing = false
                         //progressDialog.dismiss()
                         ordersList.clear()
-                        if(!resource.data?.data.isNullOrEmpty()){
+                        if (!resource.data?.data.isNullOrEmpty()) {
                             resource.data?.data?.let { it1 ->
-                                ordersList.addAll(it1.filter { it.transactionModel.orderModel.orderStatus.equals(AppConstants.STATUS.PLACED.name) })
+                                ordersList.addAll(it1.filter {
+                                    it.orderStatusModel.last().orderStatus.equals(
+                                        AppConstants.STATUS.PLACED.name
+                                    )
+                                })
+                                ordersList.forEach { it.transactionModel.orderModel.orderStatus = it.orderStatusModel.last().orderStatus }
                             }
                             orderAdapter.notifyDataSetChanged()
                         }
@@ -86,7 +91,7 @@ class  NewOrdersFragment : Fragment() {
                         errorSnackBar.dismiss()
                     }
 
-                    Resource.Status.ERROR ->{
+                    Resource.Status.ERROR -> {
                         binding.swipeRefreshLayout.isRefreshing = false
                         binding.layoutStates.visibility = View.GONE
                         binding.animationView.visibility = View.VISIBLE
@@ -97,7 +102,7 @@ class  NewOrdersFragment : Fragment() {
                         Handler().postDelayed({ errorSnackBar.show() }, 500)
                     }
 
-                    Resource.Status.LOADING ->{
+                    Resource.Status.LOADING -> {
                         ordersList.clear()
                         orderAdapter.notifyDataSetChanged()
                         if (!binding.swipeRefreshLayout.isRefreshing) {
@@ -107,7 +112,7 @@ class  NewOrdersFragment : Fragment() {
                         errorSnackBar.dismiss()
                     }
 
-                    Resource.Status.OFFLINE_ERROR ->{
+                    Resource.Status.OFFLINE_ERROR -> {
                         binding.swipeRefreshLayout.isRefreshing = false
                         binding.layoutStates.visibility = View.GONE
                         binding.animationView.visibility = View.VISIBLE
@@ -133,31 +138,31 @@ class  NewOrdersFragment : Fragment() {
         })
 
 
-        viewModel.updateOrderResponse.observe(viewLifecycleOwner,Observer{resource ->
-            if(resource!=null){
+        viewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer { resource ->
+            if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
                         viewModel.getOrderByShopId(preferencesHelper.currentShop)
                     }
 
-                    Resource.Status.ERROR ->{
+                    Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                     }
 
-                    Resource.Status.LOADING ->{
+                    Resource.Status.LOADING -> {
                         progressDialog.setMessage("Updating orders...")
                         progressDialog.show()
                     }
 
-                    Resource.Status.OFFLINE_ERROR ->{
+                    Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"Offline error", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Offline error", Toast.LENGTH_LONG).show()
                     }
 
                     Resource.Status.EMPTY -> {
                         progressDialog.dismiss()
-                        Toast.makeText(context,"No orders", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "No orders", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -169,8 +174,8 @@ class  NewOrdersFragment : Fragment() {
     var ordersList: ArrayList<OrderItemListModel> = ArrayList()
     lateinit var orderAdapter: OrdersAdapter
     private fun updateUI() {
-        println("Order list size "+ordersList.size)
-        orderAdapter = OrdersAdapter(ordersList, object: OrdersAdapter.OnItemClickListener{
+        println("Order list size " + ordersList.size)
+        orderAdapter = OrdersAdapter(ordersList, object : OrdersAdapter.OnItemClickListener {
             override fun onItemClick(item: OrderItemListModel?, position: Int) {
                 val intent = Intent(context, OrderDetailActivity::class.java)
                 intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(item))
@@ -178,16 +183,23 @@ class  NewOrdersFragment : Fragment() {
             }
 
             override fun onUpdateClick(orderItemListModel: OrderItemListModel?, position: Int) {
-                val orderModel = OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id,orderStatus = AppConstants.STATUS.ACCEPTED.name)
+                val orderModel = OrderModel(
+                    id = orderItemListModel!!.transactionModel.orderModel.id,
+                    orderStatus = AppConstants.STATUS.ACCEPTED.name
+                )
                 viewModel.updateOrder(orderModel)
             }
 
             override fun onCancelClick(orderItemListModel: OrderItemListModel?, position: Int) {
-                val orderModel = OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id,orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name )
+                val orderModel = OrderModel(
+                    id = orderItemListModel!!.transactionModel.orderModel.id,
+                    orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
+                )
                 viewModel.updateOrder(orderModel)
             }
         })
-        binding.recyclerOrders.layoutManager = LinearLayoutManager(context!!,LinearLayoutManager.VERTICAL,false)
+        binding.recyclerOrders.layoutManager =
+            LinearLayoutManager(context!!, LinearLayoutManager.VERTICAL, false)
         binding.recyclerOrders.adapter = orderAdapter
         orderAdapter.notifyDataSetChanged()
     }

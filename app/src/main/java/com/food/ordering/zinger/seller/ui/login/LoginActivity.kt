@@ -3,6 +3,7 @@ package com.food.ordering.zinger.seller.ui.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.food.ordering.zinger.seller.R
@@ -11,6 +12,8 @@ import com.food.ordering.zinger.seller.databinding.ActivityLoginBinding
 import com.food.ordering.zinger.seller.ui.home.HomeActivity
 import com.food.ordering.zinger.seller.ui.otp.OTPActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import org.koin.android.ext.android.inject
 
 class LoginActivity : AppCompatActivity() {
@@ -24,6 +27,9 @@ class LoginActivity : AppCompatActivity() {
 
         initView()
         setListener()
+
+//        FirebaseMessaging.getInstance().subscribeToTopic("global");
+//        FirebaseMessaging.getInstance().subscribeToTopic("Sathyas1");
 
         if (!preferencesHelper.oauthId.isNullOrEmpty() && preferencesHelper.id!=-1) {
             startActivity(Intent(applicationContext, HomeActivity::class.java))
