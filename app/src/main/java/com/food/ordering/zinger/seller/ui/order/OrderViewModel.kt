@@ -67,7 +67,6 @@ class OrderViewModel(private val orderRepository: OrderRepository,
 
                 if(response.code==1) {
                     updateOrder.value = Resource.success(response)
-                    getOrderByShopId(1)
                 }
                 else{
                     println("Something is wrong")

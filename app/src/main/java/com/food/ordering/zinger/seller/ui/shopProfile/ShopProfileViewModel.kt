@@ -22,6 +22,32 @@ class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewMod
     val performUploadImageStatus: LiveData<Resource<String>>
         get() = performUploadImage
 
+    private val getShopDetail = MutableLiveData<Resource<Response<ShopConfigurationModel>>>()
+    val getShopDetailResponse : LiveData<Resource<Response<ShopConfigurationModel>>>
+        get() = getShopDetail
+
+
+    fun getShopDetail(id: Int){
+        viewModelScope.launch {
+            try{
+                getShopDetail.value = Resource.loading()
+                val response = shopRepository.getShopDetailsById(id)
+                if(response.code == 1)
+                    getShopDetail.value =Resource.success(response)
+                else
+                    getShopDetail.value = Resource.error(message = response.message)
+            }catch (e: Exception) {
+                println("fetch stats failed ${e.message}")
+                if (e is UnknownHostException) {
+                    getShopDetail.value = Resource.offlineError()
+                } else {
+                    getShopDetail.value = Resource.error(e)
+                }
+            }
+        }
+    }
+
+
     fun updateShopProfile(shopConfigRequest: ConfigurationModel) {
         viewModelScope.launch {
             try {

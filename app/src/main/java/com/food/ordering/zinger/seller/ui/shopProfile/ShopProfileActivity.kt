@@ -61,7 +61,7 @@ class ShopProfileActivity : AppCompatActivity() {
         initView()
         setListener()
         setObserver()
-
+        viewModel.getShopDetail(preferencesHelper.currentShop)
     }
 
     private fun initView() {
@@ -71,6 +71,9 @@ class ShopProfileActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shop_profile)
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
+    }
+
+    private fun updateUI() {
 
 
         shopConfig = preferencesHelper.getShop()?.firstOrNull {
@@ -82,20 +85,23 @@ class ShopProfileActivity : AppCompatActivity() {
         shopConfig?.shopModel?.coverUrls?.let { imageList.addAll(it) }
 
         shopCoverImageAdapter =
-            ShopCoverImageAdapter(imageList,preferencesHelper.role,object : ShopCoverImageAdapter.OnItemClickListener {
+            ShopCoverImageAdapter(
+                imageList,
+                preferencesHelper.role,
+                object : ShopCoverImageAdapter.OnItemClickListener {
 
-                override fun onItemClick(shopImageList: List<String>?, position: Int) {
-                    var intent = Intent(applicationContext,DisplayActivity::class.java)
-                    intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL,imageList.get(position))
-                    startActivity(intent)
-                }
+                    override fun onItemClick(shopImageList: List<String>?, position: Int) {
+                        var intent = Intent(applicationContext, DisplayActivity::class.java)
+                        intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL, imageList.get(position))
+                        startActivity(intent)
+                    }
 
-                override fun onDeleteClick(shopImageList: List<String>?, position: Int) {
-                    imageList.removeAt(position)
-                    shopCoverImageAdapter?.notifyDataSetChanged()
-                }
+                    override fun onDeleteClick(shopImageList: List<String>?, position: Int) {
+                        imageList.removeAt(position)
+                        shopCoverImageAdapter?.notifyDataSetChanged()
+                    }
 
-            })
+                })
         binding.recyclerCoverPhoto.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerCoverPhoto.adapter = shopCoverImageAdapter
@@ -109,22 +115,36 @@ class ShopProfileActivity : AppCompatActivity() {
         binding.switchOrders.isChecked = shopConfig?.configurationModel?.isOrderTaken == 1
         binding.switchDelivery.isChecked = shopConfig?.configurationModel?.isDeliveryAvailable == 1
 
-        if(binding.switchOrders.isChecked)
-            binding.switchOrders.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
+        if (binding.switchOrders.isChecked)
+            binding.switchOrders.thumbTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    applicationContext,
+                    R.color.switchSelected
+                )
+            )
         else
-            binding.switchOrders.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
+            binding.switchOrders.thumbTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
 
-        if(binding.switchDelivery.isChecked)
-            binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
+        if (binding.switchDelivery.isChecked)
+            binding.switchDelivery.thumbTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    applicationContext,
+                    R.color.switchSelected
+                )
+            )
         else
-            binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
+            binding.switchDelivery.thumbTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
 
 
         binding.editName.setSelection(binding.editName.text.toString().length)
-        binding.editDeliveryPrice.setText(shopConfig?.configurationModel?.deliveryPrice?.toInt().toString())
+        binding.editDeliveryPrice.setText(
+            shopConfig?.configurationModel?.deliveryPrice?.toInt().toString()
+        )
 
         preferencesHelper.role?.let {
-            if(it==AppConstants.ROLE.SELLER.name || it==AppConstants.ROLE.DELIVERY.name){
+            if (it == AppConstants.ROLE.SELLER.name || it == AppConstants.ROLE.DELIVERY.name) {
                 binding.imageEditName.visibility = View.GONE
                 binding.imageEditDeliveryPrice.visibility = View.GONE
                 binding.imageEditOpeningTime.visibility = View.GONE
@@ -139,8 +159,8 @@ class ShopProfileActivity : AppCompatActivity() {
                 binding.textLogo.isEnabled = false
                 binding.textCoverPhoto.isEnabled = false
             }
-            if(it==AppConstants.ROLE.DELIVERY.name){
-                binding.switchOrders.isEnabled= false
+            if (it == AppConstants.ROLE.DELIVERY.name) {
+                binding.switchOrders.isEnabled = false
                 binding.switchDelivery.isEnabled = false
                 binding.buttonUpdate.visibility = View.GONE
                 binding.buttonUpdate.isEnabled = false
@@ -156,28 +176,48 @@ class ShopProfileActivity : AppCompatActivity() {
         }
 
         binding.switchDelivery.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(isChecked)
-                binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
+            if (isChecked)
+                binding.switchDelivery.thumbTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.switchSelected
+                    )
+                )
             else
-                binding.switchDelivery.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
+                binding.switchDelivery.thumbTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.accent
+                    )
+                )
         }
 
         binding.switchOrders.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(isChecked)
-                binding.switchOrders.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.switchSelected))
+            if (isChecked)
+                binding.switchOrders.thumbTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.switchSelected
+                    )
+                )
             else
-                binding.switchOrders.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
+                binding.switchOrders.thumbTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.accent
+                    )
+                )
         }
 
 
         binding.buttonUpdate.setOnClickListener(View.OnClickListener {
 
-            if(binding.editName.isEnabled){
+            if (binding.editName.isEnabled) {
                 Toast.makeText(this, "Please confirm name change", Toast.LENGTH_LONG).show()
-            }
-            else if(binding.editDeliveryPrice.isEnabled){
-                Toast.makeText(this, "Please confirm delivery price change", Toast.LENGTH_LONG).show()
-            }else{
+            } else if (binding.editDeliveryPrice.isEnabled) {
+                Toast.makeText(this, "Please confirm delivery price change", Toast.LENGTH_LONG)
+                    .show()
+            } else {
 
                 var sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
                 var sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
@@ -186,7 +226,7 @@ class ShopProfileActivity : AppCompatActivity() {
 
 
                 val shopModel = ShopModel(
-                    photoUrl = if(photoUrl.isNullOrEmpty())shopConfig?.shopModel?.photoUrl else photoUrl,
+                    photoUrl = if (photoUrl.isNullOrEmpty()) shopConfig?.shopModel?.photoUrl else photoUrl,
                     closingTime = closingTime,
                     openingTime = openingTime,
                     name = binding.editName.text.toString(),
@@ -292,9 +332,10 @@ class ShopProfileActivity : AppCompatActivity() {
 
         binding.imageLogo.setOnClickListener {
 
-            var intent = Intent(applicationContext,DisplayActivity::class.java)
-            var photoUrl = if(photoUrl.isNullOrEmpty())shopConfig?.shopModel?.photoUrl else photoUrl
-            intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL,photoUrl)
+            var intent = Intent(applicationContext, DisplayActivity::class.java)
+            var photoUrl =
+                if (photoUrl.isNullOrEmpty()) shopConfig?.shopModel?.photoUrl else photoUrl
+            intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL, photoUrl)
             startActivity(intent)
         }
 
@@ -332,7 +373,7 @@ class ShopProfileActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         Toast.makeText(
                             applicationContext,
-                            "Try again!! Error Occurred \n"+resource.message,
+                            "Try again!! Error Occurred \n" + resource.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -365,10 +406,9 @@ class ShopProfileActivity : AppCompatActivity() {
 
                                 for (i in shopConfigurationList)
                                     if (i.shopModel.id == updateConfigurationModel.shopModel?.id) {
-                                        i.shopModel= updateConfigurationModel.shopModel!!
-                                        i.configurationModel =updateConfigurationModel
+                                        i.shopModel = updateConfigurationModel.shopModel!!
+                                        i.configurationModel = updateConfigurationModel
                                     }
-
                                 preferencesHelper.shop = Gson().toJson(shopConfigurationList)
                             }
 
@@ -407,6 +447,62 @@ class ShopProfileActivity : AppCompatActivity() {
                     }
                 }
             })
+
+
+        viewModel.getShopDetailResponse.observe(this, androidx.lifecycle.Observer { resource ->
+
+            if (resource != null) {
+                when (resource.status) {
+
+                    Resource.Status.SUCCESS -> {
+
+                        progressDialog.dismiss()
+                        resource.data?.data?.let { latestShopData ->
+                            preferencesHelper.getShop()?.let { shopConfigurationList ->
+
+                                for (i in shopConfigurationList) {
+                                    if (i.shopModel.id == preferencesHelper.currentShop) {
+                                        i.shopModel = latestShopData.shopModel
+                                        i.configurationModel = latestShopData.configurationModel
+                                        i.ratingModel = latestShopData.ratingModel
+                                    }
+                                }
+                                preferencesHelper.shop = Gson().toJson(shopConfigurationList)
+                                updateUI()
+                            }
+                        }
+
+                    }
+
+
+                    Resource.Status.OFFLINE_ERROR -> {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            applicationContext,
+                            "No Internet Connection",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    Resource.Status.ERROR -> {
+                        progressDialog.dismiss()
+                        resource.message?.let {
+                            Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
+                        } ?: run {
+                            Toast.makeText(
+                                applicationContext,
+                                "Update Failed Try again later",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    Resource.Status.LOADING -> {
+                        progressDialog.setMessage("Fetching shop data...")
+                        progressDialog.show()
+                    }
+
+                }
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

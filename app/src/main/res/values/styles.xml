@@ -66,9 +66,8 @@
     <style name="snackbar_button" parent="@style/Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:fontFamily">@font/open_sans_bold</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="backgroundTint">@color/green</item>
-        <item name="android:drawableEnd">@drawable/ic_cart</item>
+        <item name="android:textColor">@color/accent</item>
+        <item name="background">@null</item>
     </style>
 
     <style name="snackbar_text" parent="@style/Widget.MaterialComponents.Snackbar.TextView">

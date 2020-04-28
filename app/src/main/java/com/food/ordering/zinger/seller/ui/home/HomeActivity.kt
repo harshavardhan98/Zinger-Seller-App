@@ -12,7 +12,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -45,7 +44,6 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.squareup.picasso.Picasso
-import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -58,7 +56,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var drawer: Drawer
     private lateinit var progressDialog: ProgressDialog
     private lateinit var cartSnackBar: Snackbar
-    private lateinit var errorSnackbar: Snackbar
+    private lateinit var errorSnackBar: Snackbar
     private var placeId = ""
     private var shopConfig: ShopConfigurationModel? = null
 
@@ -89,10 +87,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             null,
             false
         )
-        cartSnackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_INDEFINITE)
-        cartSnackBar.setBackgroundTint(ContextCompat.getColor(applicationContext, R.color.green))
-        errorSnackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_INDEFINITE)
-        val snackButton: Button = errorSnackbar.view.findViewById(R.id.snackbar_action)
+
+        errorSnackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_INDEFINITE)
+        val snackButton: Button = errorSnackBar.view.findViewById(R.id.snackbar_action)
         snackButton.setCompoundDrawables(null, null, null, null)
         snackButton.background = null
         snackButton.setTextColor(ContextCompat.getColor(applicationContext, R.color.accent))

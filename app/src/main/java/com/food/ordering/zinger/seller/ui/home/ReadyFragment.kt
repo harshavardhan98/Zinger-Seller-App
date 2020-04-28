@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,9 +59,14 @@ class ReadyFragment : Fragment() {
         updateUI()
         progressDialog = ProgressDialog(activity)
         errorSnackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_INDEFINITE)
+        val snackButton: Button = errorSnackBar.view.findViewById(R.id.snackbar_action)
+        snackButton.setCompoundDrawables(null, null, null, null)
+        snackButton.background = null
+        snackButton.setTextColor(ContextCompat.getColor(context!!, R.color.accent))
         errorSnackBar.setAction("Try Again"){
             viewModel.getOrderByShopId(preferencesHelper.currentShop)
         }
+        errorSnackBar.dismiss()
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.getOrderByShopId(preferencesHelper.currentShop)
         }
@@ -87,15 +94,17 @@ class ReadyFragment : Fragment() {
                                 }
                                 ordersList.forEach { it.transactionModel.orderModel.orderStatus = it.orderStatusModel.last().orderStatus }
                             }
-
                         }
                         orderAdapter.notifyDataSetChanged()
                     }
-                    binding.layoutStates.visibility = View.GONE
-                    binding.animationView.visibility = View.GONE
-                    binding.animationView.cancelAnimation()
-                    errorSnackBar.dismiss()
-
+                    if(ordersList.isEmpty())
+                        showEmptyStateAnimation()
+                    else{
+                        binding.layoutStates.visibility = View.GONE
+                        binding.animationView.visibility = View.GONE
+                        binding.animationView.cancelAnimation()
+                        errorSnackBar.dismiss()
+                    }
                 }
                 Resource.Status.ERROR ->{
                     binding.swipeRefreshLayout.isRefreshing = false
@@ -132,14 +141,8 @@ class ReadyFragment : Fragment() {
                 }
 
                 Resource.Status.EMPTY -> {
-                    binding.swipeRefreshLayout.isRefreshing = false
-                    binding.layoutStates.visibility = View.GONE
-                    binding.animationView.visibility = View.VISIBLE
-                    binding.animationView.loop(true)
-                    binding.animationView.setAnimation("empty_animation.json")
-                    binding.animationView.playAnimation()
-                    errorSnackBar.setText("No Orders available")
-                    Handler().postDelayed({ errorSnackBar.show() }, 500)
+                    showEmptyStateAnimation()
+
                 }
 
 
@@ -227,5 +230,21 @@ class ReadyFragment : Fragment() {
         }
     }
 
+
+    fun showEmptyStateAnimation(){
+        binding.swipeRefreshLayout.isRefreshing = false
+        binding.layoutStates.visibility = View.GONE
+        binding.animationView.visibility = View.VISIBLE
+        binding.animationView.loop(true)
+        binding.animationView.setAnimation("empty_animation.json")
+        binding.animationView.playAnimation()
+        errorSnackBar.setText("No Orders with ready status available")
+        Handler().postDelayed({ errorSnackBar.show() }, 500)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        errorSnackBar.dismiss()
+    }
 
 }

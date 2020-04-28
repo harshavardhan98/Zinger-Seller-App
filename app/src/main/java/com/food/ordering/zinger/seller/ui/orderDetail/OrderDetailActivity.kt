@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat
 class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityOrderDetailBinding
-    private val viewModel: OrderViewModel by viewModel()
+    private val viewModel: OrderDetailViewModel by viewModel()
     private val preferencesHelper: PreferencesHelper by inject()
     private lateinit var orderAdapter: OrderItemAdapter
     private lateinit var progressDialog: ProgressDialog
@@ -96,7 +96,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 if (order.transactionModel.orderModel.deliveryLocation == null)
                     binding.textUpdateStatus.text = AppConstants.STATUS.READY.name
                 else
-                    binding.textUpdateStatus.text = AppConstants.STATUS.OUT_FOR_DELIVERY.name
+                    binding.textUpdateStatus.text = "OUT FOR DELIVERY"
             }
             AppConstants.STATUS.READY.name -> {
                 binding.textCancel.visibility = View.INVISIBLE
@@ -106,7 +106,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             AppConstants.STATUS.OUT_FOR_DELIVERY.name -> {
                 binding.textCancel.visibility = View.INVISIBLE
                 binding.textCancel.isEnabled = false
-                binding.textUpdateStatus.text = AppConstants.STATUS.DELIVERED.name
+                binding.textUpdateStatus.text = "DELIVER"
             }
         }
 

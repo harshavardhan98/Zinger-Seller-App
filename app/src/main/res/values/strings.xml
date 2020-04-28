@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Zinger_Seller</string>
+    <string name="app_name">Zinger Partner</string>
     <string name="label_login">LOGIN</string>
     <string name="hint_enter_phone_number">Enter phone number</string>
     <string name="label_phone_number">Phone Number</string>
