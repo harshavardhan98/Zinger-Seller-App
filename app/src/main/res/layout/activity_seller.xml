@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -8,49 +7,88 @@
 
     </data>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.seller.SellerActivity">
+        tools:context="com.food.ordering.zinger.ui.profile.ProfileActivity">
 
-        <Button
-            android:id="@+id/btn_getSeller"
-            android:text="Get Sellers"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btn_inviteSeller"
-            android:text="Invite Sellers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_verifyInvite"
-            android:text="Verify Invite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <ImageView
+                    android:id="@+id/image_close"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_close"
+                    android:tint="@android:color/black" />
 
-        <Button
-            android:id="@+id/btn_acceptInvite"
-            android:text="Accept Invite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/text_invite_seller"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:background="@drawable/bg_rounded"
+                    android:drawableStart="@drawable/ic_add"
+                    android:drawablePadding="8dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center|start"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@android:color/black"
+                    android:text="Invite seller"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
 
-        <Button
-            android:id="@+id/btn_deleteInvite"
-            android:text="Delete Invite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_notifyInvite"
-            android:text="Notify Invite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center|start"
+                    android:paddingTop="3dp"
+                    android:text="Sellers"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/AppbarTitle"
+                    android:textColor="@android:color/black"
+                    android:textSize="32sp" />
 
-    </LinearLayout>
 
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_seller"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/item_seller"
+                android:overScrollMode="never"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>

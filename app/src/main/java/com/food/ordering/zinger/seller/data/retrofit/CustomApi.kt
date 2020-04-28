@@ -32,6 +32,9 @@ interface CustomApi  {
     @POST("notify/seller/invite")
     suspend fun notifyInvite(@Body userShop: UserShopModel): Response<String>
 
+    @DELETE("/user/seller/{shopId}/{userId}")
+    suspend fun deleteSeller(@Path("shopId") shopId: Int,@Path("userId") userId: Int): Response<String>
+
 
     // shop repository
     @PATCH("/shop/config")

@@ -15,16 +15,7 @@ import java.net.UnknownHostException
 
 import kotlin.Exception
 
-class SellerViewModel(private val sellerRepository: SellerRepository) : ViewModel() {
-
-    private val getSeller = MutableLiveData<Resource<Response<List<UserModel>>>>()
-    val getSellerResponse: LiveData<Resource<Response<List<UserModel>>>>
-        get() = getSeller
-
-
-    private val inviteSeller = MutableLiveData<Resource<Response<String>>>()
-    val inviteSellerResponse: LiveData<Resource<Response<String>>>
-        get() = inviteSeller
+class  SellerViewModel(private val sellerRepository: SellerRepository) : ViewModel() {
 
 
     private val verifyInvite = MutableLiveData<Resource<Response<UserInviteModel>>>()
@@ -44,6 +35,10 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
         get() = notifyInvite
 
 
+    private val getSeller = MutableLiveData<Resource<Response<List<UserModel>>>>()
+    val getSellerResponse: LiveData<Resource<Response<List<UserModel>>>>
+        get() = getSeller
+
     fun getSeller(shopId: String) {
         viewModelScope.launch {
             try {
@@ -62,6 +57,11 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
             }
         }
     }
+
+
+    private val inviteSeller = MutableLiveData<Resource<Response<String>>>()
+    val inviteSellerResponse: LiveData<Resource<Response<String>>>
+        get() = inviteSeller
 
     fun inviteSeller(userShopModel: UserShopModel) {
         viewModelScope.launch {
@@ -170,7 +170,30 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
                 }
             }
         }
+    }
 
+    private val deleteSeller = MutableLiveData<Resource<Response<String>>>()
+    val deleteSellerResponse: LiveData<Resource<Response<String>>>
+        get() = deleteSeller
+
+    fun deleteSeller(shopId: Int,userId: Int){
+        viewModelScope.launch {
+            try{
+                deleteSeller.value = Resource.loading()
+                val response  = sellerRepository.deleteSeller(shopId,userId)
+                if(response.code == 1)
+                    deleteSeller.value = Resource.success(response)
+                else
+                    deleteSeller.value = Resource.error(message = response.message)
+
+            }catch (e: Exception) {
+                if (e is UnknownHostException) {
+                    deleteSeller.value = Resource.offlineError()
+                } else {
+                    deleteSeller.value = Resource.error(e)
+                }
+            }
+        }
     }
 
 

@@ -19,4 +19,6 @@ class SellerRepository(private val retrofit: Retrofit) {
 
     suspend fun notifyInvite(userShopModel: UserShopModel) = service.notifyInvite(userShopModel)
 
+    suspend fun deleteSeller(shopId: Int,userId: Int) = service.deleteSeller(shopId,userId)
+
 }

@@ -45,7 +45,7 @@
                 android:textSize="12sp" />
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_item_name"
+                android:id="@+id/edit_mobile"
                 android:singleLine="true"
                 android:inputType="phone"
                 android:maxLength="10"
@@ -69,6 +69,7 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="12sp" />
             <RadioGroup
+                android:id="@+id/radio_group_role"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -76,6 +77,7 @@
                 android:layout_marginBottom="16dp">
 
                 <RadioButton
+                    android:id="@+id/radio_button_shop_owner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
@@ -85,6 +87,7 @@
                     android:textStyle="bold" />
 
                 <RadioButton
+                    android:id="@+id/radio_button_seller"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
@@ -94,6 +97,7 @@
                     android:fontFamily="@font/poppins_semibold"/>
 
                 <RadioButton
+                    android:id="@+id/radio_button_delivery"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
@@ -104,7 +108,7 @@
 
             </RadioGroup>
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_confirm"
+                android:id="@+id/button_add_seller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
