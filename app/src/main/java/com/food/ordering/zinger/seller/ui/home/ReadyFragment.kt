@@ -30,12 +30,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class ReadyFragment : Fragment() {
 
     lateinit var binding: FragmentReadyBinding
     private val viewModel: OrderViewModel by sharedViewModel()
+    private val homeViewModel: HomeViewModel by viewModel()
     private val preferencesHelper: PreferencesHelper by inject()
     private lateinit var progressDialog: ProgressDialog
     private lateinit var errorSnackBar: Snackbar
@@ -82,8 +84,8 @@ class ReadyFragment : Fragment() {
                 Resource.Status.SUCCESS -> {
                     binding.swipeRefreshLayout.isRefreshing = false
                     ordersList.clear()
-                    if (!it.data?.data.isNullOrEmpty()) {
-                        it.data?.data?.let { it1 ->
+                    if (!it.data.isNullOrEmpty()) {
+                        it.data?.let { it1 ->
                             //ordersList.addAll(it1)
                             preferencesHelper.role?.let {
                                 if (it == AppConstants.ROLE.DELIVERY.name) {
@@ -160,7 +162,7 @@ class ReadyFragment : Fragment() {
             }
         })
 
-        viewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer { resource ->
+        homeViewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
@@ -245,7 +247,7 @@ class ReadyFragment : Fragment() {
                     orderModel.orderStatus = AppConstants.STATUS.DELIVERED.name
 
                 orderModel.secretKey = dialogBinding.editSecretKey.text.toString()
-                viewModel.updateOrder(orderModel)
+                homeViewModel.updateOrder(orderModel)
             }
             dialog.dismiss()
         }

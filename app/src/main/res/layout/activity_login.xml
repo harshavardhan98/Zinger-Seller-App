@@ -30,6 +30,7 @@
                     android:src="@drawable/ic_online_groceris" />
 
                 <TextView
+                    android:id="@+id/text_welcome"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
@@ -37,7 +38,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center|start"
                     android:paddingTop="3dp"
-                    android:text="Welcome to\nZinger"
+                    android:text="Welcome to\nZinger Partner"
                     android:textAppearance="@style/AppbarTitle"
                     android:textColor="@android:color/black"
                     android:textSize="32sp" />

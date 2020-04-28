@@ -28,12 +28,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class NewOrdersFragment : Fragment() {
 
     lateinit var binding: FragmentNewOrdersBinding
     private val viewModel: OrderViewModel by sharedViewModel()
+    private val homeViewModel: HomeViewModel by viewModel()
     private lateinit var progressDialog: ProgressDialog
     private val preferencesHelper: PreferencesHelper by inject()
     private lateinit var errorSnackBar: Snackbar
@@ -80,8 +82,8 @@ class NewOrdersFragment : Fragment() {
                         binding.swipeRefreshLayout.isRefreshing = false
                         //progressDialog.dismiss()
                         ordersList.clear()
-                        if (!resource.data?.data.isNullOrEmpty()) {
-                            resource.data?.data?.let { it1 ->
+                        if (resource.data.isNullOrEmpty()) {
+                            resource.data?.let { it1 ->
                                 ordersList.addAll(it1.filter {
                                     it.orderStatusModel.last().orderStatus.equals(
                                         AppConstants.STATUS.PLACED.name
@@ -141,7 +143,7 @@ class NewOrdersFragment : Fragment() {
         })
 
 
-        viewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer { resource ->
+        homeViewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
@@ -190,7 +192,7 @@ class NewOrdersFragment : Fragment() {
                     id = orderItemListModel!!.transactionModel.orderModel.id,
                     orderStatus = AppConstants.STATUS.ACCEPTED.name
                 )
-                viewModel.updateOrder(orderModel)
+                homeViewModel.updateOrder(orderModel)
             }
 
             override fun onCancelClick(orderItemListModel: OrderItemListModel?, position: Int) {
@@ -198,7 +200,7 @@ class NewOrdersFragment : Fragment() {
                     id = orderItemListModel!!.transactionModel.orderModel.id,
                     orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
                 )
-                viewModel.updateOrder(orderModel)
+                homeViewModel.updateOrder(orderModel)
             }
         })
         binding.recyclerOrders.layoutManager =

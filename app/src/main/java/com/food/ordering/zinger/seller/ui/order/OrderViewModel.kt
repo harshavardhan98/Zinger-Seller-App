@@ -9,6 +9,7 @@ import com.food.ordering.zinger.seller.data.model.*
 import com.food.ordering.zinger.seller.data.retrofit.OrderRepository
 import com.food.ordering.zinger.seller.data.retrofit.ShopRepository
 import com.food.ordering.zinger.seller.data.retrofit.UserRespository
+import com.food.ordering.zinger.seller.utils.AppConstants
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import kotlin.Exception
@@ -26,8 +27,8 @@ class OrderViewModel(private val orderRepository: OrderRepository,
     val orderByIdResponse : LiveData<Resource<Response<OrderItemListModel>>>
     get() = orderByIdRequest
 
-    private val orderByShopId = MutableLiveData<Resource<Response<List<OrderItemListModel>>>>()
-    val orderByShopIdResponse : LiveData<Resource<Response<List<OrderItemListModel>>>>
+    private val orderByShopId = MutableLiveData<Resource<List<OrderItemListModel>>>()
+    val orderByShopIdResponse : LiveData<Resource<List<OrderItemListModel>>>
     get() = orderByShopId
 
     private val updateOrder = MutableLiveData<Resource<Response<String>>>()
@@ -62,28 +63,6 @@ class OrderViewModel(private val orderRepository: OrderRepository,
         }
     }
 
-    fun updateOrder(orderModel: OrderModel){
-        viewModelScope.launch {
-            try{
-                updateOrder.value = Resource.loading()
-                val response = orderRepository.updateOrderStatus(orderModel)
-
-                if(response.code==1) {
-                    updateOrder.value = Resource.success(response)
-                }
-                else{
-                    updateOrder.value = Resource.error(message=response.message)
-                }
-            }catch (e: Exception){
-                if (e is UnknownHostException) {
-                    updateOrder.value = Resource.offlineError()
-                } else {
-                    updateOrder.value = Resource.error(e)
-                }
-            }
-        }
-    }
-
 
 
     fun getOrderByShopId(shopId: Int){
@@ -92,10 +71,13 @@ class OrderViewModel(private val orderRepository: OrderRepository,
                 orderByShopId.value = Resource.loading()
                 val response = orderRepository.getOrderByShopId(shopId)
 
-                if(!response.data.isNullOrEmpty())
-                    orderByShopId.value = Resource.success(response)
-                else
+                if(!response.data.isNullOrEmpty()) {
+                    var orders = response.data
+                    orderByShopId.value = Resource.success(orders)
+                }
+                else {
                     orderByShopId.value = Resource.empty()
+                }
 
             }catch (e: Exception){
                 if (e is UnknownHostException) {

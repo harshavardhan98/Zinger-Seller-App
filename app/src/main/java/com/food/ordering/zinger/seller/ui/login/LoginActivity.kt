@@ -3,6 +3,7 @@ package com.food.ordering.zinger.seller.ui.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -39,6 +40,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        val text = "<font color=#000000>Welcome to</font> <br> <font color=#000000>Zinger</font> <font color=#FF4141> Partner</font>"
+        binding.textWelcome.text = Html.fromHtml(text)
     }
 
     private fun setListener() {
