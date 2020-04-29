@@ -20,6 +20,7 @@ import com.amulyakhare.textdrawable.TextDrawable
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
+import com.food.ordering.zinger.seller.data.model.OrderNotificationPayload
 import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
@@ -33,6 +34,7 @@ import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
 import com.food.ordering.zinger.seller.ui.seller.SellerActivity
 import com.food.ordering.zinger.seller.ui.shopProfile.ShopProfileActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
+import com.food.ordering.zinger.seller.utils.EventBus
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -47,6 +49,11 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -61,6 +68,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var errorSnackBar: Snackbar
     private var shopConfig: ShopConfigurationModel? = null
 
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -75,6 +83,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
         viewModel.getShopDetail(preferencesHelper.currentShop)
         println("testing")
+        subscribeToOrders()
     }
 
 
@@ -476,5 +485,16 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             preferencesHelper.isFCMTopicSubScribed = true
         }
 
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun subscribeToOrders() {
+        val subscription = EventBus.asChannel<OrderNotificationPayload>()
+        CoroutineScope(Dispatchers.Main).launch {
+            subscription.consumeEach {
+                println("Received order status event")
+                viewModel.getOrderByShopId(preferencesHelper.currentShop)
+            }
+        }
     }
 }
