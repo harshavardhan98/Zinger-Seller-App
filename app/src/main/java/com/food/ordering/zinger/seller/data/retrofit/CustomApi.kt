@@ -51,7 +51,7 @@ interface CustomApi  {
     suspend fun addItem(@Body itemModelList: List<ItemModel>): Response<String>
 
     @PATCH("/menu")
-    suspend fun updateItem(@Body item: ItemModel): Response<String>
+    suspend fun updateItem(@Body item: List<ItemModel>): Response<String>
 
     @DELETE("/menu/delete/{itemId}")
     suspend fun deleteItem(@Path("itemId") itemId: Int): Response<String>

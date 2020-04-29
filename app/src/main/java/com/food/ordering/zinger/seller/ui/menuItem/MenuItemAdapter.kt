@@ -65,11 +65,15 @@ class MenuItemAdapter(
                 )
 
             binding.switchItemAvailable.setOnCheckedChangeListener { buttonView, isChecked ->
-                listener.onSwitchChange()
-                if (isChecked)
+                listener.onSwitchChange(menuItem,position)
+                if (isChecked){
+                    menuItem.isAvailable = 1
                     binding.switchItemAvailable.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.switchSelected))
-                else
+                }
+                else{
+                    menuItem.isAvailable = 0
                     binding.switchItemAvailable.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.switchNotSelected))
+                }
             }
 
             if (menuItem.isVeg == 1) {
@@ -92,7 +96,7 @@ class MenuItemAdapter(
     interface OnItemClickListener {
         fun onEditClick(itemModel: ItemModel?, position: Int)
         fun onDeleteClick(itemModel: ItemModel?, position: Int)
-        fun onSwitchChange()
+        fun onSwitchChange(itemModel: ItemModel?, position: Int)
     }
 
 }

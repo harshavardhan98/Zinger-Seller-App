@@ -4,6 +4,7 @@ import com.food.ordering.zinger.seller.ui.home.HomeViewModel
 import com.food.ordering.zinger.seller.ui.profile.ProfileViewModel
 import com.food.ordering.zinger.seller.ui.login.LoginViewModel
 import com.food.ordering.zinger.seller.ui.menu.MenuViewModel
+import com.food.ordering.zinger.seller.ui.menuItem.MenuItemViewModel
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderDetail.OrderDetailViewModel
 import com.food.ordering.zinger.seller.ui.otp.OTPViewModel
@@ -15,7 +16,8 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { HomeViewModel(get())}
-    viewModel { MenuViewModel(get())}
+    viewModel { MenuItemViewModel(get()) }
+    viewModel { MenuViewModel(get()) }
     viewModel { OrderViewModel(get(),get(),get()) }
     viewModel { SellerViewModel(get()) }
     viewModel { ProfileViewModel(get()) }

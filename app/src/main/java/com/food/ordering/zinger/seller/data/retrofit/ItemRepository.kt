@@ -11,7 +11,7 @@ class ItemRepository(private val retrofit: Retrofit) {
 
     suspend fun addItem(item: List<ItemModel>) = service.addItem(item)
 
-    suspend fun updateItem(item: ItemModel) = service.updateItem(item)
+    suspend fun updateItem(item: List<ItemModel>) = service.updateItem(item)
 
     suspend fun deleteItem(itemId: Int) = service.deleteItem(itemId)
 

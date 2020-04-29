@@ -58,9 +58,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var headerLayout: HeaderLayoutBinding
     private lateinit var drawer: Drawer
     private lateinit var progressDialog: ProgressDialog
-    private lateinit var cartSnackBar: Snackbar
     private lateinit var errorSnackBar: Snackbar
-    private var placeId = ""
     private var shopConfig: ShopConfigurationModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -288,7 +286,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .build()
 
         preferencesHelper.role?.let {role ->
-            if(role==AppConstants.ROLE.SELLER.name || role == AppConstants.ROLE.DELIVERY.name){
+            if(role==AppConstants.ROLE.SELLER.name){
+                drawer.removeItem(sellerItem.identifier)
+            }else if(role == AppConstants.ROLE.DELIVERY.name){
+                drawer.removeItem(shopProfileItem.identifier)
+                drawer.removeItem(ordersItem.identifier)
+                drawer.removeItem(menuItem.identifier)
                 drawer.removeItem(sellerItem.identifier)
             }
         }

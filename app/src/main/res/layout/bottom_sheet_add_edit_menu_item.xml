@@ -93,7 +93,6 @@
                         android:id="@+id/edit_item_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
                         android:fontFamily="@font/poppins_semibold"
                         android:hint="eg: 50"
                         android:paddingLeft="20dp"
@@ -169,7 +168,7 @@
                     app:trackTint="#CCCCCC" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_veg"
+                    android:id="@+id/switch_non_veg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
