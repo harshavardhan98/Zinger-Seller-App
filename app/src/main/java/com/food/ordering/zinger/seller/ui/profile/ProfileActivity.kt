@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -79,7 +80,7 @@ class ProfileActivity : AppCompatActivity() {
 
             override fun onFinish() {
                 dialogBinding.textResendOtp.setText("Resend OTP")
-                dialogBinding.textResendOtp.isEnabled=true
+                dialogBinding.textResendOtp.isEnabled = true
             }
         }
 
@@ -91,21 +92,24 @@ class ProfileActivity : AppCompatActivity() {
             else if (binding.editEmail.isEnabled)
                 Toast.makeText(this, "Please confirm email change", Toast.LENGTH_LONG).show()
             else if (binding.editMobile.isEnabled)
-                Toast.makeText(this, "Please confirm mobile number change", Toast.LENGTH_LONG).show()
-            else if(binding.editMobile.editableText.toString().length!=10 || !binding.editMobile.editableText.toString().matches(Regex("\\d+")))
+                Toast.makeText(this, "Please confirm mobile number change", Toast.LENGTH_LONG)
+                    .show()
+            else if (binding.editMobile.editableText.toString().length != 10 || !binding.editMobile.editableText.toString()
+                    .matches(Regex("\\d+"))
+            )
                 Toast.makeText(this, "Incorrect mobile number", Toast.LENGTH_LONG).show()
             else {
                 val name = binding.editName.editableText.toString()
                 val email = binding.editEmail.editableText.toString()
                 val mobile = binding.editMobile.editableText.toString()
 
-                val fcmToken = if(preferencesHelper.fcmToken!=null) preferencesHelper.fcmToken else " "
+                val fcmToken =
+                    if (preferencesHelper.fcmToken != null) preferencesHelper.fcmToken else " "
 
                 if (mobile != preferencesHelper.mobile) {
                     sendOtp(mobile)
                     showOtpVerificationBottomSheet(mobile)
-                }
-                else if (!name.equals(preferencesHelper.name) ||
+                } else if (!name.equals(preferencesHelper.name) ||
                     !email.equals(preferencesHelper.email) ||
                     !mobile.equals(preferencesHelper.mobile)
                 ) {
@@ -113,7 +117,7 @@ class ProfileActivity : AppCompatActivity() {
                     viewModel.updateProfile(
                         UserModel(
                             id = preferencesHelper.id, name = name, email = email, mobile = mobile
-                            ,notificationToken = arrayListOf(fcmToken!!)
+                            , notificationToken = arrayListOf(fcmToken!!)
                         )
                     )
                 }
@@ -149,7 +153,8 @@ class ProfileActivity : AppCompatActivity() {
 
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
                 progressDialog.dismiss()
-                Toast.makeText(applicationContext, "Verification Successful!", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Verification Successful!", Toast.LENGTH_LONG)
+                    .show()
                 dialogBinding.editOtp.setText(p0.smsCode)
                 viewModel.signInWithPhoneAuthCredential(p0, this@ProfileActivity)
             }
@@ -161,7 +166,10 @@ class ProfileActivity : AppCompatActivity() {
                 dialogBinding.editOtp.setText("")
             }
 
-            override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
                 progressDialog.dismiss()
                 storedVerificationId = verificationId
                 resendToken = token
@@ -233,14 +241,14 @@ class ProfileActivity : AppCompatActivity() {
                     }
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                       // dialog.dismiss()
+                        // dialog.dismiss()
                         val name = binding.editName.editableText.toString()
                         val email = binding.editEmail.editableText.toString()
                         val mobile = binding.editMobile.editableText.toString()
                         val fcmToken = ArrayList<String>()
 
                         preferencesHelper.fcmToken?.let { fcmToken.add(it) }
-                        
+
                         viewModel.updateProfile(
                             UserModel(
                                 id = preferencesHelper.id,
@@ -254,7 +262,7 @@ class ProfileActivity : AppCompatActivity() {
                     }
 
                     Resource.Status.ERROR -> {
-                        //dialog.dismiss()
+                        progressDialog.dismiss()
                         Toast.makeText(this, "OTP verification failed ", Toast.LENGTH_LONG).show()
                         countDownTimer.cancel()
                     }
@@ -284,17 +292,34 @@ class ProfileActivity : AppCompatActivity() {
             resendVerificationCode(binding.editMobile.text.toString(), resendToken)
         })
 
-        dialogBinding.buttonVerify.setOnClickListener {
-            if (dialogBinding.editOtp.text?.length?.compareTo(6) == 0) {
-                val credential = PhoneAuthProvider.getCredential(
-                    storedVerificationId,
-                    dialogBinding.editOtp.text.toString()
-                )
-                viewModel.signInWithPhoneAuthCredential(credential, context = this)
-            } else {
-                Toast.makeText(this, "Wrong OTP length", Toast.LENGTH_LONG).show()
+        dialogBinding.editOtp.setOnEditorActionListener { v, actionId, event ->
+            when(actionId){
+                EditorInfo.IME_ACTION_DONE -> {
+                    Toast.makeText(this,"Testing worked",Toast.LENGTH_LONG).show()
+                    verifyOtpRequest(dialogBinding)
+                    true
+                }
+                else -> false
             }
         }
+
+
+        dialogBinding.buttonVerify.setOnClickListener {
+            verifyOtpRequest(dialogBinding)
+        }
+    }
+
+    private fun verifyOtpRequest(dialogBinding: BottomSheetVerifyOtpBinding) {
+        if (dialogBinding.editOtp.text?.length?.compareTo(6) == 0) {
+            val credential = PhoneAuthProvider.getCredential(
+                storedVerificationId,
+                dialogBinding.editOtp.text.toString()
+            )
+            viewModel.signInWithPhoneAuthCredential(credential, context = this)
+        } else {
+            Toast.makeText(this, "Wrong OTP length", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     private fun sendOtp(number: String) {
@@ -302,7 +327,7 @@ class ProfileActivity : AppCompatActivity() {
         progressDialog.show()
 
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            "+91"+number, // Phone number to verify
+            "+91" + number, // Phone number to verify
             60, // Timeout duration
             TimeUnit.SECONDS, // Unit of timeout
             this, // Activity (for callback binding)
@@ -313,7 +338,7 @@ class ProfileActivity : AppCompatActivity() {
     fun resendVerificationCode(number: String, token: PhoneAuthProvider.ForceResendingToken) {
 
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            "+91"+number,        // Phone number to verify
+            "+91" + number,        // Phone number to verify
             60,                 // Timeout duration
             TimeUnit.SECONDS,   // Unit of timeout
             this,               // Activity (for callback binding)

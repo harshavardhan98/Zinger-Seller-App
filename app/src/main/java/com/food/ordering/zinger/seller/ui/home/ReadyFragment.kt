@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -233,24 +234,43 @@ class ReadyFragment : Fragment() {
         val dialog = BottomSheetDialog(context!!)
         dialog.setContentView(dialogBinding.root)
         dialog.show()
-        dialogBinding.buttonConfirm.setOnClickListener {
-            if (dialogBinding.editSecretKey.text.toString()
-                    .isNotEmpty() && dialogBinding.editSecretKey.text.toString().length == 6
-                && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))
-            ) {
-                val orderModel =
-                    OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id)
 
-                if (orderItemListModel!!.transactionModel.orderModel.deliveryLocation == null)
-                    orderModel.orderStatus = AppConstants.STATUS.COMPLETED.name
-                else
-                    orderModel.orderStatus = AppConstants.STATUS.DELIVERED.name
-
-                orderModel.secretKey = dialogBinding.editSecretKey.text.toString()
-                homeViewModel.updateOrder(orderModel)
+        dialogBinding.editSecretKey.setOnEditorActionListener { v, actionId, event ->
+            when(actionId){
+                EditorInfo.IME_ACTION_DONE -> {
+                    updateOrderRequest(dialog, dialogBinding, orderItemListModel)
+                    true
+                }
+                else -> false
             }
-            dialog.dismiss()
         }
+
+        dialogBinding.buttonConfirm.setOnClickListener {
+            updateOrderRequest(dialog, dialogBinding, orderItemListModel)
+        }
+    }
+
+    fun updateOrderRequest(
+        dialog: BottomSheetDialog, dialogBinding: BottomSheetSecretKeyBinding
+        , orderItemListModel: OrderItemListModel
+    ) {
+
+        if (dialogBinding.editSecretKey.text.toString()
+                .isNotEmpty() && dialogBinding.editSecretKey.text.toString().length == 6
+            && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))
+        ) {
+            val orderModel =
+                OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id)
+
+            if (orderItemListModel!!.transactionModel.orderModel.deliveryLocation == null)
+                orderModel.orderStatus = AppConstants.STATUS.COMPLETED.name
+            else
+                orderModel.orderStatus = AppConstants.STATUS.DELIVERED.name
+
+            orderModel.secretKey = dialogBinding.editSecretKey.text.toString()
+            homeViewModel.updateOrder(orderModel)
+        }
+        dialog.dismiss()
     }
 
 

@@ -221,7 +221,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         val menuItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Shop Menu")
             .withIcon(R.drawable.ic_drawer_order)
         val sellerItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Mangage Employee")
-            .withIcon(R.drawable.ic_drawer_order)
+            .withIcon(R.drawable.ic_employee)
         val contactUsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contact Us")
             .withIcon(R.drawable.ic_drawer_mail)
         val signOutItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Sign out")

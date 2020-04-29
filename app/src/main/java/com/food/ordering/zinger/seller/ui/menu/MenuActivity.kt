@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -208,26 +209,40 @@ class MenuActivity : AppCompatActivity() {
         dialog.setContentView(dialogBinding.root)
         dialog.show()
 
-        dialogBinding.buttonConfirm.setOnClickListener {
-
-            if(dialogBinding.editCategory.text.toString().length==0 ||
-                !dialogBinding.editCategory.text.toString().matches(Regex("^[a-zA-Z]*\$")))
-            {
-                Toast.makeText(this,"Category name is empty or incorrect format ",Toast.LENGTH_LONG).show()
-
-            }else{
-                val category = CategoryItemListModel(
-                    dialogBinding.editCategory.text.toString().toUpperCase(),
-                    ArrayList()
-                )
-                categoryItemList.add(category)
-                categoryAdapter.notifyDataSetChanged()
-                dialog.dismiss()
-                val intent = Intent(applicationContext, MenuItemActivity::class.java)
-                intent.putExtra(AppConstants.CATEGORY_ITEM_DETAIL, Gson().toJson(category))
-                startActivity(intent)
+        dialogBinding.editCategory.setOnEditorActionListener { v, actionId, event ->
+            when(actionId){
+                EditorInfo.IME_ACTION_DONE -> {
+                    insertCategoryRequest(dialogBinding,dialog)
+                    true
+                }
+                else -> false
             }
+        }
+
+
+        dialogBinding.buttonConfirm.setOnClickListener {
+            insertCategoryRequest(dialogBinding,dialog)
         }
     }
 
+
+    private fun insertCategoryRequest(dialogBinding: BottomSheetAddCategoryBinding,dialog: BottomSheetDialog){
+        if(dialogBinding.editCategory.text.toString().length==0 ||
+            !dialogBinding.editCategory.text.toString().matches(Regex("^[a-zA-Z]*\$")))
+        {
+            Toast.makeText(this,"Category name is empty or incorrect format ",Toast.LENGTH_LONG).show()
+
+        }else{
+            val category = CategoryItemListModel(
+                dialogBinding.editCategory.text.toString().toUpperCase(),
+                ArrayList()
+            )
+            categoryItemList.add(category)
+            categoryAdapter.notifyDataSetChanged()
+            dialog.dismiss()
+            val intent = Intent(applicationContext, MenuItemActivity::class.java)
+            intent.putExtra(AppConstants.CATEGORY_ITEM_DETAIL, Gson().toJson(category))
+            startActivity(intent)
+        }
+    }
 }
