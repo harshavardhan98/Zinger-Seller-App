@@ -227,7 +227,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .withIcon(R.drawable.ic_drawer_past_rides)
         val menuItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Shop Menu")
             .withIcon(R.drawable.ic_drawer_order)
-        val sellerItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Mangage Employee")
+        val sellerItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Employees")
             .withIcon(R.drawable.ic_employee)
         val contactUsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contact Us")
             .withIcon(R.drawable.ic_drawer_mail)
@@ -299,7 +299,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 drawer.removeItem(sellerItem.identifier)
             }else if(role == AppConstants.ROLE.DELIVERY.name){
                 drawer.removeItem(shopProfileItem.identifier)
-                drawer.removeItem(ordersItem.identifier)
                 drawer.removeItem(menuItem.identifier)
                 drawer.removeItem(sellerItem.identifier)
             }

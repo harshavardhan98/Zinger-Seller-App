@@ -4,7 +4,10 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.text.Editable
 import android.text.Html
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import androidx.core.content.ContextCompat
@@ -13,8 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
+import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.databinding.ActivityOrderHistoryBinding
+import com.food.ordering.zinger.seller.databinding.ActivitySearchOrderBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.ui.orderhistory.OrderHistoryAdapter
@@ -24,17 +29,21 @@ import com.google.gson.Gson
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
 
-    private lateinit var binding: ActivityOrderHistoryBinding
+    private lateinit var binding: ActivitySearchOrderBinding
     private val preferencesHelper: PreferencesHelper by inject()
     private val viewModel: SearchOrderViewModel by viewModel()
     private lateinit var orderAdapter: OrderHistoryAdapter
     private lateinit var progressDialog: ProgressDialog
     private var orderList: ArrayList<OrderItemListModel> = ArrayList()
+    private var timer: Timer? = null
     private lateinit var errorSnackBar: Snackbar
     var pageCnt = 5
+    var searchTerm = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +51,8 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_search_order)
 
         initView()
-
+        setListener()
+        setObservers()
     }
 
     private fun initView() {
@@ -67,10 +77,136 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun setListener() {
+        binding.editSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                timer = Timer()
+                timer?.schedule(object : TimerTask() {
+                    override fun run() {
+                        if (s.toString().length > 2) {
+                            //viewModel.getMenu(preferencesHelper.getPlace()?.id.toString(), s.toString(), shopId, isGlobalSearch)
+                            if (searchTerm != s.toString()) {
+                                runOnUiThread {
+                                    isLoading = false
+                                    isLastPage = false
+                                    page = 1
+                                    searchTerm = s.toString()
+                                    getOrders(s.toString())
+                                }
+                            }
+                        } else {
+                            runOnUiThread {
+                                orderList.clear()
+                                orderAdapter.notifyDataSetChanged()
+                                binding.appBarLayout.setExpanded(true, true)
+                            }
+                        }
+                    }
+                }, 600)
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                timer?.cancel()
+            }
+        })
+    }
+
+
+    var isFirstTime = true
+    private fun setObservers() {
+        viewModel.searchOrderResponse.observe(this, androidx.lifecycle.Observer { resource ->
+            if (resource != null) {
+                when (resource.status) {
+                    Resource.Status.LOADING -> {
+                        isLoading = true
+                        if (isFirstTime) {
+                            binding.layoutStates.visibility = View.VISIBLE
+                            binding.animationView.visibility = View.GONE
+                        } else {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+                        errorSnackBar.dismiss()
+                    }
+                    Resource.Status.EMPTY -> {
+                        isLoading = false
+                        isLastPage = true
+                        binding.progressBar.visibility = View.GONE
+                        if (isFirstTime) {
+                            binding.layoutStates.visibility = View.GONE
+                            binding.animationView.visibility = View.VISIBLE
+                            binding.animationView.loop(true)
+                            binding.animationView.setAnimation("empty_animation.json")
+                            binding.animationView.playAnimation()
+                            orderList.clear()
+                            orderAdapter.notifyDataSetChanged()
+                            errorSnackBar.setText("No orders found")
+                            Handler().postDelayed({ errorSnackBar.show() }, 500)
+                        }
+                    }
+                    Resource.Status.SUCCESS -> {
+                        isLoading = false
+                        binding.progressBar.visibility = View.GONE
+                        binding.layoutStates.visibility = View.GONE
+                        binding.animationView.visibility = View.GONE
+                        binding.animationView.cancelAnimation()
+                        errorSnackBar.dismiss()
+                        if (isFirstTime) {
+                            orderList.clear()
+                        }
+                        println("size testing " + resource.data?.data?.size)
+                        resource.data?.data?.let { it1 -> orderList.addAll(it1) }
+                        if (resource.data?.data.isNullOrEmpty()) {
+                            isLastPage = true
+                        } else {
+                            if (resource.data?.data?.size!! < pageCnt)
+                                isLastPage = true
+
+                            if (!isLastPage)
+                                page += 1
+                        }
+                        orderAdapter.notifyDataSetChanged()
+                        isFirstTime = false
+                        //binding.appBarLayout.setExpanded(false, true)
+                    }
+                    Resource.Status.OFFLINE_ERROR -> {
+                        isLoading = false
+                        binding.progressBar.visibility = View.GONE
+                        if (isFirstTime) {
+                            binding.layoutStates.visibility = View.GONE
+                            binding.animationView.visibility = View.VISIBLE
+                            binding.animationView.loop(true)
+                            binding.animationView.setAnimation("no_internet_connection_animation.json")
+                            binding.animationView.playAnimation()
+                            errorSnackBar.setText("No Internet Connection")
+                            Handler().postDelayed({ errorSnackBar.show() }, 500)
+                        }
+                        //binding.appBarLayout.setExpanded(true, true)
+
+                    }
+                    Resource.Status.ERROR -> {
+                        isLoading = false
+                        binding.progressBar.visibility = View.GONE
+                        if (isFirstTime) {
+                            binding.layoutStates.visibility = View.GONE
+                            binding.animationView.visibility = View.VISIBLE
+                            binding.animationView.loop(true)
+                            binding.animationView.setAnimation("order_failed_animation.json")
+                            binding.animationView.playAnimation()
+                            errorSnackBar.setText("Something went wrong")
+                            Handler().postDelayed({ errorSnackBar.show() }, 500)
+                        }
+                        //binding.appBarLayout.setExpanded(true, true)
+                    }
+                }
+            }
+        })
+
+    }
+
     var isLoading = false
     var isLastPage = false
     var page = 1
-    var searchTerm = ""
     private fun setupShopRecyclerView() {
         orderAdapter =
             OrderHistoryAdapter(orderList, object : OrderHistoryAdapter.OnItemClickListener {
@@ -105,10 +241,12 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getOrders(searchTerm: String) {
-        orderList.clear()
-        orderAdapter.notifyDataSetChanged()
-        preferencesHelper.currentShop?.let {
-            viewModel.getOrderBySearchTerm(it, searchTerm, 1, pageCnt)
+        if(searchTerm.length>0){
+            orderList.clear()
+            orderAdapter.notifyDataSetChanged()
+            preferencesHelper.currentShop?.let {
+                viewModel.getOrderBySearchTerm(it, searchTerm, 1, pageCnt)
+            }
         }
     }
 }

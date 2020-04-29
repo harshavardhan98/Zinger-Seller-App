@@ -37,9 +37,9 @@ class SellerAdapter(private val context: Context, private val userModelList: Lis
         fun bind(userModel: UserModel, position: Int, listener: OnItemClickListener) {
             binding.textNameNumber.text = userModel?.name+" "+userModel.mobile
 
-            if(userModel.id!=null && userModel.id!=0 && userModel.role.equals(AppConstants.ROLE.SELLER.name)){
-                binding.imagePending.visibility = View.INVISIBLE
-                binding.textPendingInvitation.visibility = View.INVISIBLE
+            if(userModel.id!=null && userModel.id!=0){
+                binding.imagePending.visibility = View.GONE
+                binding.textPendingInvitation.visibility = View.GONE
             }
 
             binding.imageDelete.setOnClickListener { listener.onDeleteClick(userModel,position) }

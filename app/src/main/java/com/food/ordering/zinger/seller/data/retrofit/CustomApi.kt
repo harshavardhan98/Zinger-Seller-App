@@ -69,7 +69,7 @@ interface CustomApi  {
     suspend fun getOrderByPagination(@Path("shopId") shopId: Int,@Path("pageNum") pageNum: Int,@Path("pageCnt") pageCnt: Int): Response<List<OrderItemListModel>>
 
     @GET("/order/{shopId}/{searchItem}/{pageNum}/{pageCount}")
-    suspend fun getOrderBySearchItem(@Path("shopId") shopId: Int, @Path("searchItem") searchItem: String, @Path("pageNum") pageNum: Int, @Path("pageCnt") pageCnt: Int): Response<List<OrderItemListModel>>
+    suspend fun getOrderBySearchItem(@Path("shopId") shopId: Int, @Path("searchItem") searchItem: String, @Path("pageNum") pageNum: Int, @Path("pageCount") pageCnt: Int): Response<List<OrderItemListModel>>
 
     @GET("/order/seller/{shopId}")
     suspend fun getOrderByShopId(@Path("shopId") shopId: Int): Response<List<OrderItemListModel>>

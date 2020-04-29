@@ -60,8 +60,7 @@ class SearchOrderAdapter(private val orderList: List<OrderItemListModel>, privat
             binding.textViewMore.visibility = if (order.orderItemsList.size > 2)  View.VISIBLE else View.GONE
 
 
-            binding.textOrderStatus.text = order.transactionModel.orderModel.orderStatus
-
+            binding.textOrderStatus.text = order.orderStatusModel.last().orderStatus
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
 
         }

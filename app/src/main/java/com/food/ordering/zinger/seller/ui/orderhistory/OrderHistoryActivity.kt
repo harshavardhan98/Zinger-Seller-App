@@ -19,6 +19,7 @@ import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.databinding.ActivityOrderHistoryBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailActivity
+import com.food.ordering.zinger.seller.ui.searchorders.SearchOrderActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
@@ -65,6 +66,11 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun setListener() {
+
+        binding.editSearch.setOnClickListener{
+            startActivity(Intent(applicationContext,SearchOrderActivity::class.java))
+        }
+
 
     }
 
