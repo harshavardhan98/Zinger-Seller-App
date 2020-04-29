@@ -50,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
             if (phoneNo.isNotEmpty() && phoneNo.length==10 && phoneNo.matches(Regex("\\d+"))) {
                 val intent = Intent(applicationContext, OTPActivity::class.java)
                 intent.putExtra(AppConstants.PREFS_SELLER_MOBILE, "+91"+phoneNo)
+                intent.putExtra(AppConstants.SELLER_SHOP,"NULL")
                 startActivity(intent)
             } else {
                 Toast.makeText(applicationContext, "Invalid phone number!", Toast.LENGTH_SHORT).show()

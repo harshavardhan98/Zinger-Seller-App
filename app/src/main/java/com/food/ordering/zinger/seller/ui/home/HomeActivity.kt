@@ -25,6 +25,7 @@ import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBinding
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
+import com.food.ordering.zinger.seller.ui.login.LoginActivity
 import com.food.ordering.zinger.seller.ui.menu.MenuActivity
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderHistory.OrderHistoryActivity
@@ -276,7 +277,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .setPositiveButton("Yes") { dialog, which ->
                             FirebaseAuth.getInstance().signOut()
                             preferencesHelper.clearPreferences()
-                            startActivity(Intent(applicationContext, ProfileActivity::class.java))
+                            startActivity(Intent(applicationContext, LoginActivity::class.java))
                             finish()
                         }
                         .setNegativeButton("No") { dialog, which -> dialog.dismiss() }
@@ -285,6 +286,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 true
             }
             .build()
+
+        preferencesHelper.role?.let {role ->
+            if(role==AppConstants.ROLE.SELLER.name || role == AppConstants.ROLE.DELIVERY.name){
+                drawer.removeItem(sellerItem.identifier)
+            }
+        }
     }
 
     private fun setObservers() {

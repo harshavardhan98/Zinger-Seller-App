@@ -63,7 +63,6 @@
 						android:fontFamily="sans-serif"
 						android:gravity="start|center"
 						android:drawablePadding="4dp"
-						android:visibility="gone"
 						android:minWidth="60dp"
 						android:layout_marginStart="8dp"
 						android:text="Pending Invite"

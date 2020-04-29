@@ -99,6 +99,8 @@ class ProfileActivity : AppCompatActivity() {
                 val email = binding.editEmail.editableText.toString()
                 val mobile = binding.editMobile.editableText.toString()
 
+                val fcmToken = if(preferencesHelper.fcmToken!=null) preferencesHelper.fcmToken else " "
+
                 if (mobile != preferencesHelper.mobile) {
                     sendOtp(mobile)
                     showOtpVerificationBottomSheet(mobile)
@@ -111,6 +113,7 @@ class ProfileActivity : AppCompatActivity() {
                     viewModel.updateProfile(
                         UserModel(
                             id = preferencesHelper.id, name = name, email = email, mobile = mobile
+                            ,notificationToken = arrayListOf(fcmToken!!)
                         )
                     )
                 }

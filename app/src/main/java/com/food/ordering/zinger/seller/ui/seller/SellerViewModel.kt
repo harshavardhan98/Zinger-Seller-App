@@ -15,24 +15,8 @@ import java.net.UnknownHostException
 
 import kotlin.Exception
 
-class  SellerViewModel(private val sellerRepository: SellerRepository) : ViewModel() {
+class SellerViewModel(private val sellerRepository: SellerRepository) : ViewModel() {
 
-
-    private val verifyInvite = MutableLiveData<Resource<Response<UserInviteModel>>>()
-    val verifyInviteResponse: LiveData<Resource<Response<UserInviteModel>>>
-        get() = verifyInvite
-
-    private val acceptInvite = MutableLiveData<Resource<Response<String>>>()
-    val acceptInviteResponse: LiveData<Resource<Response<String>>>
-        get() = acceptInvite
-
-    private val deleteInvite = MutableLiveData<Resource<Response<String>>>()
-    val deleteInviteResponse: LiveData<Resource<Response<String>>>
-        get() = deleteInvite
-
-    private val notifyInvite = MutableLiveData<Resource<Response<String>>>()
-    val notifyInviteResponse: LiveData<Resource<Response<String>>>
-        get() = notifyInvite
 
 
     private val getSeller = MutableLiveData<Resource<Response<List<UserModel>>>>()
@@ -84,50 +68,11 @@ class  SellerViewModel(private val sellerRepository: SellerRepository) : ViewMod
         }
     }
 
-    fun verifyInvite(shopId: Int,mobile: String) {
-        viewModelScope.launch {
-            try {
-                verifyInvite.value = Resource.loading()
-                val response = sellerRepository.verifyInvite(shopId,mobile)
 
-                if (response.code == 1)
-                    verifyInvite.value = Resource.success(response)
-                else
-                    verifyInvite.value = Resource.error(message = response.message)
 
-            } catch (e: Exception) {
-                if (e is UnknownHostException) {
-                    verifyInvite.value = Resource.offlineError()
-                } else {
-                    verifyInvite.value = Resource.error(e)
-                }
-            }
-        }
-    }
-
-    fun acceptInvite(userShop: UserShopModel) {
-
-        viewModelScope.launch {
-            try {
-                acceptInvite.value = Resource.loading()
-                val response = sellerRepository.acceptInvite(userShop)
-
-                if (response.code == 1)
-                    acceptInvite.value = Resource.success(response)
-                else
-                    acceptInvite.value = Resource.error(message = response.message)
-
-            } catch (e: Exception) {
-                if (e is UnknownHostException) {
-                    acceptInvite.value = Resource.offlineError()
-                } else {
-                    acceptInvite.value = Resource.error(e)
-                }
-            }
-        }
-
-    }
-
+    private val deleteInvite = MutableLiveData<Resource<Response<String>>>()
+    val deleteInviteResponse: LiveData<Resource<Response<String>>>
+        get() = deleteInvite
     fun deleteInvite(userShop: UserShopModel) {
 
         viewModelScope.launch {
@@ -149,6 +94,10 @@ class  SellerViewModel(private val sellerRepository: SellerRepository) : ViewMod
             }
         }
     }
+
+    private val notifyInvite = MutableLiveData<Resource<Response<String>>>()
+    val notifyInviteResponse: LiveData<Resource<Response<String>>>
+        get() = notifyInvite
 
     fun notifyInvite(userShop: UserShopModel) {
 
@@ -176,17 +125,17 @@ class  SellerViewModel(private val sellerRepository: SellerRepository) : ViewMod
     val deleteSellerResponse: LiveData<Resource<Response<String>>>
         get() = deleteSeller
 
-    fun deleteSeller(shopId: Int,userId: Int){
+    fun deleteSeller(shopId: Int, userId: Int) {
         viewModelScope.launch {
-            try{
+            try {
                 deleteSeller.value = Resource.loading()
-                val response  = sellerRepository.deleteSeller(shopId,userId)
-                if(response.code == 1)
+                val response = sellerRepository.deleteSeller(shopId, userId)
+                if (response.code == 1)
                     deleteSeller.value = Resource.success(response)
                 else
                     deleteSeller.value = Resource.error(message = response.message)
 
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     deleteSeller.value = Resource.offlineError()
                 } else {
@@ -195,7 +144,6 @@ class  SellerViewModel(private val sellerRepository: SellerRepository) : ViewMod
             }
         }
     }
-
 
 
 }

@@ -24,7 +24,7 @@ interface CustomApi  {
     suspend fun verifyInvite(@Path("shopId") shopId: Int,@Path("phoneNum") phoneNum: String): Response<UserInviteModel>
 
     @POST("/user/accept/invite")
-    suspend fun acceptInvite(@Body userShop:UserShopModel): Response<String>
+    suspend fun acceptInvite(@Body userShop:UserShopModel): Response<UserShopListModel>
 
     @PATCH("/user/seller/invite")
     suspend fun deleteInvite(@Body userShop:UserShopModel): Response<String>

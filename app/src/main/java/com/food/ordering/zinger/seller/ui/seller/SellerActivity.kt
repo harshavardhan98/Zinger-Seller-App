@@ -96,6 +96,12 @@ class SellerActivity : AppCompatActivity() {
                         ).show()
                     }
 
+                    Resource.Status.EMPTY -> {
+                        progressDialog.dismiss()
+                        Toast.makeText(applicationContext, "No new Sellers found",Toast.LENGTH_SHORT).show()
+                    }
+
+
                     Resource.Status.LOADING -> {
                         progressDialog.setMessage("Fetching Sellers...")
                         progressDialog.show()

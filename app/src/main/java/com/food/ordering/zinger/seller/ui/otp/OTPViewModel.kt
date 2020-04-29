@@ -8,11 +8,13 @@ import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.data.model.UserShopListModel
+import com.food.ordering.zinger.seller.data.model.UserShopModel
+import com.food.ordering.zinger.seller.data.retrofit.SellerRepository
 import com.food.ordering.zinger.seller.data.retrofit.UserRespository
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
-class OTPViewModel(private val userRespository: UserRespository) : ViewModel() {
+class OTPViewModel(private val userRespository: UserRespository,private val sellerRepository: SellerRepository) : ViewModel() {
     private val performLogin = MutableLiveData<Resource<Response<UserShopListModel>>>()
     val performLoginStatus: LiveData<Resource<Response<UserShopListModel>>>
         get() = performLogin
@@ -35,5 +37,33 @@ class OTPViewModel(private val userRespository: UserRespository) : ViewModel() {
                 }
             }
         }
+    }
+
+
+    private val acceptInvite = MutableLiveData<Resource<Response<UserShopListModel>>>()
+    val acceptInviteResponse: LiveData<Resource<Response<UserShopListModel>>>
+        get() = acceptInvite
+
+    fun acceptInvite(userShop: UserShopModel) {
+
+        viewModelScope.launch {
+            try {
+                acceptInvite.value = Resource.loading()
+                val response = sellerRepository.acceptInvite(userShop)
+
+                if (response.code == 1)
+                    acceptInvite.value = Resource.success(response)
+                else
+                    acceptInvite.value = Resource.error(message = response.message)
+
+            } catch (e: Exception) {
+                if (e is UnknownHostException) {
+                    acceptInvite.value = Resource.offlineError()
+                } else {
+                    acceptInvite.value = Resource.error(e)
+                }
+            }
+        }
+
     }
 }

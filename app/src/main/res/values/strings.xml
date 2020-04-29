@@ -9,6 +9,7 @@
     <string name="label_update">Update</string>
     <string name="hint_search_outlets_or_dish">Search Outlets or Dish</string>
     <string name="otp_header">Enter the six digit OTP which has been sent to your mobile number: </string>
+    <string name="link_filter_intent">Link filter </string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

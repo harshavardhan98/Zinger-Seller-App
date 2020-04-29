@@ -39,6 +39,7 @@ class SellerAdapter(private val context: Context, private val userModelList: Lis
 
             if(userModel.id!=null && userModel.id!=0 && userModel.role.equals(AppConstants.ROLE.SELLER.name)){
                 binding.imagePending.visibility = View.INVISIBLE
+                binding.textPendingInvitation.visibility = View.INVISIBLE
             }
 
             binding.imageDelete.setOnClickListener { listener.onDeleteClick(userModel,position) }

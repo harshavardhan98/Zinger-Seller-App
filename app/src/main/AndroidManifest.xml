@@ -15,8 +15,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.display.DisplayActivity"></activity>
-        <activity android:name=".ui.home.HomeActivity"></activity>
+
+        <activity android:name=".ui.verifyInvite.InviteSellerActivity">
+            <intent-filter android:label="@string/link_filter_intent">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="www.zinger.tech" />
+                <data android:scheme="http" android:host="www.zinger.tech" />
+            </intent-filter>
+
+        </activity>
+        <activity android:name=".ui.display.DisplayActivity" />
+        <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".ui.otp.OTPActivity" />
         <activity android:name=".ui.seller.SellerActivity" />
         <activity android:name=".ui.menuItem.MenuItemActivity" />
@@ -32,6 +43,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".services.ZingerFirebaseMessagingService"
             android:exported="false">

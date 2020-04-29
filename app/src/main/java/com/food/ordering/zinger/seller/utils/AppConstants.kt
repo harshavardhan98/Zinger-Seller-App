@@ -14,6 +14,9 @@ object AppConstants {
     const val PREFS_SELLER_PLACE = "place"
     const val PREFS_CURRENT_SHOP_ID = "current_shop_id"
     const val PREFS_SELLER_MOBILE = "mobile"
+    const val SELLER_INVITE = "seller_invite"
+    const val SELLER_SHOP = "seller_shop"
+
     const val PREFS_SELLER_ROLE = "role"
     const val PREFS_SELLER_FCM_TOKEN = "fcm_token"
     const val PREFS_IS_FCM_TOKEN_GENERATED = "fcm_token_generated"
