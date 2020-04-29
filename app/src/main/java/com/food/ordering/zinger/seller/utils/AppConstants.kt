@@ -14,8 +14,6 @@ object AppConstants {
     const val PREFS_SELLER_PLACE = "place"
     const val PREFS_CURRENT_SHOP_ID = "current_shop_id"
     const val PREFS_SELLER_MOBILE = "mobile"
-    const val SELLER_INVITE = "seller_invite"
-    const val SELLER_SHOP = "seller_shop"
 
     const val PREFS_SELLER_ROLE = "role"
     const val PREFS_SELLER_FCM_TOKEN = "fcm_token"
@@ -39,6 +37,18 @@ object AppConstants {
     const val CATEGORY_ITEM_DETAIL = "category_item_detail"
     const val DISPLAY_IMAGE_DETAIL = "display_image_detail"
 
+
+    // intent constanta
+    const val SELLER_INVITE = "seller_invite"
+    const val SELLER_SHOP = "seller_shop"
+    const val SHOP_ID = "shop_id"
+
+
+    //NOTIFICATION TOPICS
+    const val NOTIFICATION_TOPIC_GLOBAL = "global"
+
+
+
     const val REQUEST_PHONE_CALL = 987
     enum class STATUS{
         PENDING, TXN_FAILURE, PLACED, CANCELLED_BY_USER, ACCEPTED, CANCELLED_BY_SELLER, READY, OUT_FOR_DELIVERY, COMPLETED, DELIVERED, REFUND_INITIATED, REFUND_COMPLETED
@@ -48,4 +58,7 @@ object AppConstants {
         SHOP_OWNER,SELLER,DELIVERY
     }
 
+    enum class NOTIFICATIONTYPE {
+        URL, ORDER_STATUS, NEW_ARRIVAL, NEW_ORDER, ORDER_CANCELLED
+    }
 }

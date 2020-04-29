@@ -1,4 +1,4 @@
-package com.food.ordering.zinger.seller.ui.orderDetail
+package com.food.ordering.zinger.seller.ui.orderdetail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -27,7 +27,7 @@ android {
             }
 
             //buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
-            buildConfigField "String", "CUSTOM_BASE_URL", '"https://food-backend-ssn.herokuapp.com/"'
+            buildConfigField "String", "CUSTOM_BASE_URL", '"https://1d747f37.ngrok.io/"'
         }
         release {
             minifyEnabled false

@@ -1,4 +1,4 @@
-package com.food.ordering.zinger.seller.ui.orderHistory
+package com.food.ordering.zinger.seller.ui.orderhistory
 
 import android.view.LayoutInflater
 import android.view.View

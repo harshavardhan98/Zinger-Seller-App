@@ -1,19 +1,13 @@
-package com.food.ordering.zinger.seller.ui.orderDetail
+package com.food.ordering.zinger.seller.ui.orderdetail
 
-import android.Manifest
 import android.app.ProgressDialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,12 +19,9 @@ import com.food.ordering.zinger.seller.data.model.OrderItems
 import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.databinding.ActivityOrderDetailBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetSecretKeyBinding
-import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.utils.AppConstants
-import com.food.ordering.zinger.seller.utils.AppConstants.REQUEST_PHONE_CALL
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel

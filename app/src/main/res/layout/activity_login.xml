@@ -71,6 +71,7 @@
                 android:id="@+id/edit_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
                 android:background="@null"
                 android:fontFamily="@font/poppins_semibold"
                 android:hint="@string/hint_enter_phone_number"

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.food.ordering.zinger.seller.R
@@ -45,16 +46,31 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setListener() {
-        binding.buttonLogin.setOnClickListener {
-            val phoneNo = binding.editPhone.text.toString()
-            if (phoneNo.isNotEmpty() && phoneNo.length==10 && phoneNo.matches(Regex("\\d+"))) {
-                val intent = Intent(applicationContext, OTPActivity::class.java)
-                intent.putExtra(AppConstants.PREFS_SELLER_MOBILE, "+91"+phoneNo)
-                intent.putExtra(AppConstants.SELLER_SHOP,"NULL")
-                startActivity(intent)
-            } else {
-                Toast.makeText(applicationContext, "Invalid phone number!", Toast.LENGTH_SHORT).show()
+
+        binding.editPhone.setOnEditorActionListener { v, actionId, event ->
+            when(actionId){
+                EditorInfo.IME_ACTION_DONE -> {
+                    loginRequest()
+                    true
+                }
+                else -> false
             }
+        }
+
+        binding.buttonLogin.setOnClickListener {
+            loginRequest()
+        }
+    }
+
+    private fun loginRequest(){
+        val phoneNo = binding.editPhone.text.toString()
+        if (phoneNo.isNotEmpty() && phoneNo.length==10 && phoneNo.matches(Regex("\\d+"))) {
+            val intent = Intent(applicationContext, OTPActivity::class.java)
+            intent.putExtra(AppConstants.PREFS_SELLER_MOBILE, "+91"+phoneNo)
+            intent.putExtra(AppConstants.SELLER_SHOP,"NULL")
+            startActivity(intent)
+        } else {
+            Toast.makeText(applicationContext, "Invalid phone number!", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -28,7 +28,7 @@ import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
 import com.food.ordering.zinger.seller.ui.login.LoginActivity
 import com.food.ordering.zinger.seller.ui.menu.MenuActivity
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
-import com.food.ordering.zinger.seller.ui.orderHistory.OrderHistoryActivity
+import com.food.ordering.zinger.seller.ui.orderhistory.OrderHistoryActivity
 import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
 import com.food.ordering.zinger.seller.ui.seller.SellerActivity
 import com.food.ordering.zinger.seller.ui.shopProfile.ShopProfileActivity
@@ -471,6 +471,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 FirebaseMessaging.getInstance()
                     .subscribeToTopic(it.shopModel.name?.split(" ")?.get(0) + it.shopModel.id);
             }
+            FirebaseMessaging.getInstance()
+                .subscribeToTopic(AppConstants.NOTIFICATION_TOPIC_GLOBAL);
             preferencesHelper.isFCMTopicSubScribed = true
         }
 

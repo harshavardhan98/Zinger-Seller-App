@@ -22,7 +22,7 @@ import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.databinding.FragmentNewOrdersBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
-import com.food.ordering.zinger.seller.ui.orderDetail.OrderDetailActivity
+import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar

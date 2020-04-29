@@ -1,4 +1,4 @@
-package com.food.ordering.zinger.seller.ui.orderHistory
+package com.food.ordering.zinger.seller.ui.orderhistory
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -18,14 +18,13 @@ import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.databinding.ActivityOrderHistoryBinding
 import com.food.ordering.zinger.seller.ui.order.OrderViewModel
-import com.food.ordering.zinger.seller.ui.orderDetail.OrderDetailActivity
+import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
-import java.util.*
 import kotlin.collections.ArrayList
 
 class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
