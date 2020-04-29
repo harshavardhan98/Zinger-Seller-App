@@ -47,7 +47,7 @@ data class ConfigurationModel(
     @SerializedName("isOrderTaken")
     var isOrderTaken: Int,
     @SerializedName("merchantId")
-    val merchantId: String? =null,
+    val merchantId: String? =" ",
     @SerializedName("shopModel")
     var shopModel: ShopModel?
 )

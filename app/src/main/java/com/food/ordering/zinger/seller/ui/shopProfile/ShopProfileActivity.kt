@@ -219,10 +219,16 @@ class ShopProfileActivity : AppCompatActivity() {
                     .show()
             } else {
 
-                var sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
-                var sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
-                var openingTime = sdf.format(sdf2.parse(binding.textOpeningTime.text.toString()))
-                var closingTime = sdf.format(sdf2.parse(binding.textClosingTime.text.toString()))
+                val sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
+                val sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
+                val openingTime = sdf.format(sdf2.parse(binding.textOpeningTime.text.toString()))
+                val closingTime = sdf.format(sdf2.parse(binding.textClosingTime.text.toString()))
+                var mid = " "
+
+                shopConfig?.configurationModel?.merchantId?.let {
+                    mid = it
+                }
+
 
 
                 val shopModel = ShopModel(
@@ -240,6 +246,7 @@ class ShopProfileActivity : AppCompatActivity() {
                     deliveryPrice = binding.editDeliveryPrice.text.toString().toDouble(),
                     isDeliveryAvailable = if (binding.switchDelivery.isChecked) 1 else 0,
                     isOrderTaken = if (binding.switchOrders.isChecked) 1 else 0,
+                    merchantId = mid,
                     shopModel = shopModel
                 )
 

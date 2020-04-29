@@ -380,7 +380,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         }
         accountAdapter = AccountAdapter(accountList, object : AccountAdapter.OnItemClickListener {
             override fun onItemClick(item: ShopConfigurationModel, position: Int) {
-                // todo change the rating of the shop in header layout
                 for (i in accountList.indices) {
                     accountList[i].isSelected = false
                 }

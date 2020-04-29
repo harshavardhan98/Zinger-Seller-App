@@ -35,7 +35,7 @@ class SellerAdapter(private val context: Context, private val userModelList: Lis
     class SellerViewHolder(var binding: ItemSellerBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(userModel: UserModel, position: Int, listener: OnItemClickListener) {
-            binding.textNameNumber.text = userModel?.name+"("+userModel.mobile+")"
+            binding.textNameNumber.text = userModel?.name+" "+userModel.mobile
 
             if(userModel.id!=null && userModel.id!=0 && userModel.role.equals(AppConstants.ROLE.SELLER.name)){
                 binding.imagePending.visibility = View.INVISIBLE
