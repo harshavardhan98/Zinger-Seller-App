@@ -182,10 +182,15 @@ class MenuItemActivity : AppCompatActivity() {
                                 binding.animationView.playAnimation()
                             } else {
                                 binding.switchDelivery.visibility = View.VISIBLE
-                                binding.textAddItem.visibility = View.VISIBLE
                                 binding.textAddFirstItem.visibility = View.GONE
                                 binding.animationView.visibility = View.GONE
                                 binding.animationView.cancelAnimation()
+
+                                preferencesHelper.role?.let {
+                                    if (it.equals(AppConstants.ROLE.SHOP_OWNER.name)) {
+                                        binding.textAddItem.visibility = View.VISIBLE
+                                    }
+                                }
 
                                 if (menuItemList.filter { it.isAvailable == 0 }.size == 0) {
                                     binding.switchDelivery.isChecked = true

@@ -10,18 +10,22 @@ class AuthInterceptor(val context: Context, val preferences: PreferencesHelper) 
     override fun intercept(chain: Interceptor.Chain): Response {
         val req = chain.request()
         val whiteListedEndpoints = listOf(
-            "/user/seller"
+            "/user/seller",
+            "/user/accept/invite"
         )
 
-        val request = if (!whiteListedEndpoints.contains(req.url().encodedPath())) {
-            req.newBuilder()
-                .addHeader("oauth_id", preferences.oauthId)
-                .addHeader("id", preferences.id.toString())
-                .addHeader("role", preferences.role)
-                .build()
-        } else {
-            req.newBuilder().build()
-        }
+        val request =
+            if (req.url().encodedPath().contains("/user/verify/invite/")) {
+                req.newBuilder().build()
+            } else if (!whiteListedEndpoints.contains(req.url().encodedPath())) {
+                req.newBuilder()
+                    .addHeader("oauth_id", preferences.oauthId)
+                    .addHeader("id", preferences.id.toString())
+                    .addHeader("role", preferences.role)
+                    .build()
+            } else {
+                req.newBuilder().build()
+            }
         val response = chain.proceed(request)
         return response
     }

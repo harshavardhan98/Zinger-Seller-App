@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -65,6 +66,8 @@ class OTPActivity : AppCompatActivity() {
         number = intent.getStringExtra(AppConstants.PREFS_SELLER_MOBILE)
         verifySeller = intent.getBooleanExtra(AppConstants.SELLER_INVITE, false)
         sellerShop = intent.getStringExtra(AppConstants.SELLER_SHOP)
+
+        println("TestingHar:"+verifySeller+" "+sellerShop+" "+number)
         println("Number testing" + number)
     }
 
@@ -130,6 +133,26 @@ class OTPActivity : AppCompatActivity() {
             }
         }
 
+
+        binding.editOtp.setOnEditorActionListener { v, actionId, event ->
+            when(actionId){
+                EditorInfo.IME_ACTION_DONE -> {
+                    if (binding.editOtp.text.toString()
+                            .isNotEmpty() && binding.editOtp.text.toString().length == 6
+                    ) {
+                        if (storedVerificationId.isNotEmpty()) {
+                            val credential = PhoneAuthProvider.getCredential(
+                                storedVerificationId,
+                                binding.editOtp.text.toString()
+                            )
+                            signInWithPhoneAuthCredential(credential)
+                        }
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
 
         binding.buttonLogin.setOnClickListener {
             if (binding.editOtp.text.toString()
@@ -320,6 +343,8 @@ class OTPActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     progressDialog.dismiss()
+                    println("TestingHar2:"+verifySeller+" "+sellerShop+" "+number)
+
 
                     val user = task.result?.user
                     preferencesHelper.oauthId = user?.uid

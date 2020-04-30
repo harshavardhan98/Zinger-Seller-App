@@ -68,7 +68,7 @@ class InviteSellerActivity : AppCompatActivity() {
                         intent.putExtra(AppConstants.SELLER_INVITE,true)
                         intent.putExtra(AppConstants.SELLER_SHOP,shopId)
                         startActivity(intent)
-
+                        finish()
                     }
 
                     Resource.Status.ERROR -> {

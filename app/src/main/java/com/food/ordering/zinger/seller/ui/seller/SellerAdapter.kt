@@ -1,4 +1,4 @@
-package com.food.ordering.zinger.seller.ui.seller
+package com.food.ordering .zinger.seller.ui.seller
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -35,7 +35,17 @@ class SellerAdapter(private val context: Context, private val userModelList: Lis
     class SellerViewHolder(var binding: ItemSellerBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(userModel: UserModel, position: Int, listener: OnItemClickListener) {
-            binding.textNameNumber.text = userModel?.name+" "+userModel.mobile
+
+
+            var name = ""
+            userModel.name?.let {
+                if(!it.toLowerCase().contains("null") && it.length>0)
+                    name= it
+            }
+            if(name.length>0)
+                binding.textNameNumber.text = userModel.name+" ("+userModel.mobile+")"
+            else
+                binding.textNameNumber.text = userModel.mobile
 
             if(userModel.id!=null && userModel.id!=0){
                 binding.imagePending.visibility = View.GONE

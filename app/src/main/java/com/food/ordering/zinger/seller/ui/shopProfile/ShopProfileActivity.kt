@@ -138,6 +138,7 @@ class ShopProfileActivity : AppCompatActivity() {
                 ColorStateList.valueOf(ContextCompat.getColor(applicationContext, R.color.accent))
 
 
+        binding.editMerchantId.setText(shopConfig?.configurationModel?.merchantId.toString())
         binding.editName.setSelection(binding.editName.text.toString().length)
         binding.editDeliveryPrice.setText(
             shopConfig?.configurationModel?.deliveryPrice?.toInt().toString()
@@ -164,6 +165,11 @@ class ShopProfileActivity : AppCompatActivity() {
                 binding.switchDelivery.isEnabled = false
                 binding.buttonUpdate.visibility = View.GONE
                 binding.buttonUpdate.isEnabled = false
+            }
+
+            if(it==AppConstants.ROLE.SHOP_OWNER.name){
+                binding.textMerchantId.visibility =View.VISIBLE
+                binding.layoutMerchantId.visibility = View.VISIBLE
             }
         }
 
@@ -215,9 +221,10 @@ class ShopProfileActivity : AppCompatActivity() {
             if (binding.editName.isEnabled) {
                 Toast.makeText(this, "Please confirm name change", Toast.LENGTH_LONG).show()
             } else if (binding.editDeliveryPrice.isEnabled) {
-                Toast.makeText(this, "Please confirm delivery price change", Toast.LENGTH_LONG)
-                    .show()
-            } else {
+                Toast.makeText(this, "Please confirm delivery price change", Toast.LENGTH_LONG).show()
+            }else if (binding.layoutMerchantId.visibility == View.VISIBLE && binding.editMerchantId.isEnabled) {
+                Toast.makeText(this, "Please confirm merchant Id change", Toast.LENGTH_LONG).show()
+            }else {
 
                 val sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
                 val sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
@@ -225,9 +232,14 @@ class ShopProfileActivity : AppCompatActivity() {
                 val closingTime = sdf.format(sdf2.parse(binding.textClosingTime.text.toString()))
                 var mid = " "
 
-                shopConfig?.configurationModel?.merchantId?.let {
-                    mid = it
+                if(binding.layoutMerchantId.visibility == View.VISIBLE){
+                     mid = binding.editMerchantId.text.toString()
+                }else{
+                    shopConfig?.configurationModel?.merchantId?.let {
+                        mid = it
+                    }
                 }
+
 
 
 
@@ -268,6 +280,14 @@ class ShopProfileActivity : AppCompatActivity() {
             else
                 binding.imageEditDeliveryPrice.setImageResource(R.drawable.ic_edit)
             binding.editDeliveryPrice.isEnabled = !(binding.editDeliveryPrice.isEnabled)
+        })
+
+        binding.imageEditMerchantId.setOnClickListener(View.OnClickListener {
+            if (!binding.editMerchantId.isEnabled)
+                binding.imageEditMerchantId.setImageResource(R.drawable.ic_check)
+            else
+                binding.imageEditMerchantId.setImageResource(R.drawable.ic_edit)
+            binding.editMerchantId.isEnabled = !(binding.editMerchantId.isEnabled)
         })
 
 
@@ -497,7 +517,7 @@ class ShopProfileActivity : AppCompatActivity() {
                         } ?: run {
                             Toast.makeText(
                                 applicationContext,
-                                "Update Failed Try again later",
+                                "Failed to fetch data, Try again later",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
