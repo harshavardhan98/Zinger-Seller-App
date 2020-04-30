@@ -64,8 +64,12 @@ class MenuItemAdapter(
                     ContextCompat.getColor(context, R.color.switchNotSelected)
                 )
 
-            binding.switchItemAvailable.setOnCheckedChangeListener { buttonView, isChecked ->
+            binding.switchItemAvailable.setOnClickListener {
                 listener.onSwitchChange(menuItem,position)
+            }
+
+            binding.switchItemAvailable.setOnCheckedChangeListener { buttonView, isChecked ->
+
                 if (isChecked){
                     menuItem.isAvailable = 1
                     binding.switchItemAvailable.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.switchSelected))

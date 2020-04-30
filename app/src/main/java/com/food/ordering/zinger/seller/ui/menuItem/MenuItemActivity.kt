@@ -60,7 +60,6 @@ class MenuItemActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
         getArgs()
         initView()
         setListener()
@@ -116,7 +115,9 @@ class MenuItemActivity : AppCompatActivity() {
 
         binding.imageClose.setOnClickListener { onBackPressed() }
 
-        binding.switchDelivery.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchDelivery.setOnClickListener { buttonView ->
+
+            val isChecked = binding.switchDelivery.isChecked
 
             if (isChecked) {
                 binding.switchDelivery.thumbTintList =
@@ -186,7 +187,7 @@ class MenuItemActivity : AppCompatActivity() {
                                 binding.animationView.visibility = View.GONE
                                 binding.animationView.cancelAnimation()
 
-                                if (it.data?.filter { it.isAvailable == 0 }?.size == 0) {
+                                if (menuItemList.filter { it.isAvailable == 0 }.size == 0) {
                                     binding.switchDelivery.isChecked = true
                                     binding.switchDelivery.thumbTintList = ColorStateList.valueOf(
                                         ContextCompat.getColor(
@@ -194,7 +195,7 @@ class MenuItemActivity : AppCompatActivity() {
                                             R.color.switchSelected
                                         )
                                     )
-                                } else if (it.data?.filter { it.isAvailable == 1 }?.size == 0) {
+                                } else{
                                     binding.switchDelivery.isChecked = false
                                     binding.switchDelivery.thumbTintList = ColorStateList.valueOf(
                                         ContextCompat.getColor(
@@ -234,6 +235,7 @@ class MenuItemActivity : AppCompatActivity() {
                     }
                 }
             }
+            binding.buttonSaveChanges.visibility = View.GONE
         })
 
         viewModel.performUploadImageStatus.observe(this, androidx.lifecycle.Observer { resource ->
@@ -288,7 +290,7 @@ class MenuItemActivity : AppCompatActivity() {
 
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                        preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
+                        preferencesHelper.currentShop.let { viewModel.getMenu(it) }
                     }
 
                     Resource.Status.ERROR -> {
@@ -314,6 +316,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.show()
                     }
                 }
+                binding.buttonSaveChanges.visibility = View.GONE
             }
         })
 
@@ -323,7 +326,6 @@ class MenuItemActivity : AppCompatActivity() {
 
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-
                         resource.data?.let {
                             preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
                         }
@@ -352,6 +354,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.show()
                     }
                 }
+                binding.buttonSaveChanges.visibility = View.GONE
             }
         })
 
@@ -387,6 +390,7 @@ class MenuItemActivity : AppCompatActivity() {
                         progressDialog.show()
                     }
                 }
+                binding.buttonSaveChanges.visibility = View.GONE
             }
         })
 

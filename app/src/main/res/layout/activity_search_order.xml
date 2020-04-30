@@ -65,7 +65,7 @@
                         android:layout_marginTop="16dp"
                         android:gravity="center|start"
                         android:paddingTop="3dp"
-                        android:text="Manage your orders"
+                        android:text="Search past orders"
                         android:textAppearance="@style/AppbarTitle"
                         android:textColor="@android:color/black" />
 
@@ -91,7 +91,7 @@
                     android:drawableStart="@drawable/ic_drawer_search_small"
                     android:drawablePadding="8dp"
                     android:fontFamily="@font/open_sans_semibold"
-                    android:hint="Search order by shop name"
+                    android:hint="Customer name, phone no and order id"
                     android:paddingStart="10dp"
                     android:paddingTop="8dp"
                     android:paddingEnd="10dp"
