@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.databinding.ItemPastOrderBinding
+import com.food.ordering.zinger.seller.utils.CommonUtils
 import java.lang.Exception
 import java.text.SimpleDateFormat
 
@@ -60,7 +61,7 @@ class OrderHistoryAdapter(private val orderList: List<OrderItemListModel>, priva
             binding.textViewMore.visibility = if (order.orderItemsList.size > 2)  View.VISIBLE else View.GONE
 
 
-            binding.textOrderStatus.text = order.orderStatusModel.last().orderStatus
+            binding.textOrderStatus.text = CommonUtils.getStatus(order.orderStatusModel.last().orderStatus)
 
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
 

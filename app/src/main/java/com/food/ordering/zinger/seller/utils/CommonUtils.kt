@@ -22,4 +22,16 @@ object CommonUtils {
 
         return ""
     }
+
+    fun getStatus(status: String): String{
+        when(status){
+            AppConstants.STATUS.CANCELLED_BY_SELLER.name -> return "CANCELLED BY SELLER"
+            AppConstants.STATUS.CANCELLED_BY_USER.name -> return "CANCELLED BY USER"
+            AppConstants.STATUS.OUT_FOR_DELIVERY.name -> return "OUT FOR DELIVERY"
+            AppConstants.STATUS.REFUND_INITIATED.name -> return "REFUND INITIATED"
+            AppConstants.STATUS.REFUND_COMPLETED.name -> return "REFUND COMPLETED"
+            AppConstants.STATUS.TXN_FAILURE.name -> return "TRANSACTION FAILURE"
+        }
+        return status
+    }
 }

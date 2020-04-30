@@ -5,25 +5,25 @@ import java.util.*
 
 data class TransactionModel(
     @SerializedName("bankName")
-    val bankName: String,
+    val bankName: String ?= "",
     @SerializedName("bankTransactionId")
-    val bankTransactionId: String,
+    val bankTransactionId: String =" ",
     @SerializedName("checksumHash")
-    val checksumHash: String,
+    val checksumHash: String ?=" ",
     @SerializedName("currency")
-    val currency: String,
+    val currency: String ?= "",
     @SerializedName("gatewayName")
-    val gatewayName: String,
+    val gatewayName: String ?= "",
     @SerializedName("orderModel")
     val orderModel: OrderModel,
     @SerializedName("paymentMode")
-    val paymentMode: String,
+    val paymentMode: String ?= "",
     @SerializedName("responseCode")
-    val responseCode: String,
+    val responseCode: String ?= "",
     @SerializedName("responseMessage")
-    val responseMessage: String,
+    val responseMessage: String ?= "",
     @SerializedName("transactionId")
-    val transactionId: String
+    val transactionId: String ?= ""
 )
 
 data class OrderModel(
@@ -36,7 +36,7 @@ data class OrderModel(
     @SerializedName("deliveryPrice")
     val deliveryPrice: Double?=null,
     @SerializedName("id")
-    val id: Int?=null,
+    var id: Int?=null,
     @SerializedName("lastStatusUpdatedTime")
     val lastStatusUpdatedTime: Date?=null,
     @SerializedName("orderStatus")

@@ -58,7 +58,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                         )
                         val pendingIntent: PendingIntent =
                             PendingIntent.getActivity(this, 0, intent, 0)
-                        sendNotificationWithPendingIntent(title, message, pendingIntent)
+                        sendNotificationWithPendingIntent(Date().time.toInt(),title, message, pendingIntent)
                     }
                 }
 
@@ -67,30 +67,34 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     var title = it["title"]
                     var message = it["message"]
                     val payload = Gson().fromJson(it["payload"],OrderNotificationPayload::class.java)
-                    //TODO change title and message
-                    title = "12"
-                    message = "34"
                     println(payload)
+                    if(title.isNullOrEmpty()){
+                        title = "New Order Received"
+                    }
+                    if(message.isNullOrEmpty()){
+                        message = "OrderId: "+payload.orderId.toString()+"\nItems:\n"
+                        for(i in payload.itemList)
+                            message+=i+"\n"
+                    }
 
                     val intent = Intent(this, OrderDetailActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
-                    intent.putExtra("ORDER_ID",payload.orderId)
+                    intent.putExtra(AppConstants.INTENT_ORDER_ID,payload.orderId)
                     val acceptIntent = Intent(this, OrderDetailActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
-                    acceptIntent.putExtra("ORDER_ID",payload.orderId)
-                    acceptIntent.putExtra("accept",true)
+                    acceptIntent.putExtra(AppConstants.INTENT_ORDER_ID,payload.orderId)
+                    acceptIntent.putExtra(AppConstants.INTENT_ACCEPT,true)
                     val declineIntent = Intent(this, OrderDetailActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
-                    declineIntent.putExtra("ORDER_ID",payload.orderId)
-                    declineIntent.putExtra("decline",true)
+                    declineIntent.putExtra(AppConstants.INTENT_ORDER_ID,payload.orderId)
+                    declineIntent.putExtra(AppConstants.INTENT_DECLINE,true)
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(this, payload.orderId, intent, 0)
                     val acceptPendingIntent: PendingIntent = PendingIntent.getActivity(this, payload.orderId, acceptIntent, 0)
                     val declinePendingIntent: PendingIntent = PendingIntent.getActivity(this, payload.orderId, declineIntent, 0)
-                    //TODO change title and message
-                    sendNotificationNewOrder(title,message,pendingIntent,acceptPendingIntent,declinePendingIntent)
+                    sendNotificationNewOrder(payload.orderId,title,message,pendingIntent,acceptPendingIntent,declinePendingIntent)
                     EventBus.send(payload)
 
                 }
@@ -99,21 +103,25 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     var title = it["title"]
                     var message = it["message"]
                     val payload = Gson().fromJson(it["payload"],OrderNotificationPayload::class.java)
-                    //TODO change title and message
-                    title = "56"
-                    message = "78"
+                    if(title.isNullOrEmpty()){
+                        title = "ORDER CANCELLED"
+                    }
+                    if(message.isNullOrEmpty()){
+                        message = payload.orderId.toString()+"\n"
+                        for(i in payload.itemList)
+                            message+=i+"\n"
+                    }
                     println(payload)
                     val intent = Intent(this, OrderDetailActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
-                    intent.putExtra("ORDER_ID",payload.orderId)
+                    intent.putExtra(AppConstants.INTENT_ORDER_ID,payload.orderId)
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(this, payload.orderId, intent, 0)
-                    sendNotificationWithPendingIntent(title,message,pendingIntent)
+                    sendNotificationWithPendingIntent(payload.orderId,title,message,pendingIntent)
                     EventBus.send(payload)
                 }
 
                 AppConstants.NOTIFICATIONTYPE.NEW_ARRIVAL.name -> {
-                    //TODO navigate to specific shop
                     val intent = Intent(this, HomeActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }
@@ -136,7 +144,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     }
                     intent.putExtra(AppConstants.SHOP_ID,shopId)
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
-                    sendNotificationWithPendingIntent(title,message,pendingIntent)
+                    sendNotificationWithPendingIntent(Date().time.toInt(),title,message,pendingIntent)
                 }
 
 
@@ -144,7 +152,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
 
         }.run {
             remoteMessage.notification?.let {
-                sendNotification(it.title, it.body)
+                sendNotification(Date().time.toInt(),it.title, it.body)
             }
         }
     }
@@ -166,7 +174,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendNotification(title: String?, message: String?) {
+    private fun sendNotification(id: Int,title: String?, message: String?) {
         val builder = NotificationCompat.Builder(applicationContext, "7698")
             .setSmallIcon(R.drawable.ic_zinger_notification_icon)
             .setContentTitle(title)
@@ -177,12 +185,12 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
             )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         with(NotificationManagerCompat.from(applicationContext)) {
-            // TODO change id
-            notify(123, builder.build())
+            notify(id, builder.build())
         }
     }
 
     private fun sendNotificationWithPendingIntent(
+        id: Int,
         title: String?,
         message: String?,
         pendingIntent: PendingIntent
@@ -199,12 +207,12 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
         with(NotificationManagerCompat.from(applicationContext)) {
-            // TODO change id
-            notify(123, builder.build())
+            notify(id, builder.build())
         }
     }
 
     private fun sendNotificationNewOrder(
+        id: Int,
         title: String?,
         message: String?,
         pendingIntent: PendingIntent,
@@ -225,8 +233,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
             .addAction(R.drawable.ic_cancelled,"Decline",declineIntent)
             .setAutoCancel(true)
         with(NotificationManagerCompat.from(applicationContext)) {
-            // TODO change id
-            notify(123, builder.build())
+            notify(id, builder.build())
         }
     }
 

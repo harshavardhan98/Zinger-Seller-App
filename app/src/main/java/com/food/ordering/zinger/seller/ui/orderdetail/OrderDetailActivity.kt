@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
-import com.food.ordering.zinger.seller.data.model.OrderItemListModel
-import com.food.ordering.zinger.seller.data.model.OrderItems
-import com.food.ordering.zinger.seller.data.model.OrderModel
+import com.food.ordering.zinger.seller.data.model.*
 import com.food.ordering.zinger.seller.databinding.ActivityOrderDetailBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetSecretKeyBinding
 import com.food.ordering.zinger.seller.utils.AppConstants
@@ -41,16 +39,61 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
 
         getArgs()
-        initView()
         setListeners()
         setObservers()
     }
 
     private fun getArgs() {
-        order = Gson().fromJson(
-            intent.getStringExtra(AppConstants.ORDER_DETAIL),
-            OrderItemListModel::class.java
-        )
+        if (intent.hasExtra(AppConstants.ORDER_DETAIL)) {
+            order = Gson().fromJson(
+                intent.getStringExtra(AppConstants.ORDER_DETAIL),
+                OrderItemListModel::class.java
+            )
+            initView()
+        } else if (intent.hasExtra(AppConstants.INTENT_ORDER_ID)) {
+
+            binding = DataBindingUtil.setContentView(this, R.layout.activity_order_detail)
+            binding.imageClose.setOnClickListener(this)
+            progressDialog = ProgressDialog(this)
+
+            order = OrderItemListModel(
+                ArrayList(),
+                TransactionModel(orderModel = OrderModel()),
+                ArrayList()
+            )
+            setupShopRecyclerView()
+
+            val orderId = intent.getIntExtra(AppConstants.INTENT_ORDER_ID, -1)
+
+            if (orderId != -1) {
+                val orderModelRequest = OrderModel(id = orderId)
+                if (intent.hasExtra(AppConstants.INTENT_ACCEPT)) {
+                    if (intent.getBooleanExtra(AppConstants.INTENT_ACCEPT, false)) {
+                        orderModelRequest.orderStatus = AppConstants.STATUS.ACCEPTED.name
+                        viewModel.updateOrder(orderModelRequest)
+                    }else{
+                        viewModel.getOrderById(orderId)
+                    }
+                } else if (intent.hasExtra(AppConstants.INTENT_DECLINE)) {
+                    if (intent.getBooleanExtra(AppConstants.INTENT_DECLINE, false)) {
+                        orderModelRequest.orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
+                        viewModel.updateOrder(orderModelRequest)
+                    }else{
+                        viewModel.getOrderById(orderId)
+                    }
+                } else {
+                    viewModel.getOrderById(orderId)
+                }
+
+            } else {
+                Toast.makeText(this, "Invalid Order Id", Toast.LENGTH_LONG).show()
+                onBackPressed()
+            }
+        } else {
+            Toast.makeText(this, "OnBack Pressed", Toast.LENGTH_LONG)
+            onBackPressed()
+        }
+
     }
 
     private fun initView() {
@@ -217,14 +260,13 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 AppConstants.STATUS.ACCEPTED.name -> {
 
                     var orderModel = OrderModel(id = order.transactionModel.orderModel.id)
-                    var msg=""
-                    if (order.transactionModel.orderModel.deliveryLocation == null){
+                    var msg = ""
+                    if (order.transactionModel.orderModel.deliveryLocation == null) {
                         orderModel.orderStatus = AppConstants.STATUS.READY.name
-                        msg =  getString(R.string.pickup_order_request)
-                    }
-                    else{
+                        msg = getString(R.string.pickup_order_request)
+                    } else {
                         orderModel.orderStatus = AppConstants.STATUS.OUT_FOR_DELIVERY.name
-                        msg =  getString(R.string.delivery_order_request)
+                        msg = getString(R.string.delivery_order_request)
                     }
 
 
@@ -251,15 +293,13 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupShopRecyclerView() {
+
         orderList.addAll(order.orderItemsList)
         orderAdapter = OrderItemAdapter(
             applicationContext,
             orderList,
             object : OrderItemAdapter.OnItemClickListener {
                 override fun onItemClick(item: OrderItems?, position: Int) {
-                    //val intent = Intent(applicationContext, RestaurantActivity::class.java)
-                    //intent.putExtra("shop", item)
-                    //startActivity(intent)
                 }
             })
         binding.recyclerOrderItems.layoutManager =
@@ -275,7 +315,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                        var intent = getIntent()
+                        var intent = Intent(applicationContext, OrderDetailActivity::class.java)
                         intent.putExtra(
                             AppConstants.ORDER_DETAIL,
                             Gson().toJson(resource.data?.data)
@@ -367,7 +407,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         dialog.show()
 
         dialogBinding.editSecretKey.setOnEditorActionListener { v, actionId, event ->
-            when(actionId){
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     updateOrderRequest(dialog, dialogBinding, orderItemListModel)
                     true
@@ -377,7 +417,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         dialogBinding.buttonConfirm.setOnClickListener {
-            updateOrderRequest(dialog,dialogBinding,orderItemListModel)
+            updateOrderRequest(dialog, dialogBinding, orderItemListModel)
         }
     }
 

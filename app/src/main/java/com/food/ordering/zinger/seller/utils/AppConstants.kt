@@ -42,6 +42,10 @@ object AppConstants {
     const val SELLER_INVITE = "seller_invite"
     const val SELLER_SHOP = "seller_shop"
     const val SHOP_ID = "shop_id"
+    const val INTENT_ORDER_ID = "order_id"
+    const val INTENT_ACCEPT = "accept"
+    const val INTENT_DECLINE = "decline"
+
 
 
     //NOTIFICATION TOPICS

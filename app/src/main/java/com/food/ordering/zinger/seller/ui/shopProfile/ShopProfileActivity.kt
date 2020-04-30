@@ -159,8 +159,7 @@ class ShopProfileActivity : AppCompatActivity() {
                 binding.imageEditClosingTime.isEnabled = false
                 binding.textLogo.isEnabled = false
                 binding.textCoverPhoto.isEnabled = false
-            }
-            if (it == AppConstants.ROLE.DELIVERY.name) {
+
                 binding.switchOrders.isEnabled = false
                 binding.switchDelivery.isEnabled = false
                 binding.buttonUpdate.visibility = View.GONE
