@@ -18,6 +18,8 @@ interface AppPreferencesHelper {
 
     var isFCMTokenUpdated: Boolean?
     var isFCMTopicSubScribed: Boolean?
+    var orderStatusChanged: Boolean
+
 
     fun saveUser(id: Int?,name: String?,email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?)
 

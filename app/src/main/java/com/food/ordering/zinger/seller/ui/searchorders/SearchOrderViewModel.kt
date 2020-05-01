@@ -36,4 +36,6 @@ class SearchOrderViewModel(private val orderRepository: OrderRepository) : ViewM
             }
         }
     }
+
+    /*****************************************************************************/
 }

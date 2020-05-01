@@ -14,18 +14,10 @@ import java.net.UnknownHostException
 
 class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewModel() {
 
-    private val performUpdateShopProfile = MutableLiveData<Resource<Response<String>>>()
-    val performUpdateShopProfileStatus: LiveData<Resource<Response<String>>>
-        get() = performUpdateShopProfile
-
-    private val performUploadImage = MutableLiveData<Resource<String>>()
-    val performUploadImageStatus: LiveData<Resource<String>>
-        get() = performUploadImage
 
     private val getShopDetail = MutableLiveData<Resource<Response<ShopConfigurationModel>>>()
     val getShopDetailResponse : LiveData<Resource<Response<ShopConfigurationModel>>>
         get() = getShopDetail
-
 
     fun getShopDetail(id: Int){
         viewModelScope.launch {
@@ -47,6 +39,11 @@ class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewMod
         }
     }
 
+    /*****************************************************************************/
+
+    private val performUpdateShopProfile = MutableLiveData<Resource<Response<String>>>()
+    val performUpdateShopProfileStatus: LiveData<Resource<Response<String>>>
+        get() = performUpdateShopProfile
 
     fun updateShopProfile(shopConfigRequest: ConfigurationModel) {
         viewModelScope.launch {
@@ -67,6 +64,12 @@ class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewMod
             }
         }
     }
+
+    /*****************************************************************************/
+
+    private val performUploadImage = MutableLiveData<Resource<String>>()
+    val performUploadImageStatus: LiveData<Resource<String>>
+        get() = performUploadImage
 
     fun uploadPhotoToFireBase(storageReference: StorageReference,uri: Uri){
 

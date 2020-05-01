@@ -42,6 +42,8 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
         }
     }
 
+    /*****************************************************************************/
+
 
     private val inviteSeller = MutableLiveData<Resource<Response<String>>>()
     val inviteSellerResponse: LiveData<Resource<Response<String>>>
@@ -68,6 +70,7 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
         }
     }
 
+    /*****************************************************************************/
 
 
     private val deleteInvite = MutableLiveData<Resource<Response<String>>>()
@@ -95,6 +98,8 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
         }
     }
 
+    /*****************************************************************************/
+
     private val notifyInvite = MutableLiveData<Resource<Response<String>>>()
     val notifyInviteResponse: LiveData<Resource<Response<String>>>
         get() = notifyInvite
@@ -121,6 +126,8 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
         }
     }
 
+    /*****************************************************************************/
+
     private val deleteSeller = MutableLiveData<Resource<Response<String>>>()
     val deleteSellerResponse: LiveData<Resource<Response<String>>>
         get() = deleteSeller
@@ -145,5 +152,6 @@ class SellerViewModel(private val sellerRepository: SellerRepository) : ViewMode
         }
     }
 
+    /*****************************************************************************/
 
 }

@@ -21,10 +21,6 @@ class ProfileViewModel(private val userRespository: UserRespository) : ViewModel
     val performUpdateProfileStatus: LiveData<Resource<Response<String>>>
         get() = performUpdateProfile
 
-    private val verifyOtp = MutableLiveData<Resource<String>>()
-    val verifyOtpStatus: LiveData<Resource<String>>
-        get() = verifyOtp
-
     fun updateProfile(userModel: UserModel) {
         viewModelScope.launch {
             try {
@@ -45,6 +41,12 @@ class ProfileViewModel(private val userRespository: UserRespository) : ViewModel
         }
     }
 
+    /*****************************************************************************/
+
+    private val verifyOtp = MutableLiveData<Resource<String>>()
+    val verifyOtpStatus: LiveData<Resource<String>>
+        get() = verifyOtp
+
     fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential,context: Context) {
 
         var auth = FirebaseAuth.getInstance()
@@ -64,5 +66,7 @@ class ProfileViewModel(private val userRespository: UserRespository) : ViewModel
             }
 
     }
+
+    /*****************************************************************************/
 
 }

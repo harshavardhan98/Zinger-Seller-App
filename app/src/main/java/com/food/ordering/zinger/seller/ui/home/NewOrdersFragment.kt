@@ -84,7 +84,7 @@ class NewOrdersFragment : Fragment() {
                         //progressDialog.dismiss()
                         ordersList.clear()
                         if (!resource.data.isNullOrEmpty()) {
-                            resource.data?.let { it1 ->
+                            resource.data.let { it1 ->
                                 ordersList.addAll(it1.filter {
                                     it.orderStatusModel.last().orderStatus.equals(
                                         AppConstants.STATUS.PLACED.name
@@ -149,7 +149,7 @@ class NewOrdersFragment : Fragment() {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                        viewModel.getOrderByShopId(preferencesHelper.currentShop)
+                        //viewModel.getOrderByShopId(preferencesHelper.currentShop)
                     }
 
                     Resource.Status.ERROR -> {

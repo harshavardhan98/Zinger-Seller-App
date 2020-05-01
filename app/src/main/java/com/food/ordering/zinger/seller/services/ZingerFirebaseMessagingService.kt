@@ -26,6 +26,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ZingerFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -96,6 +97,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     val declinePendingIntent: PendingIntent = PendingIntent.getActivity(this, payload.orderId, declineIntent, 0)
                     sendNotificationNewOrder(payload.orderId,title,message,pendingIntent,acceptPendingIntent,declinePendingIntent)
                     EventBus.send(payload)
+                    preferencesHelper.orderStatusChanged = true
 
                 }
 
@@ -119,6 +121,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(this, payload.orderId, intent, 0)
                     sendNotificationWithPendingIntent(payload.orderId,title,message,pendingIntent)
                     EventBus.send(payload)
+                    preferencesHelper.orderStatusChanged = true
                 }
 
                 AppConstants.NOTIFICATIONTYPE.NEW_ARRIVAL.name -> {
@@ -145,6 +148,52 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     intent.putExtra(AppConstants.SHOP_ID,shopId)
                     val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
                     sendNotificationWithPendingIntent(Date().time.toInt(),title,message,pendingIntent)
+                }
+
+                AppConstants.NOTIFICATIONTYPE.ORDER_STATUS.name -> {
+
+                    var title = it["title"]
+                    var message = it["message"]
+                    val payload = JSONObject(it["payload"])
+                    println("order status change "+payload)
+                    var status = ""
+                    var shopName = ""
+                    var orderId = ""
+                    if (payload.has("shopName")) {
+                        shopName = payload.getString("shopName").toString()
+                    }
+                    if (payload.has("orderId")) {
+                        orderId = payload.getString("orderId").toString()
+                    }
+                    if (payload.has("orderStatus")) {
+                        status = payload.getString("orderStatus").toString()
+                    }
+                    if (title.isNullOrEmpty()) {
+                        /*if(payload.has("orderId")){
+                            title+=shopName+"Order "+orderId + " - "
+                        }*/
+                        if (payload.has("orderStatus")) {
+                            title = "hell0"
+                            //title += "Order " + StatusHelper.getStatusMessage(status) + " - " + shopName
+                        }
+                    }
+                    if (message.isNullOrEmpty()) {
+                        //message += StatusHelper.getStatusDetailedMessage(status)
+                        when (status) {
+                            AppConstants.ORDER_STATUS_READY, AppConstants.ORDER_STATUS_OUT_FOR_DELIVERY -> {
+                                if(payload.has("secretKey")){
+                                    message+="\nSecret Key: "+payload.getString("secretKey").toString()
+                                }
+                            }
+                        }
+                    }
+                    //intent.putExtra(AppConstants.INTENT_ORDER_ID, orderId)
+                    //val pendingIntent: PendingIntent = PendingIntent.getActivity(this, orderId.toInt(), intent, 0)
+                    //sendNotificationWithPendingIntent(orderId.toInt(), title, message, pendingIntent)
+                    //Alerting the order detail activity
+                    EventBus.send(OrderNotificationPayload(0.0,ArrayList(),1,""))
+                    preferencesHelper.orderStatusChanged = true
+                    //sendNotification(Date().time.toInt(),"status", "status")
                 }
 
 

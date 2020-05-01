@@ -1,6 +1,7 @@
 package com.food.ordering.zinger.seller.ui.home
 
 import androidx.lifecycle.*
+import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.data.model.Response
@@ -10,7 +11,7 @@ import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
 
-class HomeViewModel(private val orderRepository: OrderRepository) : ViewModel() {
+class HomeViewModel(private val orderRepository: OrderRepository,private val preferencesHelper: PreferencesHelper) : ViewModel() {
 
     private val updateOrder = MutableLiveData<Resource<Response<String>>>()
     val updateOrderResponse: LiveData<Resource<Response<String>>>
@@ -24,6 +25,7 @@ class HomeViewModel(private val orderRepository: OrderRepository) : ViewModel() 
 
                 if(response.code==1) {
                     updateOrder.value = Resource.success(response)
+                    preferencesHelper.orderStatusChanged = true
                 }
                 else{
                     updateOrder.value = Resource.error(message=response.message)

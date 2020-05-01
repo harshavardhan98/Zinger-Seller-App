@@ -15,6 +15,8 @@ import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
 class OTPViewModel(private val userRespository: UserRespository,private val sellerRepository: SellerRepository) : ViewModel() {
+
+
     private val performLogin = MutableLiveData<Resource<Response<UserShopListModel>>>()
     val performLoginStatus: LiveData<Resource<Response<UserShopListModel>>>
         get() = performLogin
@@ -39,6 +41,7 @@ class OTPViewModel(private val userRespository: UserRespository,private val sell
         }
     }
 
+    /*****************************************************************************/
 
     private val acceptInvite = MutableLiveData<Resource<Response<UserShopListModel>>>()
     val acceptInviteResponse: LiveData<Resource<Response<UserShopListModel>>>

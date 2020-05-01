@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.*
 import com.food.ordering.zinger.seller.data.retrofit.OrderRepository
@@ -14,46 +15,29 @@ import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import kotlin.Exception
 
-class OrderViewModel(private val orderRepository: OrderRepository,
-                     private val userRespository: UserRespository,
-                     private val shopRepository: ShopRepository):ViewModel() {
+class OrderViewModel(
+    private val orderRepository: OrderRepository,
+    private val userRespository: UserRespository,
+    private val shopRepository: ShopRepository,
+    private val preferencesHelper: PreferencesHelper
+) : ViewModel() {
 
-
-    private val performUpdateProfile = MutableLiveData<Resource<Response<String>>>()
-    val performUpdateProfileStatus: LiveData<Resource<Response<String>>>
-        get() = performUpdateProfile
 
     private val orderByIdRequest = MutableLiveData<Resource<Response<OrderItemListModel>>>()
-    val orderByIdResponse : LiveData<Resource<Response<OrderItemListModel>>>
-    get() = orderByIdRequest
+    val orderByIdResponse: LiveData<Resource<Response<OrderItemListModel>>>
+        get() = orderByIdRequest
 
-    private val orderByShopId = MutableLiveData<Resource<List<OrderItemListModel>>>()
-    val orderByShopIdResponse : LiveData<Resource<List<OrderItemListModel>>>
-    get() = orderByShopId
-
-    private val updateOrder = MutableLiveData<Resource<Response<String>>>()
-    val updateOrderResponse: LiveData<Resource<Response<String>>>
-    get() = updateOrder
-
-    private val orderByPagination = MutableLiveData<Resource<Response<List<OrderItemListModel>>>>()
-    val orderByPaginationResponse : LiveData<Resource<Response<List<OrderItemListModel>>>>
-        get() = orderByPagination
-
-    private val getShopDetail = MutableLiveData<Resource<Response<ShopConfigurationModel>>>()
-    val getShopDetailResponse : LiveData<Resource<Response<ShopConfigurationModel>>>
-        get() = getShopDetail
-
-    fun getOrderById(orderId: Int){
+    fun getOrderById(orderId: Int) {
         viewModelScope.launch {
             try {
                 orderByIdRequest.value = Resource.loading()
                 val response = orderRepository.getOrderById(orderId)
-                if(response.code==1)
-                    orderByIdRequest.value=Resource.success(response)
-                else{
-                    orderByIdRequest.value=Resource.error(message = response.message)
+                if (response.code == 1)
+                    orderByIdRequest.value = Resource.success(response)
+                else {
+                    orderByIdRequest.value = Resource.error(message = response.message)
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     orderByIdRequest.value = Resource.offlineError()
                 } else {
@@ -63,23 +47,27 @@ class OrderViewModel(private val orderRepository: OrderRepository,
         }
     }
 
+    /*****************************************************************************/
 
+    private val orderByShopId = MutableLiveData<Resource<List<OrderItemListModel>>>()
+    val orderByShopIdResponse: LiveData<Resource<List<OrderItemListModel>>>
+        get() = orderByShopId
 
-    fun getOrderByShopId(shopId: Int){
+    fun getOrderByShopId(shopId: Int) {
         viewModelScope.launch {
-            try{
+            try {
                 orderByShopId.value = Resource.loading()
                 val response = orderRepository.getOrderByShopId(shopId)
 
-                if(!response.data.isNullOrEmpty()) {
+                if (!response.data.isNullOrEmpty()) {
                     var orders = response.data
                     orderByShopId.value = Resource.success(orders)
-                }
-                else {
+                    preferencesHelper.orderStatusChanged = false
+                } else {
                     orderByShopId.value = Resource.empty()
                 }
 
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     orderByShopId.value = Resource.offlineError()
                 } else {
@@ -89,18 +77,24 @@ class OrderViewModel(private val orderRepository: OrderRepository,
         }
     }
 
-    fun getOrderByPagination(shopId: Int,pageNum: Int,pageCnt: Int){
+    /*****************************************************************************/
+
+    private val orderByPagination = MutableLiveData<Resource<Response<List<OrderItemListModel>>>>()
+    val orderByPaginationResponse: LiveData<Resource<Response<List<OrderItemListModel>>>>
+        get() = orderByPagination
+
+    fun getOrderByPagination(shopId: Int, pageNum: Int, pageCnt: Int) {
         viewModelScope.launch {
-            try{
+            try {
                 orderByPagination.value = Resource.loading()
 
-                val response = orderRepository.getOrderByPagination(shopId,pageNum,pageCnt)
-                if(!response.data.isNullOrEmpty())
+                val response = orderRepository.getOrderByPagination(shopId, pageNum, pageCnt)
+                if (!response.data.isNullOrEmpty())
                     orderByPagination.value = Resource.success(response)
-                else{
+                else {
                     orderByPagination.value = Resource.empty()
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     orderByPagination.value = Resource.offlineError()
                 } else {
@@ -109,6 +103,13 @@ class OrderViewModel(private val orderRepository: OrderRepository,
             }
         }
     }
+
+
+    /*****************************************************************************/
+
+    private val performUpdateProfile = MutableLiveData<Resource<Response<String>>>()
+    val performUpdateProfileStatus: LiveData<Resource<Response<String>>>
+        get() = performUpdateProfile
 
     fun updateProfile(userModel: UserModel) {
         viewModelScope.launch {
@@ -130,16 +131,22 @@ class OrderViewModel(private val orderRepository: OrderRepository,
         }
     }
 
-    fun getShopDetail(id: Int){
+    /*****************************************************************************/
+
+    private val getShopDetail = MutableLiveData<Resource<Response<ShopConfigurationModel>>>()
+    val getShopDetailResponse: LiveData<Resource<Response<ShopConfigurationModel>>>
+        get() = getShopDetail
+
+    fun getShopDetail(id: Int) {
         viewModelScope.launch {
-            try{
+            try {
                 getShopDetail.value = Resource.loading()
                 val response = shopRepository.getShopDetailsById(id)
-                if(response.code == 1)
-                    getShopDetail.value =Resource.success(response)
+                if (response.code == 1)
+                    getShopDetail.value = Resource.success(response)
                 else
                     getShopDetail.value = Resource.error(message = response.message)
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 println("fetch stats failed ${e.message}")
                 if (e is UnknownHostException) {
                     getShopDetail.value = Resource.offlineError()

@@ -168,7 +168,7 @@ class ReadyFragment : Fragment() {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                        viewModel.getOrderByShopId(preferencesHelper.currentShop)
+                        //viewModel.getOrderByShopId(preferencesHelper.currentShop)
                     }
 
                     Resource.Status.ERROR -> {

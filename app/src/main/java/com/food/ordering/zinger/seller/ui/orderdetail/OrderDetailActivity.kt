@@ -29,7 +29,6 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityOrderDetailBinding
     private val viewModel: OrderDetailViewModel by viewModel()
-    private val preferencesHelper: PreferencesHelper by inject()
     private lateinit var orderAdapter: OrderItemAdapter
     private lateinit var progressDialog: ProgressDialog
     private var orderList: ArrayList<OrderItems> = ArrayList()
@@ -55,6 +54,8 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             binding = DataBindingUtil.setContentView(this, R.layout.activity_order_detail)
             binding.imageClose.setOnClickListener(this)
             progressDialog = ProgressDialog(this)
+            progressDialog.setCancelable(false)
+
 
             order = OrderItemListModel(
                 ArrayList(),
@@ -358,6 +359,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
+
                         order.transactionModel.orderModel.id?.let { viewModel.getOrderById(it) }
                     }
 

@@ -82,6 +82,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         setUpFCM()
 
         viewModel.getShopDetail(preferencesHelper.currentShop)
+        viewModel.getOrderByShopId(preferencesHelper.currentShop)
         println("testing")
         subscribeToOrders()
     }
@@ -425,7 +426,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getOrderByShopId(preferencesHelper.currentShop)
+
+        if(preferencesHelper.orderStatusChanged) {
+            viewModel.getOrderByShopId(preferencesHelper.currentShop)
+        }
         shopConfig = preferencesHelper.getShop()!!
             .filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
         binding.textShopName.text = shopConfig?.shopModel?.name

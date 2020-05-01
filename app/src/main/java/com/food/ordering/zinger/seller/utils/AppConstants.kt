@@ -14,11 +14,12 @@ object AppConstants {
     const val PREFS_SELLER_PLACE = "place"
     const val PREFS_CURRENT_SHOP_ID = "current_shop_id"
     const val PREFS_SELLER_MOBILE = "mobile"
-
     const val PREFS_SELLER_ROLE = "role"
     const val PREFS_SELLER_FCM_TOKEN = "fcm_token"
     const val PREFS_IS_FCM_TOKEN_GENERATED = "fcm_token_generated"
     const val PREFS_IS_FCM_TOPIC_SUBSCRIBED = "fcm_topic_subscribed"
+    const val PREFS_ORDER_STATUS_CHANGED = "order_status_changed"
+
 
     const val ORDER_STATUS_PENDING = "PENDING"
     const val ORDER_STATUS_TXN_FAILURE = "TXN_FAILURE"

@@ -70,6 +70,13 @@ class PreferencesHelper(context: Context) : AppPreferencesHelper {
                 loginPreferences.edit().putBoolean(AppConstants.PREFS_IS_FCM_TOPIC_SUBSCRIBED,value).apply()
         }
 
+
+    override var orderStatusChanged: Boolean
+        get() = sellerPreferences.getBoolean(AppConstants.PREFS_ORDER_STATUS_CHANGED,false)
+        set(value) {
+            sellerPreferences.edit().putBoolean(AppConstants.PREFS_ORDER_STATUS_CHANGED,value).apply()
+        }
+
     override fun saveUser(id: Int?, name: String?, email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?) {
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_NAME, name).apply()
         sellerPreferences.edit().putString(AppConstants.PREFS_SELLER_EMAIL, email).apply()
