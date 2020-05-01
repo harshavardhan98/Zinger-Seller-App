@@ -26,6 +26,8 @@ import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBinding
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
+import com.food.ordering.zinger.seller.ui.contactus.ContactUsActivity
+import com.food.ordering.zinger.seller.ui.contributors.ContributorsActivity
 import com.food.ordering.zinger.seller.ui.login.LoginActivity
 import com.food.ordering.zinger.seller.ui.menu.MenuActivity
 import com.food.ordering.zinger.seller.ui.orderhistory.OrderHistoryActivity
@@ -233,7 +235,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .withIcon(R.drawable.ic_drawer_mail)
         val signOutItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Sign out")
             .withIcon(R.drawable.ic_drawer_log_out)
-        val helpcenter = PrimaryDrawerItem().withIdentifier(++identifier).withName("Help Center")
+        val contributorsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contributors")
             .withIcon(R.drawable.ic_drawer_info)
 
 
@@ -251,7 +253,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 ordersItem,
                 menuItem,
                 sellerItem,
-                helpcenter,
+                contributorsItem,
                 contactUsItem,
                 DividerDrawerItem(),
                 signOutItem
@@ -272,10 +274,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 if (sellerItem.identifier == drawerItem.identifier) {
                     startActivity(Intent(applicationContext, SellerActivity::class.java))
                 }
-
-                if (helpcenter.identifier == drawerItem.identifier) { //TODO open help activity
+                if (contributorsItem.identifier == drawerItem.identifier) {
+                    startActivity(Intent(applicationContext, ContributorsActivity::class.java))
                 }
-                if (contactUsItem.identifier == drawerItem.identifier) { //TODO open contact us activity
+                if (contactUsItem.identifier == drawerItem.identifier) {
+                    startActivity(Intent(applicationContext,ContactUsActivity::class.java))
                 }
                 if (signOutItem.identifier == drawerItem.identifier) {
                     MaterialAlertDialogBuilder(this@HomeActivity)

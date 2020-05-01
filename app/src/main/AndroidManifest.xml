@@ -15,7 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.webview.WebViewActivity"></activity>
+        <activity android:name=".ui.contributors.ContributorDetailActivity"></activity>
+        <activity android:name=".ui.contributors.ContributorsActivity" />
+        <activity android:name=".ui.contactus.ContactUsActivity" />
+        <activity android:name=".ui.webview.WebViewActivity" />
         <activity android:name=".ui.searchorders.SearchOrderActivity" />
         <activity android:name=".ui.verifyInvite.InviteSellerActivity">
             <intent-filter android:label="@string/link_filter_intent">
