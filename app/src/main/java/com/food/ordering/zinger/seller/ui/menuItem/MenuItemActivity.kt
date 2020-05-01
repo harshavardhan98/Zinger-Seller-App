@@ -1,13 +1,14 @@
 package com.food.ordering.zinger.seller.ui.menuItem
 
+import android.R.attr.data
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.res.ColorStateList
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,9 +17,9 @@ import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.CategoryItemListModel
 import com.food.ordering.zinger.seller.data.model.ItemModel
-import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.data.model.ShopModel
-import com.food.ordering.zinger.seller.databinding.*
+import com.food.ordering.zinger.seller.databinding.ActivityMenuItemBinding
+import com.food.ordering.zinger.seller.databinding.BottomSheetAddEditMenuItemBinding
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -33,8 +34,8 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
 import java.util.*
 import java.util.Collections.sort
-import kotlin.Comparator
 import kotlin.collections.ArrayList
+
 
 /*
 *  1. When no items are available
@@ -685,10 +686,6 @@ class MenuItemActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        Toast.makeText(applicationContext, "Testing on back pressed", Toast.LENGTH_LONG).show()
-    }
 
     fun updateList(itemModelList: ArrayList<ItemModel>) {
 
@@ -709,6 +706,15 @@ class MenuItemActivity : AppCompatActivity() {
         }
 
         menuAdapter.notifyDataSetChanged()
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent()
+        intent.putExtra(AppConstants.INTENT_UPDATED_ITEM, Gson().toJson(menuItemList))
+        intent.putExtra(AppConstants.INTENT_UPDATED_ITEM_CATEGORY, category)
+        setResult(35, intent)
+        // NOTE: do not put on back pressed first, else result code will be 0 instead of 35
+        super.onBackPressed()
     }
 
 }

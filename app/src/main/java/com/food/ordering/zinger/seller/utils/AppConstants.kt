@@ -49,6 +49,8 @@ object AppConstants {
     const val INTENT_ORDER_ID = "order_id"
     const val INTENT_ACCEPT = "accept"
     const val INTENT_DECLINE = "decline"
+    const val INTENT_UPDATED_ITEM = "updated_item_list"
+    const val INTENT_UPDATED_ITEM_CATEGORY = "updated_item_category"
 
 
 
@@ -56,8 +58,11 @@ object AppConstants {
     const val NOTIFICATION_TOPIC_GLOBAL = "global"
 
 
-
+    // REQUEST CODE
     const val REQUEST_PHONE_CALL = 987
+    const val REQUEST_UPDATED_MENU_ITEMS = 321
+    const val SUCCESS_UPDATED_MENU_ITEMS = 1
+
     enum class STATUS{
         PENDING, TXN_FAILURE, PLACED, CANCELLED_BY_USER, ACCEPTED, CANCELLED_BY_SELLER, READY, OUT_FOR_DELIVERY, COMPLETED, DELIVERED, REFUND_INITIATED, REFUND_COMPLETED
     }

@@ -25,6 +25,7 @@ import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.koin.android.ext.android.inject
 
 class MenuActivity : AppCompatActivity() {
@@ -36,6 +37,7 @@ class MenuActivity : AppCompatActivity() {
     private lateinit var categoryAdapter: CategoryAdapter
     private var categoryItemList: ArrayList<CategoryItemListModel> = ArrayList()
     private lateinit var errorSnackBar: Snackbar
+    private var categoryHashMap: HashMap<String, ArrayList<ItemModel>> = HashMap()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,12 +45,11 @@ class MenuActivity : AppCompatActivity() {
         initView()
         setListener()
         setObservers()
-
+        setUpRecyclerView()
     }
 
     override fun onResume() {
         super.onResume()
-        setUpRecyclerView()
     }
 
     private fun initView() {
@@ -98,28 +99,24 @@ class MenuActivity : AppCompatActivity() {
                         categoryItemList.clear()
 
                         resource.data?.data?.let {
+
                             var itemList = it.sortedByDescending { it.category }
+                            categoryHashMap = HashMap()
 
-                            var categoryItem: CategoryItemListModel? = null
-
-                            for (i in itemList) {
-                                if (categoryItem != null) {
-                                    if (categoryItem.category != i.category) {
-                                        categoryItemList.add(categoryItem)
-                                        var itemModelList: ArrayList<ItemModel> = ArrayList()
-                                        itemModelList.add(i)
-                                        categoryItem =
-                                            CategoryItemListModel(i.category, itemModelList)
-                                    } else {
-                                        categoryItem.itemModelList.add(i)
-                                    }
+                            for (item in itemList) {
+                                if (categoryHashMap.containsKey(item.category)) {
+                                    categoryHashMap.get(item.category)?.add(item)
                                 } else {
-                                    var itemModelList: ArrayList<ItemModel> = ArrayList()
-                                    itemModelList.add(i)
-                                    categoryItem = CategoryItemListModel(i.category, itemModelList)
+                                    categoryHashMap[item.category] = ArrayList(listOf(item))
                                 }
                             }
-                            categoryItem?.let { categoryItemList.add(categoryItem) }
+
+                            for (category in categoryHashMap.keys) {
+                                categoryHashMap.get(category)?.let { it1 ->
+                                    categoryItemList.add(CategoryItemListModel(category, it1))
+                                }
+                            }
+
                             categoryAdapter.notifyDataSetChanged()
                             binding.layoutStates.visibility = View.GONE
                             binding.animationView.visibility = View.GONE
@@ -188,7 +185,7 @@ class MenuActivity : AppCompatActivity() {
                         AppConstants.CATEGORY_ITEM_DETAIL,
                         Gson().toJson(categoryItemListModel)
                     )
-                    startActivity(intent)
+                    startActivityForResult(intent, AppConstants.REQUEST_UPDATED_MENU_ITEMS)
                 }
             })
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -211,9 +208,9 @@ class MenuActivity : AppCompatActivity() {
         dialog.show()
 
         dialogBinding.editCategory.setOnEditorActionListener { v, actionId, event ->
-            when(actionId){
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    insertCategoryRequest(dialogBinding,dialog)
+                    insertCategoryRequest(dialogBinding, dialog)
                     true
                 }
                 else -> false
@@ -222,28 +219,77 @@ class MenuActivity : AppCompatActivity() {
 
 
         dialogBinding.buttonConfirm.setOnClickListener {
-            insertCategoryRequest(dialogBinding,dialog)
+            insertCategoryRequest(dialogBinding, dialog)
         }
     }
 
 
-    private fun insertCategoryRequest(dialogBinding: BottomSheetAddCategoryBinding,dialog: BottomSheetDialog){
-        if(dialogBinding.editCategory.text.toString().length==0 ||
-            !dialogBinding.editCategory.text.toString().matches(Regex("^[a-zA-Z]*\$")))
-        {
-            Toast.makeText(this,"Category name is empty or incorrect format ",Toast.LENGTH_LONG).show()
+    private fun insertCategoryRequest(
+        dialogBinding: BottomSheetAddCategoryBinding,
+        dialog: BottomSheetDialog
+    ) {
+        if (dialogBinding.editCategory.text.toString().length == 0 ||
+            !dialogBinding.editCategory.text.toString().matches(Regex("^[a-zA-Z]*\$"))
+        ) {
+            Toast.makeText(this, "Category name is empty or incorrect format ", Toast.LENGTH_LONG)
+                .show()
 
-        }else{
+        } else {
             val category = CategoryItemListModel(
                 dialogBinding.editCategory.text.toString().toUpperCase(),
                 ArrayList()
             )
+            categoryHashMap[category.category] = ArrayList()
             categoryItemList.add(category)
             categoryAdapter.notifyDataSetChanged()
             dialog.dismiss()
             val intent = Intent(applicationContext, MenuItemActivity::class.java)
             intent.putExtra(AppConstants.CATEGORY_ITEM_DETAIL, Gson().toJson(category))
-            startActivity(intent)
+            startActivityForResult(intent, AppConstants.REQUEST_UPDATED_MENU_ITEMS)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AppConstants.REQUEST_UPDATED_MENU_ITEMS) {
+            // todo handle new category addition
+            if (resultCode == 35) {
+                val listType = object : TypeToken<List<ItemModel?>?>() {}.type
+                val itemList = Gson().fromJson<List<ItemModel>>(
+                    data?.getStringExtra(AppConstants.INTENT_UPDATED_ITEM),
+                    listType
+                )
+                val category = data?.getStringExtra(AppConstants.INTENT_UPDATED_ITEM_CATEGORY)
+
+                if(itemList.size>0){
+                    categoryHashMap.get(itemList[0].category)?.let {
+                        categoryHashMap[itemList[0].category] = ArrayList(itemList)
+                        categoryItemList.clear()
+                        for (category in categoryHashMap.keys) {
+                            categoryHashMap.get(category)?.let { it1 ->
+                                if(it1.size>0)
+                                    categoryItemList.add(CategoryItemListModel(category, it1))
+                            }
+                        }
+                        categoryAdapter.notifyDataSetChanged()
+                    }
+                }else{
+                    categoryItemList.clear()
+
+                    category?.let {
+                        categoryHashMap[it] = ArrayList()
+                    }
+
+                    for (key in categoryHashMap.keys) {
+                        categoryHashMap.get(key)?.let { it1 ->
+                            if(it1.size>0)
+                                categoryItemList.add(CategoryItemListModel(key, it1))
+                        }
+                    }
+                    categoryAdapter.notifyDataSetChanged()
+                }
+                println("testing: " + itemList)
+            }
         }
     }
 }
