@@ -9,4 +9,6 @@ class UserRespository(private val retofit: Retrofit) {
     suspend fun login(userModel: UserModel) = service.login(userModel)
 
     suspend fun updateProfile(userModel: UserModel) = service.updateProfile(userModel)
+
+    suspend fun updateFcmToken(userModel: UserModel) = service.updateFcmToken(userModel)
 }

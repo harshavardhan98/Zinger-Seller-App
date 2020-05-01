@@ -344,20 +344,15 @@ class OTPActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     progressDialog.dismiss()
                     println("TestingHar2:"+verifySeller+" "+sellerShop+" "+number)
-
-
                     val user = task.result?.user
                     preferencesHelper.oauthId = user?.uid
                     preferencesHelper.mobile = user?.phoneNumber?.substring(3)
-                    var fcmTokenList = ArrayList<String>()
-                    fcmTokenList.add("TEST_TOKEN")
 
                     val userModel = user?.uid?.let {
                         user.phoneNumber?.let { it1 ->
                             UserModel(
                                 oauthId = it,
-                                mobile = it1.substring(3),
-                                notificationToken = fcmTokenList
+                                mobile = it1.substring(3)
                             )
                         }
                     }

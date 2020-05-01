@@ -35,7 +35,7 @@ data class UserModel(
     @SerializedName("role")
     val role: String? = null,
     @SerializedName("notificationToken")
-    val notificationToken: ArrayList<String>? = null
+    val notificationToken: String? = null
 )
 
 

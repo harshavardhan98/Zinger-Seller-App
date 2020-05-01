@@ -31,7 +31,7 @@ val viewModelModule = module {
     viewModel { SearchOrderViewModel(get()) }
     viewModel { OrderHistoryViewModel(get()) }
     viewModel { SellerViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(),get()) }
     viewModel { OTPViewModel(get(),get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { ShopProfileViewModel(get()) }

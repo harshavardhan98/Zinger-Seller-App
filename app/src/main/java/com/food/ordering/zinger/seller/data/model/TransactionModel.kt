@@ -45,6 +45,8 @@ data class OrderModel(
     val price: Double?=null,
     @SerializedName("rating")
     val rating: Double?=null,
+    @SerializedName("feedback")
+    val feedBack: String?=null,
     @SerializedName("secretKey")
     var secretKey: String?=null,
     @SerializedName("shopModel")

@@ -284,6 +284,14 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .setPositiveButton("Yes") { dialog, which ->
                             FirebaseAuth.getInstance().signOut()
                             preferencesHelper.clearPreferences()
+                            preferencesHelper.getShop()?.forEach {
+                                FirebaseMessaging.getInstance()
+                                    .unsubscribeFromTopic(
+                                        it.shopModel.name?.split(" ")?.get(0) + it.shopModel.id
+                                    );
+                            }
+                            FirebaseMessaging.getInstance()
+                                .unsubscribeFromTopic(AppConstants.NOTIFICATION_TOPIC_GLOBAL);
                             startActivity(Intent(applicationContext, LoginActivity::class.java))
                             finish()
                         }
@@ -294,10 +302,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
             .build()
 
-        preferencesHelper.role?.let {role ->
-            if(role==AppConstants.ROLE.SELLER.name){
+        preferencesHelper.role?.let { role ->
+            if (role == AppConstants.ROLE.SELLER.name) {
                 drawer.removeItem(sellerItem.identifier)
-            }else if(role == AppConstants.ROLE.DELIVERY.name){
+            } else if (role == AppConstants.ROLE.DELIVERY.name) {
                 drawer.removeItem(shopProfileItem.identifier)
                 drawer.removeItem(menuItem.identifier)
                 drawer.removeItem(sellerItem.identifier)
@@ -307,17 +315,17 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setObservers() {
 
-        viewModel.performUpdateProfileStatus.observe(this, Observer { resource ->
+        viewModel.updateFcmTokenResponse.observe(this, Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
-                        preferencesHelper.isFCMTokenUpdated = true;
+                        println("FCM token Succesfully updated")
                     }
                     Resource.Status.ERROR -> {
-                        preferencesHelper.isFCMTokenUpdated = false
+                        preferencesHelper.fcmToken = ""
                     }
                     Resource.Status.OFFLINE_ERROR -> {
-                        preferencesHelper.isFCMTokenUpdated = false
+                        preferencesHelper.fcmToken = ""
                     }
                 }
             }
@@ -428,10 +436,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
         try {
             preferencesHelper.orderStatusChanged.let {
-                if(it==false)
+                if (it == false)
                     viewModel.getOrderByShopId(preferencesHelper.currentShop)
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             println(e.printStackTrace())
         }
 
@@ -466,19 +474,14 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 // Get new Instance ID token
                 val token = task.result?.token
-                if(preferencesHelper.fcmToken!=token) {
+                if (preferencesHelper.fcmToken != token ) {
                     preferencesHelper.fcmToken = token
-                    val msg = "FCM TOKEN " + token
-                    Log.d("FCM", msg)
                     preferencesHelper.fcmToken?.let { fcmToken ->
-                        val userModelRequest = UserModel(
+                        val fcmTokenRequest = UserModel(
                             id = preferencesHelper.id,
-                            name = preferencesHelper.name,
-                            email = preferencesHelper.email,
-                            mobile = preferencesHelper.mobile,
-                            notificationToken = arrayListOf(fcmToken)
+                            notificationToken = preferencesHelper.fcmToken
                         )
-                        viewModel.updateProfile(userModel = userModelRequest)
+                        viewModel.updateFCMToken(fcmTokenRequest)
                     }
                 }
             })
@@ -490,7 +493,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                     .subscribeToTopic(it.shopModel.name?.split(" ")?.get(0) + it.shopModel.id);
             }
             FirebaseMessaging.getInstance()
-                .subscribeToTopic(AppConstants.NOTIFICATION_TOPIC_GLOBAL);
+                .subscribeToTopic(AppConstants.NOTIFICATION_TOPIC_GLOBAL)
             preferencesHelper.isFCMTopicSubScribed = true
         }
 

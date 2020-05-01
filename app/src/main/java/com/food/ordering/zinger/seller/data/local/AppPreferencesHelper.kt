@@ -14,6 +14,8 @@ interface AppPreferencesHelper {
     val currentShop: Int?
     val id: Int?
     val fcmToken: String?
+    val tempMobile: String?
+    val tempOauthId: String?
 
 
     var isFCMTokenUpdated: Boolean?

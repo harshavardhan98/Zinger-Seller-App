@@ -42,11 +42,12 @@ class ProfileActivity : AppCompatActivity() {
     private val viewModel: ProfileViewModel by viewModel()
     private lateinit var progressDialog: ProgressDialog
     private lateinit var dialogBinding: BottomSheetVerifyOtpBinding
-    lateinit var verificationCallBack: PhoneAuthProvider.OnVerificationStateChangedCallbacks
-    lateinit var storedVerificationId: String
-    lateinit var dialog: BottomSheetDialog
-    lateinit var countDownTimer: CountDownTimer
+    private lateinit var verificationCallBack: PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    private lateinit var storedVerificationId: String
+    private lateinit var dialog: BottomSheetDialog
+    private lateinit var countDownTimer: CountDownTimer
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
+    private var otpVerified = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,33 +92,16 @@ class ProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please confirm name change", Toast.LENGTH_LONG).show()
             else if (binding.editEmail.isEnabled)
                 Toast.makeText(this, "Please confirm email change", Toast.LENGTH_LONG).show()
-            else if (binding.editMobile.isEnabled)
-                Toast.makeText(this, "Please confirm mobile number change", Toast.LENGTH_LONG)
-                    .show()
-            else if (binding.editMobile.editableText.toString().length != 10 || !binding.editMobile.editableText.toString()
-                    .matches(Regex("\\d+"))
-            )
-                Toast.makeText(this, "Incorrect mobile number", Toast.LENGTH_LONG).show()
             else {
                 val name = binding.editName.editableText.toString()
                 val email = binding.editEmail.editableText.toString()
-                val mobile = binding.editMobile.editableText.toString()
+                val mobile = preferencesHelper.mobile
 
-                val fcmToken =
-                    if (preferencesHelper.fcmToken != null) preferencesHelper.fcmToken else " "
-
-                if (mobile != preferencesHelper.mobile) {
-                    sendOtp(mobile)
-                    showOtpVerificationBottomSheet(mobile)
-                } else if (!name.equals(preferencesHelper.name) ||
-                    !email.equals(preferencesHelper.email) ||
-                    !mobile.equals(preferencesHelper.mobile)
-                ) {
-                    // check if all the tick mark is selected
+                if (!name.equals(preferencesHelper.name) || !email.equals(preferencesHelper.email)) {
                     viewModel.updateProfile(
                         UserModel(
                             id = preferencesHelper.id, name = name, email = email, mobile = mobile
-                            , notificationToken = arrayListOf(fcmToken!!)
+                            , oauthId = preferencesHelper.oauthId
                         )
                     )
                 }
@@ -141,12 +125,8 @@ class ProfileActivity : AppCompatActivity() {
             binding.editEmail.isEnabled = !binding.editEmail.isEnabled
         })
 
-        binding.imageEditMobile.setOnClickListener(View.OnClickListener {
-            if (!binding.editMobile.isEnabled)
-                binding.imageEditMobile.setImageResource(R.drawable.ic_check)
-            else
-                binding.imageEditMobile.setImageResource(R.drawable.ic_edit)
-            binding.editMobile.isEnabled = !binding.editMobile.isEnabled
+        binding.editMobile.setOnClickListener(View.OnClickListener {
+            showOtpVerificationBottomSheet(preferencesHelper.mobile!!)
         })
 
         verificationCallBack = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -193,7 +173,13 @@ class ProfileActivity : AppCompatActivity() {
                     Resource.Status.SUCCESS -> {
                         preferencesHelper.name = binding.editName.editableText.toString()
                         preferencesHelper.email = binding.editEmail.editableText.toString()
-                        preferencesHelper.mobile = binding.editMobile.editableText.toString()
+                        if (otpVerified) {
+                            preferencesHelper.mobile = preferencesHelper.tempMobile
+                            preferencesHelper.oauthId = preferencesHelper.tempOauthId
+                            otpVerified = false
+                        }
+
+                        binding.editMobile.setText(preferencesHelper.mobile)
                         progressDialog.dismiss()
                         Toast.makeText(
                             applicationContext,
@@ -241,24 +227,23 @@ class ProfileActivity : AppCompatActivity() {
                     }
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                        // dialog.dismiss()
-                        val name = binding.editName.editableText.toString()
-                        val email = binding.editEmail.editableText.toString()
-                        val mobile = binding.editMobile.editableText.toString()
-                        val fcmToken = ArrayList<String>()
-
-                        preferencesHelper.fcmToken?.let { fcmToken.add(it) }
-
-                        viewModel.updateProfile(
-                            UserModel(
-                                id = preferencesHelper.id,
-                                name = name,
-                                email = email,
-                                mobile = mobile,
-                                notificationToken = fcmToken
-                            )
-                        )
+                        otpVerified = true
+                        binding.editMobile.setText(preferencesHelper.tempMobile)
                         countDownTimer.cancel()
+
+                        val updateUserRequest = UserModel(
+                            preferencesHelper.id,
+                            preferencesHelper.email,
+                            preferencesHelper.tempMobile,
+                            preferencesHelper.name,
+                            preferencesHelper.tempOauthId
+                        )
+
+                        viewModel.updateProfile(updateUserRequest)
+
+                        dialog.let {
+                            dialog.dismiss()
+                        }
                     }
 
                     Resource.Status.ERROR -> {
@@ -283,19 +268,19 @@ class ProfileActivity : AppCompatActivity() {
                 false
             )
 
+        dialogBinding.editMobile.setText(number)
         dialog = BottomSheetDialog(this)
         dialog.setContentView(dialogBinding.root)
         dialog.show()
 
         dialogBinding.textResendOtp.setOnClickListener(View.OnClickListener {
             Toast.makeText(this, "OTP resent", Toast.LENGTH_LONG).show()
-            resendVerificationCode(binding.editMobile.text.toString(), resendToken)
+            resendVerificationCode(dialogBinding.editMobile.text.toString(), resendToken)
         })
 
         dialogBinding.editOtp.setOnEditorActionListener { v, actionId, event ->
-            when(actionId){
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    Toast.makeText(this,"Testing worked",Toast.LENGTH_LONG).show()
                     verifyOtpRequest(dialogBinding)
                     true
                 }
@@ -303,9 +288,22 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
 
-
         dialogBinding.buttonVerify.setOnClickListener {
-            verifyOtpRequest(dialogBinding)
+            if (dialogBinding.layoutOtp.visibility == View.GONE) {
+                if (dialogBinding.editMobile.text.toString() == preferencesHelper.mobile) {
+                    Toast.makeText(applicationContext, "Mobile number is same!", Toast.LENGTH_SHORT).show()
+                } else if (dialogBinding.editMobile.text.toString().length != 10 && dialogBinding.editMobile.text.toString().matches(Regex("\\d+"))) {
+                    Toast.makeText(applicationContext, "Incorrect Format!", Toast.LENGTH_SHORT).show()
+                } else {
+                    dialogBinding.layoutOtp.visibility = View.VISIBLE
+                    dialogBinding.buttonVerify.text = "Verify OTP"
+                    dialogBinding.editMobile.isEnabled = false
+                    sendOtp(dialogBinding.editMobile.text.toString())
+                }
+            } else {
+                verifyOtpRequest(dialogBinding)
+            }
+
         }
     }
 

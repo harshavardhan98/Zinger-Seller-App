@@ -12,6 +12,9 @@ interface CustomApi  {
     @PATCH("/user")
     suspend fun updateProfile(@Body userModel: UserModel): Response<String>
 
+    @PATCH("/user/notif")
+    suspend fun updateFcmToken(@Body userModel: UserModel): Response<String>
+
     // seller repository
 
     @GET("/user/seller/{shopId}")

@@ -142,6 +142,7 @@
 				android:textSize="12sp" />
 
 			<RelativeLayout
+				android:id="@+id/layout_mobile"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content">
 
@@ -149,7 +150,8 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:id="@+id/edit_mobile"
-					android:enabled="false"
+					android:textIsSelectable="true"
+					android:focusable="false"
 					android:singleLine="true"
 					android:inputType="phone"
 					android:maxLength="10"

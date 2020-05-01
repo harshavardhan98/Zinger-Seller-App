@@ -102,6 +102,14 @@ class PreferencesHelper(context: Context) : AppPreferencesHelper {
             sellerPreferences.edit().putInt(AppConstants.PREFS_DELETE_ITEM_REQUEST, value).apply()
         }
 
+    override var tempMobile: String?
+        get() = sellerPreferences.getString(AppConstants.TEMP_MOBILE, null)
+        set(value) = sellerPreferences.edit().putString(AppConstants.TEMP_MOBILE, value).apply()
+
+    override var tempOauthId: String?
+        get() = sellerPreferences.getString(AppConstants.TEMP_OAUTHID, null)
+        set(value) = sellerPreferences.edit().putString(AppConstants.TEMP_OAUTHID, value).apply()
+
     override fun saveUser(
         id: Int?,
         name: String?,

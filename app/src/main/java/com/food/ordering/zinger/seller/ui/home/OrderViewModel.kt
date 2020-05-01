@@ -76,31 +76,6 @@ class OrderViewModel(
         }
     }
 
-    /*****************************************************************************/
-
-    private val performUpdateProfile = MutableLiveData<Resource<Response<String>>>()
-    val performUpdateProfileStatus: LiveData<Resource<Response<String>>>
-        get() = performUpdateProfile
-
-    fun updateProfile(userModel: UserModel) {
-        viewModelScope.launch {
-            try {
-                performUpdateProfile.value = Resource.loading()
-                val response = userRespository.updateProfile(userModel)
-                if (response.code == 1)
-                    performUpdateProfile.value = Resource.success(response)
-                else
-                    performUpdateProfile.value = Resource.error(message = response.message)
-            } catch (e: Exception) {
-                println("fetch stats failed ${e.message}")
-                if (e is UnknownHostException) {
-                    performUpdateProfile.value = Resource.offlineError()
-                } else {
-                    performUpdateProfile.value = Resource.error(e)
-                }
-            }
-        }
-    }
 
     /*****************************************************************************/
 
@@ -127,5 +102,43 @@ class OrderViewModel(
             }
         }
     }
+
+
+    /*****************************************************************************/
+
+    private val updateFcmToken = MutableLiveData<Resource<Response<String>>>()
+    val updateFcmTokenResponse: LiveData<Resource<Response<String>>>
+        get() = updateFcmToken
+
+
+    fun updateFCMToken(user: UserModel){
+
+        viewModelScope.launch {
+            try {
+                updateFcmToken.value = Resource.loading()
+                val response = userRespository.updateFcmToken(user)
+                if (response.code == 1) {
+                    updateFcmToken.value = Resource.success(response)
+                } else {
+                    updateFcmToken.value = Resource.error(message = response.message)
+                }
+
+            } catch (e: Exception) {
+
+                println("fetch stats failed ${e.message}")
+
+                if (e is UnknownHostException) {
+                    updateFcmToken.value = Resource.offlineError()
+                } else {
+                    updateFcmToken.value = Resource.error(e)
+                }
+            }
+        }
+
+
+
+    }
+
+
 
 }

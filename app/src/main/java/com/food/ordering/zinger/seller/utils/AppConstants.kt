@@ -22,6 +22,8 @@ object AppConstants {
     const val PREFS_ADD_ITEM_REQUEST = "order_status_changed"
     const val PREFS_UPDATE_ITEM_REQUEST = "order_status_changed"
     const val PREFS_DELETE_ITEM_REQUEST = "order_status_changed"
+    const val TEMP_MOBILE = "temp_mobile"
+    const val TEMP_OAUTHID = "temp_oauthid"
 
 
     const val ORDER_STATUS_PENDING = "PENDING"
@@ -72,6 +74,6 @@ object AppConstants {
     }
 
     enum class NOTIFICATIONTYPE {
-        URL, ORDER_STATUS, NEW_ARRIVAL, NEW_ORDER, ORDER_CANCELLED
+        URL, NEW_ARRIVAL, USER_ORDER_STATUS, SELLER_ORDER_STATUS
     }
 }

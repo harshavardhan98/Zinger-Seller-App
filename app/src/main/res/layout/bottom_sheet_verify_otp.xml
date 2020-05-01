@@ -27,46 +27,85 @@
                 android:layout_marginEnd="16dp"
                 android:fontFamily="@font/poppins_bold"
                 android:gravity="center|start"
-                android:text="OTP"
+                android:text="Mobile"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <com.food.ordering.zinger.seller.utils.OtpEditText
-                android:id="@+id/edit_otp"
-                android:imeOptions="actionDone"
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_mobile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:cursorVisible="false"
-                android:digits="1234567890"
-                android:fontFamily="@font/poppins_semibold"
+                tools:text="9176019334"
                 android:inputType="number"
-                android:maxLength="6"
-                android:textColor="@color/colorAccent"
-                android:textIsSelectable="false"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/text_resend_otp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="16dp"
-                android:drawableStart="@drawable/ic_reload"
-                android:drawablePadding="8dp"
-                android:layout_marginBottom="8dp"
+                android:maxLength="10"
+                android:layout_marginBottom="16dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:gravity="center|start"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingLeft="8dp"
-                android:text="@string/label_resend_otp"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:hint="Name" />
+
+            <LinearLayout
+                android:id="@+id/layout_otp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center|start"
+                    android:text="OTP"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.food.ordering.zinger.seller.utils.OtpEditText
+                    android:id="@+id/edit_otp"
+                    android:imeOptions="actionDone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:cursorVisible="false"
+                    android:digits="1234567890"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:textColor="@color/colorAccent"
+                    android:textIsSelectable="false"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_resend_otp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16dp"
+                    android:drawableStart="@drawable/ic_reload"
+                    android:drawablePadding="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:gravity="center|start"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="8dp"
+                    android:text="@string/label_resend_otp"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_verify"
@@ -75,7 +114,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
-                android:text="Verify"
+                android:text="Send OTP"
                 app:backgroundTint="@color/colorAccent" />
         </LinearLayout>
 
