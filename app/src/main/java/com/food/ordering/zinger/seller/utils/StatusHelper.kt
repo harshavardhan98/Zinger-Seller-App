@@ -15,6 +15,25 @@ import com.food.ordering.zinger.seller.utils.AppConstants.ORDER_STATUS_TXN_FAILU
 
 
 object StatusHelper{
+
+    fun getMessageDetail(status: String?): String{
+        return when(status){
+            "Pending" -> getStatusDetailedMessage(ORDER_STATUS_PENDING)
+            "Transaction failed"  -> getStatusDetailedMessage(ORDER_STATUS_TXN_FAILURE)
+            "Placed"  -> getStatusDetailedMessage(ORDER_STATUS_PLACED)
+            "Cancelled by you"  -> getStatusDetailedMessage(ORDER_STATUS_CANCELLED_BY_USER)
+            "Accepted"  -> getStatusDetailedMessage(ORDER_STATUS_ACCEPTED)
+            "Cancelled by shop"  -> getStatusDetailedMessage(ORDER_STATUS_CANCELLED_BY_SELLER)
+            "Ready"  -> getStatusDetailedMessage(ORDER_STATUS_READY)
+            "Out for delivery"  -> getStatusDetailedMessage(ORDER_STATUS_OUT_FOR_DELIVERY)
+            "Completed"  -> getStatusDetailedMessage(ORDER_STATUS_COMPLETED)
+            "Delivered"  -> getStatusDetailedMessage(ORDER_STATUS_DELIVERED)
+            "Refund initiated"  -> getStatusDetailedMessage(ORDER_STATUS_REFUND_INITIATED)
+            "Refunded"  -> getStatusDetailedMessage(ORDER_STATUS_REFUND_COMPLETED)
+            else -> status.toString()
+        }
+    }
+
     fun getStatusMessage(status: String): String{
         return when(status){
             ORDER_STATUS_PENDING -> "Pending"

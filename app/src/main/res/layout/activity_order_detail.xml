@@ -287,6 +287,23 @@
                         android:background="#F2F2F2" />
 
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:overScrollMode="never"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_order_status" />
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F2F2F2" />
+
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -467,6 +484,20 @@
                         android:layout_marginTop="8dp"
                         android:background="#f2f2f2" />
 
+                    <TextView
+                        android:id="@+id/text_rating_feedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="#F7F7F7"
+                        android:drawableStart="@drawable/ic_star_24dp"
+                        android:drawablePadding="16dp"
+                        android:fontFamily="@font/open_sans_semibold"
+                        android:gravity="center|start"
+                        android:padding="16dp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:text="Boys Hostel" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
