@@ -62,6 +62,7 @@ class SearchOrderAdapter(private val orderList: List<OrderItemListModel>, privat
 
             binding.textOrderStatus.text = order.orderStatusModel.last().orderStatus
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
+            binding.buttonViewOrder.setOnClickListener{ listener.onItemClick(order, position) }
 
         }
 

@@ -65,6 +65,8 @@ class OrderHistoryAdapter(private val orderList: List<OrderItemListModel>, priva
 
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
 
+            binding.buttonViewOrder.setOnClickListener{ listener.onItemClick(order, position) }
+
         }
 
     }
