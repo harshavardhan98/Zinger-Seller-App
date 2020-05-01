@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
@@ -17,6 +16,7 @@ import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.CategoryItemListModel
 import com.food.ordering.zinger.seller.data.model.ItemModel
+import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.data.model.ShopModel
 import com.food.ordering.zinger.seller.databinding.*
 import com.food.ordering.zinger.seller.utils.AppConstants
@@ -26,12 +26,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
-import java.text.FieldPosition
 import java.util.*
+import java.util.Collections.sort
+import kotlin.Comparator
 import kotlin.collections.ArrayList
 
 /*
@@ -75,11 +77,18 @@ class MenuItemActivity : AppCompatActivity() {
         )
         menuItemList = categoryItemList.itemModelList
         category = categoryItemList.category
+
+        sort(menuItemList, object : Comparator<ItemModel> {
+            override fun compare(o1: ItemModel, o2: ItemModel): Int {
+                return o1.id!! - o2.id!!
+            }
+        })
     }
 
     private fun initView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item)
         progressDialog = ProgressDialog(this)
+        progressDialog.setCancelable(false)
         binding.textCategoryName.text = category
         mStorageRef = FirebaseStorage.getInstance().getReference()
         binding.switchDelivery.thumbTintList =
@@ -139,15 +148,19 @@ class MenuItemActivity : AppCompatActivity() {
 
         binding.textAddItem.setOnClickListener {
             if (binding.buttonSaveChanges.visibility == View.VISIBLE) {
-                Toast.makeText(applicationContext, "Please save current changes before proceeding", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    applicationContext,
+                    "Please save current changes before proceeding",
+                    Toast.LENGTH_LONG
+                ).show()
             } else {
-                showCategoryAdditionBottomSheet()
+                showItemAddEditBottomSheet()
             }
 
         }
 
         binding.textAddFirstItem.setOnClickListener {
-            showCategoryAdditionBottomSheet()
+            showItemAddEditBottomSheet()
         }
 
 
@@ -200,7 +213,7 @@ class MenuItemActivity : AppCompatActivity() {
                                             R.color.switchSelected
                                         )
                                     )
-                                } else{
+                                } else {
                                     binding.switchDelivery.isChecked = false
                                     binding.switchDelivery.thumbTintList = ColorStateList.valueOf(
                                         ContextCompat.getColor(
@@ -332,7 +345,14 @@ class MenuItemActivity : AppCompatActivity() {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
                         resource.data?.let {
-                            preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
+                            if (!preferencesHelper.updateItemRequest.equals("null")) {
+                                val listType = object : TypeToken<List<ItemModel?>?>() {}.type
+                                updateList(
+                                    ArrayList(Gson().fromJson<List<ItemModel>>(preferencesHelper.updateItemRequest, listType))
+                                )
+                            } else {
+                                preferencesHelper.currentShop.let { viewModel.getMenu(it) }
+                            }
                         }
                     }
 
@@ -369,7 +389,15 @@ class MenuItemActivity : AppCompatActivity() {
 
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                        preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
+                        if (preferencesHelper.deleteItemRequest != -1) {
+                            val tempList =
+                                menuItemList.filter { it.id != preferencesHelper.deleteItemRequest }
+                            menuItemList.clear()
+                            menuItemList.addAll(tempList)
+                            menuAdapter.notifyDataSetChanged()
+                        } else {
+                            preferencesHelper.currentShop?.let { viewModel.getMenu(it) }
+                        }
                     }
 
                     Resource.Status.ERROR -> {
@@ -419,7 +447,7 @@ class MenuItemActivity : AppCompatActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                         } else {
-                            showCategoryAdditionBottomSheet(itemModel)
+                            showItemAddEditBottomSheet(itemModel)
                         }
                     }
 
@@ -464,7 +492,7 @@ class MenuItemActivity : AppCompatActivity() {
 
     var itemListAddRequest = ArrayList<ItemModel>()
     var itemUpdateRequest: ItemModel? = null
-    private fun showCategoryAdditionBottomSheet(item: ItemModel? = null) {
+    private fun showItemAddEditBottomSheet(item: ItemModel? = null) {
 
         dialogBinding =
             DataBindingUtil.inflate(
@@ -657,5 +685,30 @@ class MenuItemActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Toast.makeText(applicationContext, "Testing on back pressed", Toast.LENGTH_LONG).show()
+    }
+
+    fun updateList(itemModelList: ArrayList<ItemModel>) {
+
+        itemModelList.sortedBy { item -> item.id }
+        sort(menuItemList, object : Comparator<ItemModel> {
+            override fun compare(o1: ItemModel, o2: ItemModel): Int {
+                return o1.id!! - o2.id!!
+            }
+        })
+
+        var i = 0
+        var k = 0
+
+        while (i < menuItemList.size) {
+            if (k < itemModelList.size && menuItemList.get(i).id == itemModelList.get(k).id)
+                menuItemList[i] = itemModelList.get(k++)
+            i++
+        }
+
+        menuAdapter.notifyDataSetChanged()
+    }
 
 }

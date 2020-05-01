@@ -23,7 +23,6 @@ import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.databinding.BottomSheetSecretKeyBinding
 import com.food.ordering.zinger.seller.databinding.FragmentReadyBinding
-import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.bottomsheet.BottomSheetDialog

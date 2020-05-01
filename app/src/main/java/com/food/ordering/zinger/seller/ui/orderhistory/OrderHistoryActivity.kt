@@ -17,7 +17,6 @@ import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.databinding.ActivityOrderHistoryBinding
-import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.ui.searchorders.SearchOrderActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
@@ -32,7 +31,7 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
 
     private lateinit var binding: ActivityOrderHistoryBinding
     private val preferencesHelper: PreferencesHelper by inject()
-    private val viewModel: OrderViewModel by viewModel()
+    private val viewModel: OrderHistoryViewModel by viewModel()
     private lateinit var orderAdapter: OrderHistoryAdapter
     private lateinit var progressDialog: ProgressDialog
     private var orderList: ArrayList<OrderItemListModel> = ArrayList()

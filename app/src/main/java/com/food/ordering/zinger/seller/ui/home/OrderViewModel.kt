@@ -1,4 +1,4 @@
-package com.food.ordering.zinger.seller.ui.order
+package com.food.ordering.zinger.seller.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +10,6 @@ import com.food.ordering.zinger.seller.data.model.*
 import com.food.ordering.zinger.seller.data.retrofit.OrderRepository
 import com.food.ordering.zinger.seller.data.retrofit.ShopRepository
 import com.food.ordering.zinger.seller.data.retrofit.UserRespository
-import com.food.ordering.zinger.seller.utils.AppConstants
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import kotlin.Exception
@@ -76,34 +75,6 @@ class OrderViewModel(
             }
         }
     }
-
-    /*****************************************************************************/
-
-    private val orderByPagination = MutableLiveData<Resource<Response<List<OrderItemListModel>>>>()
-    val orderByPaginationResponse: LiveData<Resource<Response<List<OrderItemListModel>>>>
-        get() = orderByPagination
-
-    fun getOrderByPagination(shopId: Int, pageNum: Int, pageCnt: Int) {
-        viewModelScope.launch {
-            try {
-                orderByPagination.value = Resource.loading()
-
-                val response = orderRepository.getOrderByPagination(shopId, pageNum, pageCnt)
-                if (!response.data.isNullOrEmpty())
-                    orderByPagination.value = Resource.success(response)
-                else {
-                    orderByPagination.value = Resource.empty()
-                }
-            } catch (e: Exception) {
-                if (e is UnknownHostException) {
-                    orderByPagination.value = Resource.offlineError()
-                } else {
-                    orderByPagination.value = Resource.error(e)
-                }
-            }
-        }
-    }
-
 
     /*****************************************************************************/
 

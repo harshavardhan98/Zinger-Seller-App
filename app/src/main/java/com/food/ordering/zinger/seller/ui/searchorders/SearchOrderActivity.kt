@@ -18,9 +18,7 @@ import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderItemListModel
-import com.food.ordering.zinger.seller.databinding.ActivityOrderHistoryBinding
 import com.food.ordering.zinger.seller.databinding.ActivitySearchOrderBinding
-import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.ui.orderhistory.OrderHistoryAdapter
 import com.food.ordering.zinger.seller.utils.AppConstants
@@ -64,7 +62,7 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
         snackButton.setCompoundDrawables(null, null, null, null)
         snackButton.background = null
         snackButton.setTextColor(ContextCompat.getColor(applicationContext, R.color.accent))
-        val text = "<font color=#000000>Manage and track</font> <font color=#FF4141>orders</font>"
+        val text = "<font color=#000000>Search past</font> <font color=#FF4141>orders</font>"
         binding.titleOrders.text = Html.fromHtml(text)
         setupShopRecyclerView()
     }

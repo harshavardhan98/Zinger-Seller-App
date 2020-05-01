@@ -5,15 +5,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.ItemModel
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.retrofit.ItemRepository
 import com.google.firebase.storage.StorageReference
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
-class MenuItemViewModel(private val itemRepository: ItemRepository) : ViewModel() {
+class MenuItemViewModel(
+    private val itemRepository: ItemRepository,
+    private val preferencesHelper: PreferencesHelper
+) : ViewModel() {
 
 
     private val performUploadImage = MutableLiveData<Resource<String>>()
@@ -116,10 +121,12 @@ class MenuItemViewModel(private val itemRepository: ItemRepository) : ViewModel(
             try {
                 updateItem.value = Resource.loading()
                 val response = itemRepository.updateItem(item)
-                if (response.code == 1)
+                if (response.code == 1) {
+                    preferencesHelper.updateItemRequest = Gson().toJson(item)
                     updateItem.value = Resource.success(response)
-                else
+                } else {
                     updateItem.value = Resource.error(message = response.message)
+                }
             } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     updateItem.value = Resource.offlineError()
@@ -142,10 +149,12 @@ class MenuItemViewModel(private val itemRepository: ItemRepository) : ViewModel(
                 deleteItem.value = Resource.loading()
                 val response = itemRepository.deleteItem(itemId)
 
-                if (response.code == 1)
+                if (response.code == 1) {
+                    preferencesHelper.deleteItemRequest = itemId
                     deleteItem.value = Resource.success(response)
-                else
+                } else {
                     deleteItem.value = Resource.error(message = response.message)
+                }
 
             } catch (e: Exception) {
                 if (e is UnknownHostException) {

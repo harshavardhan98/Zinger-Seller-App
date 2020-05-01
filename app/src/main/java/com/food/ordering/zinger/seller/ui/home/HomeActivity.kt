@@ -28,7 +28,6 @@ import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBindi
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
 import com.food.ordering.zinger.seller.ui.login.LoginActivity
 import com.food.ordering.zinger.seller.ui.menu.MenuActivity
-import com.food.ordering.zinger.seller.ui.order.OrderViewModel
 import com.food.ordering.zinger.seller.ui.orderhistory.OrderHistoryActivity
 import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
 import com.food.ordering.zinger.seller.ui.seller.SellerActivity
@@ -81,8 +80,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         setObservers()
         setUpFCM()
 
-        viewModel.getShopDetail(preferencesHelper.currentShop)
         viewModel.getOrderByShopId(preferencesHelper.currentShop)
+        viewModel.getShopDetail(preferencesHelper.currentShop)
         println("testing")
         subscribeToOrders()
     }
@@ -427,9 +426,16 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
 
-        if(preferencesHelper.orderStatusChanged) {
-            viewModel.getOrderByShopId(preferencesHelper.currentShop)
+        try {
+            preferencesHelper.orderStatusChanged.let {
+                if(it==false)
+                    viewModel.getOrderByShopId(preferencesHelper.currentShop)
+            }
+        }catch (e: Exception){
+            println(e.printStackTrace())
         }
+
+
         shopConfig = preferencesHelper.getShop()!!
             .filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
         binding.textShopName.text = shopConfig?.shopModel?.name

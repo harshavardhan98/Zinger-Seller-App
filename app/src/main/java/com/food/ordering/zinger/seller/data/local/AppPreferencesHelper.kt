@@ -21,6 +21,10 @@ interface AppPreferencesHelper {
     var orderStatusChanged: Boolean
 
 
+    var updateItemRequest: String
+    var deleteItemRequest: Int
+
+
     fun saveUser(id: Int?,name: String?,email: String?, mobile: String?, role: String?, oauthId: String?, shop: String?)
 
     fun clearPreferences()

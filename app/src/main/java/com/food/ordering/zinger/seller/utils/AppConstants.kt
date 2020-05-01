@@ -19,6 +19,9 @@ object AppConstants {
     const val PREFS_IS_FCM_TOKEN_GENERATED = "fcm_token_generated"
     const val PREFS_IS_FCM_TOPIC_SUBSCRIBED = "fcm_topic_subscribed"
     const val PREFS_ORDER_STATUS_CHANGED = "order_status_changed"
+    const val PREFS_ADD_ITEM_REQUEST = "order_status_changed"
+    const val PREFS_UPDATE_ITEM_REQUEST = "order_status_changed"
+    const val PREFS_DELETE_ITEM_REQUEST = "order_status_changed"
 
 
     const val ORDER_STATUS_PENDING = "PENDING"
