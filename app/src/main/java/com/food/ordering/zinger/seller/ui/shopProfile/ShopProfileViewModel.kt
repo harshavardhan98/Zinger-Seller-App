@@ -77,8 +77,8 @@ class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewMod
                 storageReference.putFile(uri)
                     .addOnSuccessListener{
                         val result = it.metadata!!.reference!!.downloadUrl;
-                        result.addOnSuccessListener {
-                            val imageLink = it.toString()
+                        result.addOnSuccessListener {uri ->
+                            val imageLink = uri.toString()
                             performUploadImage.value = Resource.success(imageLink)
                         }
                     }
