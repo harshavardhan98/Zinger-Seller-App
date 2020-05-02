@@ -20,40 +20,34 @@ class MenuItemViewModel(
     private val preferencesHelper: PreferencesHelper
 ) : ViewModel() {
 
-
     private val performUploadImage = MutableLiveData<Resource<String>>()
     val performUploadImageStatus: LiveData<Resource<String>>
         get() = performUploadImage
 
     fun uploadPhotoToFireBase(storageReference: StorageReference, uri: Uri) {
-
         viewModelScope.launch {
             try {
                 performUploadImage.value = Resource.loading()
                 storageReference.putFile(uri)
                     .addOnSuccessListener {
                         val result = it.metadata!!.reference!!.downloadUrl;
-                        result.addOnSuccessListener {
-                            val imageLink = it.toString()
+                        result.addOnSuccessListener {uri->
+                            val imageLink = uri.toString()
                             performUploadImage.value = Resource.success(imageLink)
                         }
                     }
                     .addOnFailureListener {
                         performUploadImage.value = Resource.error(message = "Error updating photo")
                     }
-
             } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     performUploadImage.value = Resource.offlineError()
                 } else {
                     performUploadImage.value = Resource.error(e)
                 }
-
             }
         }
-
     }
-
 
     /*********************************************************************************************/
 
@@ -66,13 +60,11 @@ class MenuItemViewModel(
             try {
                 menuRequest.value = Resource.loading()
                 val response = itemRepository.getShopMenu(shopId)
-
                 if (!response.data.isNullOrEmpty()) {
                     menuRequest.value = Resource.success(response)
                 } else {
                     menuRequest.value = Resource.empty()
                 }
-
             } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     menuRequest.value = Resource.offlineError()
@@ -108,9 +100,7 @@ class MenuItemViewModel(
         }
     }
 
-
     /*********************************************************************************************/
-
 
     private val updateItem = MutableLiveData<Resource<Response<String>>>()
     val updateItemResponse: LiveData<Resource<Response<String>>>
@@ -148,14 +138,12 @@ class MenuItemViewModel(
             try {
                 deleteItem.value = Resource.loading()
                 val response = itemRepository.deleteItem(itemId)
-
                 if (response.code == 1) {
                     preferencesHelper.deleteItemRequest = itemId
                     deleteItem.value = Resource.success(response)
                 } else {
                     deleteItem.value = Resource.error(message = response.message)
                 }
-
             } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     deleteItem.value = Resource.offlineError()
