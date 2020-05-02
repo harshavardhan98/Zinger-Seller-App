@@ -1,5 +1,6 @@
 package com.food.ordering.zinger.seller.ui.otp
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
@@ -71,6 +72,7 @@ class OTPActivity : AppCompatActivity() {
         println("Number testing" + number)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_o_t_p)
         binding.textHeading.text = getString(R.string.otp_header) + " " + number
@@ -80,21 +82,19 @@ class OTPActivity : AppCompatActivity() {
     }
 
     private fun setListener() {
-
         countDownTimer = object : CountDownTimer(10000, 1000) {
-
+            @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long) {
-                binding.textResendOtp.setText("Resend OTP (" + millisUntilFinished / 1000 + ")")
+                binding.textResendOtp.text = "Resend OTP (" + millisUntilFinished / 1000 + ")"
             }
-
+            @SuppressLint("SetTextI18n")
             override fun onFinish() {
-                binding.textResendOtp.setText("Resend OTP")
+                binding.textResendOtp.text = "Resend OTP"
                 binding.textResendOtp.isEnabled = true
             }
         }
 
         verificationCallBack = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
                 progressDialog.dismiss()
                 Toast.makeText(applicationContext, "Verification Successful!", Toast.LENGTH_LONG)
@@ -102,7 +102,6 @@ class OTPActivity : AppCompatActivity() {
                 binding.editOtp.setText(p0.smsCode)
                 signInWithPhoneAuthCredential(p0)
             }
-
             override fun onVerificationFailed(p0: FirebaseException) {
                 progressDialog.dismiss()
                 p0.printStackTrace()
@@ -111,7 +110,6 @@ class OTPActivity : AppCompatActivity() {
                 otpSent = false
                 binding.textResendOtp.isEnabled = true
             }
-
             override fun onCodeSent(
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
@@ -123,7 +121,6 @@ class OTPActivity : AppCompatActivity() {
                 binding.textResendOtp.isEnabled = false
                 countDownTimer.start()
             }
-
             override fun onCodeAutoRetrievalTimeOut(p0: String) {
                 super.onCodeAutoRetrievalTimeOut(p0)
                 otpSent = false
@@ -132,9 +129,7 @@ class OTPActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Verification failed!", Toast.LENGTH_LONG).show()
             }
         }
-
-
-        binding.editOtp.setOnEditorActionListener { _, actionId, event ->
+        binding.editOtp.setOnEditorActionListener { _, actionId, _ ->
             when(actionId){
                 EditorInfo.IME_ACTION_DONE -> {
                     if (binding.editOtp.text.toString()
@@ -167,17 +162,14 @@ class OTPActivity : AppCompatActivity() {
                 }
             }
         }
-
         binding.imageClose.setOnClickListener {
             onBackPressed()
         }
-
         binding.textResendOtp.setOnClickListener { v ->
             number?.let {
                 number?.let { resendVerificationCode(number!!, resendToken) }
             }
         }
-
     }
 
     private fun setObservers() {
@@ -187,7 +179,6 @@ class OTPActivity : AppCompatActivity() {
                     Resource.Status.SUCCESS -> {
                         if (resource.data != null) {
                             progressDialog.dismiss()
-
                             val shopModelList = resource.data.data?.shopModelList
                             val userModel = resource.data.data?.userModel
                             if (userModel != null) {
@@ -213,8 +204,6 @@ class OTPActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-
-
                         } else {
                             Toast.makeText(
                                 applicationContext,
@@ -258,7 +247,6 @@ class OTPActivity : AppCompatActivity() {
                     Resource.Status.SUCCESS -> {
                         if (resource.data != null) {
                             progressDialog.dismiss()
-
                             val shopModelList = resource.data.data?.shopModelList
                             val userModel = resource.data.data?.userModel
                             if (userModel != null) {
@@ -284,8 +272,6 @@ class OTPActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-
-
                         } else {
                             Toast.makeText(
                                 applicationContext,
@@ -343,11 +329,10 @@ class OTPActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     progressDialog.dismiss()
-                    println("TestingHar2:"+verifySeller+" "+sellerShop+" "+number)
+                    println("TestingHar2:$verifySeller $sellerShop $number")
                     val user = task.result?.user
                     preferencesHelper.oauthId = user?.uid
                     preferencesHelper.mobile = user?.phoneNumber?.substring(3)
-
                     val userModel = user?.uid?.let {
                         user.phoneNumber?.let { it1 ->
                             UserModel(
@@ -356,7 +341,6 @@ class OTPActivity : AppCompatActivity() {
                             )
                         }
                     }
-
                     if (!verifySeller) {
                         // Normal sign up
                         userModel?.let { viewModel.login(it) } ?: run {
@@ -375,13 +359,9 @@ class OTPActivity : AppCompatActivity() {
                         else{
                           Toast.makeText(this,"Accept Invite failed",Toast.LENGTH_LONG).show()
                         }
-
                     }
-
-
                 } else {
                     progressDialog.dismiss()
-
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         (task.exception as FirebaseAuthInvalidCredentialsException).printStackTrace()
                         Toast.makeText(
@@ -411,7 +391,6 @@ class OTPActivity : AppCompatActivity() {
     }
 
     private fun resendVerificationCode(number: String, token: PhoneAuthProvider.ForceResendingToken) {
-
         timeOut = false
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
             number,        // Phone number to verify
@@ -420,7 +399,6 @@ class OTPActivity : AppCompatActivity() {
             this,               // Activity (for callback binding)
             verificationCallBack,         // OnVerificationStateChangedCallbacks
             token // ForceResendingToken from callbacks
-        );
-
+        )
     }
 }

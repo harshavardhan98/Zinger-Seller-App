@@ -14,8 +14,7 @@ import com.food.ordering.zinger.seller.data.retrofit.UserRespository
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
-class OTPViewModel(private val userRespository: UserRespository,private val sellerRepository: SellerRepository) : ViewModel() {
-
+class OTPViewModel(private val userRepository: UserRespository, private val sellerRepository: SellerRepository) : ViewModel() {
 
     private val performLogin = MutableLiveData<Resource<Response<UserShopListModel>>>()
     val performLoginStatus: LiveData<Resource<Response<UserShopListModel>>>
@@ -25,7 +24,7 @@ class OTPViewModel(private val userRespository: UserRespository,private val sell
         viewModelScope.launch {
             try {
                 performLogin.value = Resource.loading()
-                val response = userRespository.login(userModel)
+                val response = userRepository.login(userModel)
                 if(response.code==1)
                     performLogin.value = Resource.success(response)
                 else
@@ -48,17 +47,14 @@ class OTPViewModel(private val userRespository: UserRespository,private val sell
         get() = acceptInvite
 
     fun acceptInvite(userShop: UserShopModel) {
-
         viewModelScope.launch {
             try {
                 acceptInvite.value = Resource.loading()
                 val response = sellerRepository.acceptInvite(userShop)
-
                 if (response.code == 1)
                     acceptInvite.value = Resource.success(response)
                 else
                     acceptInvite.value = Resource.error(message = response.message)
-
             } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     acceptInvite.value = Resource.offlineError()
@@ -67,6 +63,6 @@ class OTPViewModel(private val userRespository: UserRespository,private val sell
                 }
             }
         }
-
     }
+
 }
