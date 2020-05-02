@@ -36,13 +36,11 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
     private lateinit var progressDialog: ProgressDialog
     private var orderList: ArrayList<OrderItemListModel> = ArrayList()
     private lateinit var errorSnackBar: Snackbar
-    var pageCnt = 5
-
+    var pageCnt = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
         initView()
         setListener()
         setObservers()
@@ -65,15 +63,12 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun setListener() {
-
         binding.editSearch.setOnClickListener{
             startActivity(Intent(applicationContext,SearchOrderActivity::class.java))
         }
-
-
     }
 
-    var isFirstTime = true
+    private var isFirstTime = true
     private fun setObservers(){
         viewModel.orderByPaginationResponse.observe(this, androidx.lifecycle.Observer { resource ->
             if (resource != null) {
@@ -161,7 +156,6 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
                 }
             }
         })
-
     }
 
     var isLoading = false
@@ -178,12 +172,10 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.recyclerShops.layoutManager = layoutManager
         binding.recyclerShops.adapter = AlphaInAnimationAdapter(orderAdapter)
-
         binding.recyclerShops.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
             }
-
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val visibleItemCount: Int = layoutManager.childCount
@@ -211,7 +203,7 @@ class OrderHistoryActivity : AppCompatActivity(),View.OnClickListener {
     private fun getOrders() {
         orderList.clear()
         orderAdapter.notifyDataSetChanged()
-        preferencesHelper.currentShop?.let {
+        preferencesHelper.currentShop.let {
             viewModel.getOrderByPagination(it, 1, pageCnt)
         }
     }

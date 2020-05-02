@@ -21,7 +21,6 @@ class OrderHistoryViewModel(private val orderRepository: OrderRepository) : View
         viewModelScope.launch {
             try {
                 orderByPagination.value = Resource.loading()
-
                 val response = orderRepository.getOrderByPagination(shopId, pageNum, pageCnt)
                 if (!response.data.isNullOrEmpty())
                     orderByPagination.value = Resource.success(response)
@@ -37,8 +36,5 @@ class OrderHistoryViewModel(private val orderRepository: OrderRepository) : View
             }
         }
     }
-
-    /*****************************************************************************/
-
 
 }

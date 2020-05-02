@@ -1,5 +1,6 @@
 package com.food.ordering.zinger.seller.ui.orderhistory
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,6 @@ class OrderHistoryAdapter(private val orderList: List<OrderItemListModel>, priva
         parent: ViewGroup,
         viewType: Int
     ): OrderViewHolder {
-
         val binding: ItemPastOrderBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             R.layout.item_past_order,
@@ -36,9 +36,8 @@ class OrderHistoryAdapter(private val orderList: List<OrderItemListModel>, priva
     }
 
     class OrderViewHolder(var binding: ItemPastOrderBinding) : RecyclerView.ViewHolder(binding.root) {
-
+        @SuppressLint("SimpleDateFormat", "SetTextI18n")
         fun bind(order: OrderItemListModel, position: Int, listener: OnItemClickListener) {
-
             binding.textCustomerName.text = order.transactionModel.orderModel.userModel?.name
             try {
                 val appDateFormat = SimpleDateFormat("dd MMMM yyyy, hh:mm aaa")
@@ -47,33 +46,21 @@ class OrderHistoryAdapter(private val orderList: List<OrderItemListModel>, priva
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
             binding.textOrderId.text = order.transactionModel.orderModel.id.toString()
-
-            binding.textOrderPrice.text =
-                "₹ " + order.transactionModel.orderModel.price?.toInt().toString()
+            binding.textOrderPrice.text = "₹ " + order.transactionModel.orderModel.price?.toInt().toString()
             var items = ""
             order.orderItemsList.forEach {
                 items += it.quantity.toString() + " X " + it.itemModel.name + "\n"
             }
-
             binding.textOrderItems.text = items
             binding.textViewMore.visibility = if (order.orderItemsList.size > 2)  View.VISIBLE else View.GONE
-
-
             binding.textOrderStatus.text = CommonUtils.getStatus(order.orderStatusModel.last().orderStatus)
-
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
-
             binding.buttonViewOrder.setOnClickListener{ listener.onItemClick(order, position) }
-
         }
-
     }
 
     interface OnItemClickListener {
         fun onItemClick(item: OrderItemListModel?, position: Int)
-
     }
-
 }
