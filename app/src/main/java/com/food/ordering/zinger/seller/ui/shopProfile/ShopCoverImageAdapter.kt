@@ -36,23 +36,18 @@ class ShopCoverImageAdapter(
 
     class ThumbNailViewHolder(var binding: ItemThumbnailBinding,var role:String?) :
         RecyclerView.ViewHolder(binding.root) {
-
         fun bind(imageList: List<String>, position: Int, listener: OnItemClickListener) {
-
             role?.let {
-                if(it.equals(AppConstants.ROLE.SELLER.name) || it.equals(AppConstants.ROLE.DELIVERY.name)){
+                if(it == AppConstants.ROLE.SELLER.name || it == AppConstants.ROLE.DELIVERY.name){
                     binding.imageClose.visibility = View.GONE
                     binding.imageClose.isEnabled = false
                 }
             }
-
-            Picasso.get().load(imageList.get(position)).placeholder(R.drawable.shop_placeholder)
+            Picasso.get().load(imageList[position]).placeholder(R.drawable.shop_placeholder)
                 .into(binding.imageCover)
-
             binding.imageCover.setOnClickListener {
                 listener.onItemClick(imageList, position)
             }
-
             binding.imageClose.setOnClickListener {
                 listener.onDeleteClick(imageList, position)
             }

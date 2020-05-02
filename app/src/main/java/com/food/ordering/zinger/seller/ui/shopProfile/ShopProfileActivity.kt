@@ -6,14 +6,11 @@ import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
@@ -21,19 +18,16 @@ import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.ConfigurationModel
 import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
-import com.food.ordering.zinger.seller.data.model.ShopImageDataModel
 import com.food.ordering.zinger.seller.data.model.ShopModel
 import com.food.ordering.zinger.seller.databinding.ActivityShopProfileBinding
 import com.food.ordering.zinger.seller.ui.display.DisplayActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.food.ordering.zinger.seller.utils.CommonUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
-import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
@@ -41,8 +35,8 @@ import java.text.SimpleDateFormat
 import java.util.*;
 import kotlin.collections.ArrayList
 
-
 class ShopProfileActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityShopProfileBinding
     private val preferencesHelper: PreferencesHelper by inject()
     private val viewModel: ShopProfileViewModel by viewModel()
@@ -65,21 +59,16 @@ class ShopProfileActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-
+        mStorageRef = FirebaseStorage.getInstance().reference
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shop_profile)
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
     }
 
     private fun updateUI() {
-
-
         shopConfig = preferencesHelper.getShop()?.firstOrNull {
             it.shopModel.id == preferencesHelper.currentShop
         }
-
 
         imageList.clear()
         shopConfig?.shopModel?.coverUrls?.let { imageList.addAll(it) }
@@ -89,14 +78,12 @@ class ShopProfileActivity : AppCompatActivity() {
                 imageList,
                 preferencesHelper.role,
                 object : ShopCoverImageAdapter.OnItemClickListener {
-
-                    override fun onItemClick(shopImageList: List<String>?, position: Int) {
-                        var intent = Intent(applicationContext, DisplayActivity::class.java)
-                        intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL, imageList.get(position))
+                    override fun onItemClick(item: List<String>?, position: Int) {
+                        val intent = Intent(applicationContext, DisplayActivity::class.java)
+                        intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL, imageList[position])
                         startActivity(intent)
                     }
-
-                    override fun onDeleteClick(shopImageList: List<String>?, position: Int) {
+                    override fun onDeleteClick(item: List<String>?, position: Int) {
                         imageList.removeAt(position)
                         shopCoverImageAdapter?.notifyDataSetChanged()
                     }
@@ -106,8 +93,8 @@ class ShopProfileActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerCoverPhoto.adapter = shopCoverImageAdapter
         binding.editName.setText(shopConfig?.shopModel?.name)
-        var sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
-        var sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
+        val sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
+        val sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
         binding.textOpeningTime.text = sdf2.format(sdf.parse(shopConfig?.shopModel?.openingTime))
         binding.textClosingTime.text = sdf2.format(sdf.parse(shopConfig?.shopModel?.closingTime))
         Picasso.get().load(shopConfig?.shopModel?.photoUrl).placeholder(R.drawable.ic_shop)
@@ -171,16 +158,13 @@ class ShopProfileActivity : AppCompatActivity() {
                 binding.layoutMerchantId.visibility = View.VISIBLE
             }
         }
-
     }
 
     private fun setListener() {
-
         binding.imageClose.setOnClickListener {
             onBackPressed()
         }
-
-        binding.switchDelivery.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchDelivery.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
                 binding.switchDelivery.thumbTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
@@ -196,8 +180,7 @@ class ShopProfileActivity : AppCompatActivity() {
                     )
                 )
         }
-
-        binding.switchOrders.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchOrders.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
                 binding.switchOrders.thumbTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
@@ -214,9 +197,7 @@ class ShopProfileActivity : AppCompatActivity() {
                 )
         }
 
-
-        binding.buttonUpdate.setOnClickListener(View.OnClickListener {
-
+        binding.buttonUpdate.setOnClickListener {
             if (binding.editName.isEnabled) {
                 Toast.makeText(this, "Please confirm name change", Toast.LENGTH_LONG).show()
             } else if (binding.editDeliveryPrice.isEnabled) {
@@ -224,24 +205,18 @@ class ShopProfileActivity : AppCompatActivity() {
             }else if (binding.layoutMerchantId.visibility == View.VISIBLE && binding.editMerchantId.isEnabled) {
                 Toast.makeText(this, "Please confirm merchant Id change", Toast.LENGTH_LONG).show()
             }else {
-
                 val sdf = SimpleDateFormat("HH:mm:ss", Locale.US)
                 val sdf2 = SimpleDateFormat("hh:mm a", Locale.US)
                 val openingTime = sdf.format(sdf2.parse(binding.textOpeningTime.text.toString()))
                 val closingTime = sdf.format(sdf2.parse(binding.textClosingTime.text.toString()))
                 var mid = " "
-
                 if(binding.layoutMerchantId.visibility == View.VISIBLE){
-                     mid = binding.editMerchantId.text.toString()
+                    mid = binding.editMerchantId.text.toString()
                 }else{
                     shopConfig?.configurationModel?.merchantId?.let {
                         mid = it
                     }
                 }
-
-
-
-
                 val shopModel = ShopModel(
                     photoUrl = if (photoUrl.isNullOrEmpty()) shopConfig?.shopModel?.photoUrl else photoUrl,
                     closingTime = closingTime,
@@ -251,8 +226,6 @@ class ShopProfileActivity : AppCompatActivity() {
                     mobile = shopConfig?.shopModel?.mobile,
                     id = shopConfig?.shopModel?.id
                 )
-
-
                 updateConfigurationModel = ConfigurationModel(
                     deliveryPrice = binding.editDeliveryPrice.text.toString().toDouble(),
                     isDeliveryAvailable = if (binding.switchDelivery.isChecked) 1 else 0,
@@ -260,47 +233,39 @@ class ShopProfileActivity : AppCompatActivity() {
                     merchantId = mid,
                     shopModel = shopModel
                 )
-
                 viewModel.updateShopProfile(updateConfigurationModel)
             }
-        })
+        }
 
-        binding.imageEditName.setOnClickListener(View.OnClickListener {
+        binding.imageEditName.setOnClickListener {
             if (!binding.editName.isEnabled)
                 binding.imageEditName.setImageResource(R.drawable.ic_check)
             else
                 binding.imageEditName.setImageResource(R.drawable.ic_edit)
             binding.editName.isEnabled = !(binding.editName.isEnabled)
-        })
-
-        binding.imageEditDeliveryPrice.setOnClickListener(View.OnClickListener {
+        }
+        binding.imageEditDeliveryPrice.setOnClickListener {
             if (!binding.editDeliveryPrice.isEnabled)
                 binding.imageEditDeliveryPrice.setImageResource(R.drawable.ic_check)
             else
                 binding.imageEditDeliveryPrice.setImageResource(R.drawable.ic_edit)
             binding.editDeliveryPrice.isEnabled = !(binding.editDeliveryPrice.isEnabled)
-        })
-
-        binding.imageEditMerchantId.setOnClickListener(View.OnClickListener {
+        }
+        binding.imageEditMerchantId.setOnClickListener {
             if (!binding.editMerchantId.isEnabled)
                 binding.imageEditMerchantId.setImageResource(R.drawable.ic_check)
             else
                 binding.imageEditMerchantId.setImageResource(R.drawable.ic_edit)
             binding.editMerchantId.isEnabled = !(binding.editMerchantId.isEnabled)
-        })
-
-
-        binding.imageEditOpeningTime.setOnClickListener(View.OnClickListener {
-
-            var openingTime =
+        }
+        binding.imageEditOpeningTime.setOnClickListener {
+            val openingTime =
                 SimpleDateFormat("HH:mm:ss", Locale.US).parse(shopConfig?.shopModel?.openingTime)
-
-
             val timePickerDialog = TimePickerDialog(
                 this,
                 OnTimeSetListener { view, hourOfDay, minute ->
-                    var time = CommonUtils.TimeConversion24to12(hourOfDay, minute)
-                    binding.textOpeningTime.setText(time)
+                    val time = CommonUtils.TimeConversion24to12(hourOfDay, minute)
+                    binding.textOpeningTime.text = time
                 }, openingTime.hours, openingTime.minutes, false
             )
             timePickerDialog.show()
@@ -312,18 +277,15 @@ class ShopProfileActivity : AppCompatActivity() {
             )
             timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE)
                 .setTextColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
-        })
-
-        binding.imageEditClosingTime.setOnClickListener(View.OnClickListener {
-
-            var closingTime =
+        }
+        binding.imageEditClosingTime.setOnClickListener {
+            val closingTime =
                 SimpleDateFormat("HH:mm:ss", Locale.US).parse(shopConfig?.shopModel?.closingTime)
-
             val timePickerDialog = TimePickerDialog(
                 this,
                 OnTimeSetListener { view, hourOfDay, minute ->
-                    var time = CommonUtils.TimeConversion24to12(hourOfDay, minute)
-                    binding.textClosingTime.setText(time)
+                    val time = CommonUtils.TimeConversion24to12(hourOfDay, minute)
+                    binding.textClosingTime.text = time
                 }, closingTime.hours, closingTime.minutes, false
             )
             timePickerDialog.show()
@@ -335,10 +297,8 @@ class ShopProfileActivity : AppCompatActivity() {
             )
             timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE)
                 .setTextColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
-        })
-
-
-        binding.textLogo.setOnClickListener { v ->
+        }
+        binding.textLogo.setOnClickListener {
             isShopLogoClicked = true
             ImagePicker.with(this)
                 .galleryOnly()
@@ -346,8 +306,7 @@ class ShopProfileActivity : AppCompatActivity() {
                 .cropSquare()
                 .start()
         }
-
-        binding.textCoverPhoto.setOnClickListener { v ->
+        binding.textCoverPhoto.setOnClickListener {
             isShopCoverImageClicked = true;
             ImagePicker.with(this)
                 .galleryOnly()
@@ -355,11 +314,9 @@ class ShopProfileActivity : AppCompatActivity() {
                 .crop(16f, 9f)
                 .start()
         }
-
         binding.imageLogo.setOnClickListener {
-
-            var intent = Intent(applicationContext, DisplayActivity::class.java)
-            var photoUrl =
+            val intent = Intent(applicationContext, DisplayActivity::class.java)
+            val photoUrl =
                 if (photoUrl.isNullOrEmpty()) shopConfig?.shopModel?.photoUrl else photoUrl
             intent.putExtra(AppConstants.DISPLAY_IMAGE_DETAIL, photoUrl)
             startActivity(intent)
@@ -369,16 +326,13 @@ class ShopProfileActivity : AppCompatActivity() {
     }
 
     var photoUrl: String? = null
-
     private fun setObserver() {
-
         viewModel.performUploadImageStatus.observe(this, androidx.lifecycle.Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
 
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-
                         resource.data?.let {
                             if (isShopCoverImageClicked) {
                                 imageList.add(resource.data)
@@ -392,7 +346,6 @@ class ShopProfileActivity : AppCompatActivity() {
                                 isShopLogoClicked = !isShopLogoClicked
                             }
                         }
-
                     }
 
                     Resource.Status.ERROR -> {
@@ -427,9 +380,7 @@ class ShopProfileActivity : AppCompatActivity() {
                 if (resource != null) {
                     when (resource.status) {
                         Resource.Status.SUCCESS -> {
-
                             preferencesHelper.getShop()?.let { shopConfigurationList ->
-
                                 for (i in shopConfigurationList)
                                     if (i.shopModel.id == updateConfigurationModel.shopModel?.id) {
                                         i.shopModel = updateConfigurationModel.shopModel!!
@@ -437,14 +388,12 @@ class ShopProfileActivity : AppCompatActivity() {
                                     }
                                 preferencesHelper.shop = Gson().toJson(shopConfigurationList)
                             }
-
                             progressDialog.dismiss()
                             Toast.makeText(
                                 applicationContext,
                                 "Profile Successfully Updated",
                                 Toast.LENGTH_SHORT
                             ).show()
-
                         }
                         Resource.Status.OFFLINE_ERROR -> {
                             progressDialog.dismiss()
@@ -476,12 +425,9 @@ class ShopProfileActivity : AppCompatActivity() {
 
 
         viewModel.getShopDetailResponse.observe(this, androidx.lifecycle.Observer { resource ->
-
             if (resource != null) {
                 when (resource.status) {
-
                     Resource.Status.SUCCESS -> {
-
                         progressDialog.dismiss()
                         resource.data?.data?.let { latestShopData ->
                             preferencesHelper.getShop()?.let { shopConfigurationList ->
@@ -497,10 +443,7 @@ class ShopProfileActivity : AppCompatActivity() {
                                 updateUI()
                             }
                         }
-
                     }
-
-
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -525,7 +468,6 @@ class ShopProfileActivity : AppCompatActivity() {
                         progressDialog.setMessage("Fetching shop data...")
                         progressDialog.show()
                     }
-
                 }
             }
         })
@@ -534,13 +476,10 @@ class ShopProfileActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-
             if (requestCode == ImagePicker.REQUEST_CODE) {
-
                 val fileUri = data?.data
                 val file: File? = ImagePicker.getFile(data)
                 var storageReference: StorageReference? = null
-
                 if (isShopLogoClicked) {
                     storageReference =
                         mStorageRef?.child("profileImage/" + shopConfig?.shopModel?.id + "/" + file?.name + Calendar.getInstance().time)
@@ -549,14 +488,12 @@ class ShopProfileActivity : AppCompatActivity() {
                     storageReference =
                         mStorageRef?.child("coverImage/" + shopConfig?.shopModel?.id + "/" + file?.name + Calendar.getInstance().time)
                 }
-
                 if (storageReference != null) {
                     if (fileUri != null) {
                         viewModel.uploadPhotoToFireBase(storageReference, fileUri)
                     }
                 }
             }
-
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
         } else {

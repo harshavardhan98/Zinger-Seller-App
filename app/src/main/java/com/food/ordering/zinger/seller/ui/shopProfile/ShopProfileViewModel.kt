@@ -14,7 +14,6 @@ import java.net.UnknownHostException
 
 class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewModel() {
 
-
     private val getShopDetail = MutableLiveData<Resource<Response<ShopConfigurationModel>>>()
     val getShopDetailResponse : LiveData<Resource<Response<ShopConfigurationModel>>>
         get() = getShopDetail
@@ -72,7 +71,6 @@ class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewMod
         get() = performUploadImage
 
     fun uploadPhotoToFireBase(storageReference: StorageReference,uri: Uri){
-
         viewModelScope.launch {
             try{
                 performUploadImage.value = Resource.loading()
@@ -87,16 +85,14 @@ class ShopProfileViewModel(private val shopRepository: ShopRepository) : ViewMod
                     .addOnFailureListener {
                             performUploadImage.value = Resource.error(message = "Error updating photo")
                     }
-
             }catch (e: Exception){
                 if (e is UnknownHostException) {
                     performUploadImage.value = Resource.offlineError()
                 } else {
                     performUploadImage.value = Resource.error(e)
                 }
-
             }
         }
-
     }
+
 }
