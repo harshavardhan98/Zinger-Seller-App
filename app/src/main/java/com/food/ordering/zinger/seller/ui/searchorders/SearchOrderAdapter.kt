@@ -1,5 +1,6 @@
 package com.food.ordering.zinger.seller.ui.searchorders
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,6 @@ class SearchOrderAdapter(private val orderList: List<OrderItemListModel>, privat
         parent: ViewGroup,
         viewType: Int
     ): OrderViewHolder {
-
         val binding: ItemPastOrderBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             R.layout.item_past_order,
@@ -36,8 +36,8 @@ class SearchOrderAdapter(private val orderList: List<OrderItemListModel>, privat
 
     class OrderViewHolder(var binding: ItemPastOrderBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SimpleDateFormat", "SetTextI18n")
         fun bind(order: OrderItemListModel, position: Int, listener: OnItemClickListener) {
-
             binding.textCustomerName.text = order.transactionModel.orderModel.userModel?.name
             try {
                 val appDateFormat = SimpleDateFormat("dd MMMM yyyy, hh:mm aaa")
@@ -48,18 +48,13 @@ class SearchOrderAdapter(private val orderList: List<OrderItemListModel>, privat
             }
 
             binding.textOrderId.text = order.transactionModel.orderModel.id.toString()
-
-            binding.textOrderPrice.text =
-                "₹ " + order.transactionModel.orderModel.price?.toInt().toString()
+            binding.textOrderPrice.text = "₹ " + order.transactionModel.orderModel.price?.toInt().toString()
             var items = ""
             order.orderItemsList.forEach {
                 items += it.quantity.toString() + " X " + it.itemModel.name + "\n"
             }
-
             binding.textOrderItems.text = items
             binding.textViewMore.visibility = if (order.orderItemsList.size > 2)  View.VISIBLE else View.GONE
-
-
             binding.textOrderStatus.text = order.orderStatusModel.last().orderStatus
             binding.layoutRoot.setOnClickListener { listener.onItemClick(order, position) }
             binding.buttonViewOrder.setOnClickListener{ listener.onItemClick(order, position) }

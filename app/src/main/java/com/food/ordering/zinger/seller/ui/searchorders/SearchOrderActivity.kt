@@ -43,11 +43,9 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
     var pageCnt = 5
     var searchTerm = ""
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_order)
-
         initView()
         setListener()
         setObservers()
@@ -102,7 +100,6 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }, 600)
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 timer?.cancel()
@@ -110,8 +107,7 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-
-    var isFirstTime = true
+    private var isFirstTime = true
     private fun setObservers() {
         viewModel.searchOrderResponse.observe(this, androidx.lifecycle.Observer { resource ->
             if (resource != null) {
@@ -159,7 +155,6 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
                         } else {
                             if (resource.data?.data?.size!! < pageCnt)
                                 isLastPage = true
-
                             if (!isLastPage)
                                 page += 1
                         }
@@ -180,7 +175,6 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
                             Handler().postDelayed({ errorSnackBar.show() }, 500)
                         }
                         //binding.appBarLayout.setExpanded(true, true)
-
                     }
                     Resource.Status.ERROR -> {
                         isLoading = false
@@ -199,7 +193,6 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         })
-
     }
 
     var isLoading = false
@@ -221,7 +214,6 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
             }
-
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val visibleItemCount: Int = layoutManager.childCount
@@ -239,10 +231,10 @@ class SearchOrderActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getOrders(searchTerm: String) {
-        if(searchTerm.length>0){
+        if(searchTerm.isNotEmpty()){
             orderList.clear()
             orderAdapter.notifyDataSetChanged()
-            preferencesHelper.currentShop?.let {
+            preferencesHelper.currentShop.let {
                 viewModel.getOrderBySearchTerm(it, searchTerm, 1, pageCnt)
             }
         }
