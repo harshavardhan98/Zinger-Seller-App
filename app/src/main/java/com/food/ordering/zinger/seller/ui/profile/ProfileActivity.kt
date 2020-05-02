@@ -1,8 +1,7 @@
 package com.food.ordering.zinger.seller.ui.profile
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -15,28 +14,18 @@ import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.UserModel
-import com.food.ordering.zinger.seller.databinding.ActivityLoginBinding
 import com.food.ordering.zinger.seller.databinding.ActivityProfileBinding
-import com.food.ordering.zinger.seller.databinding.BottomSheetAddEditMenuItemBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetVerifyOtpBinding
-import com.food.ordering.zinger.seller.di.networkModule
-import com.food.ordering.zinger.seller.ui.home.HomeActivity
-import com.food.ordering.zinger.seller.ui.otp.OTPActivity
-import com.food.ordering.zinger.seller.ui.otp.OTPViewModel
-import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
-import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_profile.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.context.loadKoinModules
-import org.koin.core.context.unloadKoinModules
 import java.util.concurrent.TimeUnit
 
 class ProfileActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityProfileBinding
     private val preferencesHelper: PreferencesHelper by inject()
     private val viewModel: ProfileViewModel by viewModel()
@@ -52,7 +41,6 @@ class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-
         initView()
         setListener()
         setObserver()
@@ -62,32 +50,26 @@ class ProfileActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile)
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
-
         binding.editName.setText(preferencesHelper.name)
         binding.editEmail.setText(preferencesHelper.email)
         binding.editMobile.setText(preferencesHelper.mobile)
     }
 
     private fun setListener() {
-
         binding.imageClose.setOnClickListener {
             onBackPressed()
         }
         countDownTimer = object : CountDownTimer(10000, 1000) {
-
             override fun onTick(millisUntilFinished: Long) {
                 dialogBinding.textResendOtp.setText("Resend OTP (" + millisUntilFinished / 1000 + ")")
             }
-
             override fun onFinish() {
                 dialogBinding.textResendOtp.setText("Resend OTP")
                 dialogBinding.textResendOtp.isEnabled = true
             }
         }
 
-        binding.buttonUpdate.setOnClickListener(View.OnClickListener {
-
-
+        binding.buttonUpdate.setOnClickListener {
             if (binding.editName.isEnabled)
                 Toast.makeText(this, "Please confirm name change", Toast.LENGTH_LONG).show()
             else if (binding.editEmail.isEnabled)
@@ -96,8 +78,7 @@ class ProfileActivity : AppCompatActivity() {
                 val name = binding.editName.editableText.toString()
                 val email = binding.editEmail.editableText.toString()
                 val mobile = preferencesHelper.mobile
-
-                if (!name.equals(preferencesHelper.name) || !email.equals(preferencesHelper.email)) {
+                if (name != preferencesHelper.name || email != preferencesHelper.email) {
                     viewModel.updateProfile(
                         UserModel(
                             id = preferencesHelper.id, name = name, email = email, mobile = mobile
@@ -105,29 +86,28 @@ class ProfileActivity : AppCompatActivity() {
                         )
                     )
                 }
-
             }
-        })
+        }
 
-        binding.imageEditName.setOnClickListener(View.OnClickListener {
+        binding.imageEditName.setOnClickListener {
             if (!binding.editName.isEnabled)
                 binding.imageEditName.setImageResource(R.drawable.ic_check)
             else
                 binding.imageEditName.setImageResource(R.drawable.ic_edit)
             binding.editName.isEnabled = !(binding.editName.isEnabled)
-        })
+        }
 
-        binding.imageEditEmail.setOnClickListener(View.OnClickListener {
+        binding.imageEditEmail.setOnClickListener {
             if (!binding.editEmail.isEnabled)
                 binding.imageEditEmail.setImageResource(R.drawable.ic_check)
             else
                 binding.imageEditEmail.setImageResource(R.drawable.ic_edit)
             binding.editEmail.isEnabled = !binding.editEmail.isEnabled
-        })
+        }
 
-        binding.editMobile.setOnClickListener(View.OnClickListener {
+        binding.editMobile.setOnClickListener {
             showOtpVerificationBottomSheet(preferencesHelper.mobile!!)
-        })
+        }
 
         verificationCallBack = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
@@ -163,7 +143,6 @@ class ProfileActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Verification failed!", Toast.LENGTH_LONG).show()
             }
         }
-
     }
 
     private fun setObserver() {
@@ -178,7 +157,6 @@ class ProfileActivity : AppCompatActivity() {
                             preferencesHelper.oauthId = preferencesHelper.tempOauthId
                             otpVerified = false
                         }
-
                         binding.editMobile.setText(preferencesHelper.mobile)
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -230,7 +208,6 @@ class ProfileActivity : AppCompatActivity() {
                         otpVerified = true
                         binding.editMobile.setText(preferencesHelper.tempMobile)
                         countDownTimer.cancel()
-
                         val updateUserRequest = UserModel(
                             preferencesHelper.id,
                             preferencesHelper.email,
@@ -238,28 +215,23 @@ class ProfileActivity : AppCompatActivity() {
                             preferencesHelper.name,
                             preferencesHelper.tempOauthId
                         )
-
                         viewModel.updateProfile(updateUserRequest)
-
                         dialog.let {
                             dialog.dismiss()
                         }
                     }
-
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(this, "OTP verification failed ", Toast.LENGTH_LONG).show()
                         countDownTimer.cancel()
                     }
-
                 }
             }
-
         })
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showOtpVerificationBottomSheet(number: String) {
-
         dialogBinding =
             DataBindingUtil.inflate(
                 layoutInflater,
@@ -267,18 +239,17 @@ class ProfileActivity : AppCompatActivity() {
                 null,
                 false
             )
-
         dialogBinding.editMobile.setText(number)
         dialog = BottomSheetDialog(this)
         dialog.setContentView(dialogBinding.root)
         dialog.show()
 
-        dialogBinding.textResendOtp.setOnClickListener(View.OnClickListener {
+        dialogBinding.textResendOtp.setOnClickListener {
             Toast.makeText(this, "OTP resent", Toast.LENGTH_LONG).show()
             resendVerificationCode(dialogBinding.editMobile.text.toString(), resendToken)
-        })
+        }
 
-        dialogBinding.editOtp.setOnEditorActionListener { v, actionId, event ->
+        dialogBinding.editOtp.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     verifyOtpRequest(dialogBinding)
@@ -323,9 +294,8 @@ class ProfileActivity : AppCompatActivity() {
     private fun sendOtp(number: String) {
         progressDialog.setMessage("Sending OTP")
         progressDialog.show()
-
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            "+91" + number, // Phone number to verify
+            "+91$number", // Phone number to verify
             60, // Timeout duration
             TimeUnit.SECONDS, // Unit of timeout
             this, // Activity (for callback binding)
@@ -333,16 +303,14 @@ class ProfileActivity : AppCompatActivity() {
         )
     }
 
-    fun resendVerificationCode(number: String, token: PhoneAuthProvider.ForceResendingToken) {
-
+    private fun resendVerificationCode(number: String, token: PhoneAuthProvider.ForceResendingToken) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            "+91" + number,        // Phone number to verify
+            "+91$number",        // Phone number to verify
             60,                 // Timeout duration
             TimeUnit.SECONDS,   // Unit of timeout
             this,               // Activity (for callback binding)
             verificationCallBack,         // OnVerificationStateChangedCallbacks
             token // ForceResendingToken from callbacks
-        );
-
+        )
     }
 }

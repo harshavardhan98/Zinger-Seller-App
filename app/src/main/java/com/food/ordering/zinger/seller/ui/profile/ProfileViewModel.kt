@@ -11,12 +11,11 @@ import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.data.retrofit.UserRespository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
-class ProfileViewModel(private val userRespository: UserRespository,
+class ProfileViewModel(private val userRepository: UserRespository,
                        private val preferencesHelper: PreferencesHelper) : ViewModel() {
 
     private val performUpdateProfile = MutableLiveData<Resource<Response<String>>>()
@@ -27,7 +26,7 @@ class ProfileViewModel(private val userRespository: UserRespository,
         viewModelScope.launch {
             try {
                 performUpdateProfile.value = Resource.loading()
-                val response = userRespository.updateProfile(userModel)
+                val response = userRepository.updateProfile(userModel)
                 if (response.code == 1)
                     performUpdateProfile.value = Resource.success(response)
                 else
@@ -50,10 +49,8 @@ class ProfileViewModel(private val userRespository: UserRespository,
         get() = verifyOtp
 
     fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, context: Context) {
-
-        var auth = FirebaseAuth.getInstance()
+        val auth = FirebaseAuth.getInstance()
         verifyOtp.value = Resource.loading()
-
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 viewModelScope.launch {
@@ -66,11 +63,7 @@ class ProfileViewModel(private val userRespository: UserRespository,
                         verifyOtp.value = Resource.error(message = "")
                     }
                 }
-
             }
-
     }
-
-    /*****************************************************************************/
 
 }
