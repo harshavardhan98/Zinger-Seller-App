@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderItemListModel
 import com.food.ordering.zinger.seller.data.model.OrderModel
@@ -51,7 +50,6 @@ class OrderDetailViewModel(private val orderRepository: OrderRepository) : ViewM
             try {
                 updateOrder.value = Resource.loading()
                 val response = orderRepository.updateOrderStatus(orderModel)
-
                 if (response.code == 1) {
                     updateOrder.value = Resource.success(response)
                 } else {
@@ -66,6 +64,5 @@ class OrderDetailViewModel(private val orderRepository: OrderRepository) : ViewM
             }
         }
     }
-
 
 }

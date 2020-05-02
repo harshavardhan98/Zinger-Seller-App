@@ -1,5 +1,6 @@
 package com.food.ordering.zinger.seller.ui.orderdetail
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
@@ -12,7 +13,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.food.ordering.zinger.seller.R
-import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.*
 import com.food.ordering.zinger.seller.databinding.ActivityOrderDetailBinding
@@ -29,7 +29,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 
@@ -42,12 +41,11 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var progressDialog: ProgressDialog
     private var orderList: ArrayList<OrderItems> = ArrayList()
     private lateinit var order: OrderItemListModel
-    var isPickup = false
+    private var isPickup = false
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         getArgs()
         setListeners()
         setObservers()
@@ -62,22 +60,17 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             )
             initView()
         } else if (intent.hasExtra(AppConstants.INTENT_ORDER_ID)) {
-
             binding = DataBindingUtil.setContentView(this, R.layout.activity_order_detail)
             binding.imageClose.setOnClickListener(this)
             progressDialog = ProgressDialog(this)
             progressDialog.setCancelable(false)
-
-
             order = OrderItemListModel(
                 ArrayList(),
                 TransactionModel(orderModel = OrderModel()),
                 ArrayList()
             )
             setupShopRecyclerView()
-
             val orderId = intent.getIntExtra(AppConstants.INTENT_ORDER_ID, -1)
-
             if (orderId != -1) {
                 val orderModelRequest = OrderModel(id = orderId)
                 if (intent.hasExtra(AppConstants.INTENT_ACCEPT)) {
@@ -103,23 +96,22 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 onBackPressed()
             }
         } else {
-            Toast.makeText(this, "OnBack Pressed", Toast.LENGTH_LONG)
+            //Toast.makeText(this, "OnBack Pressed", Toast.LENGTH_LONG).show()
             onBackPressed()
         }
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_order_detail)
         binding.imageClose.setOnClickListener(this)
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
-
-
-        var status = order.orderStatusModel.last().orderStatus
+        val status = order.orderStatusModel.last().orderStatus
         order.transactionModel.orderModel.orderStatus = status
         // CANCELLED_BY_SELLER,CANCELLED_BY_USER, DELIVERED, COMPLETED
-        var terminalStates = arrayOf<String>(
+        val terminalStates = arrayOf(
             AppConstants.STATUS.COMPLETED.name,
             AppConstants.STATUS.DELIVERED.name,
             AppConstants.STATUS.REFUND_INITIATED.name,
@@ -159,12 +151,12 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 binding.textUpdateStatus.text = "DELIVER"
             }
         }
-
         setupOrderStatusRecyclerView()
         setupShopRecyclerView()
         updateUI()
     }
 
+    @SuppressLint("SimpleDateFormat", "SetTextI18n")
     private fun updateUI() {
         binding.textUserName.text = order.transactionModel.orderModel.userModel?.name
         try {
@@ -175,18 +167,15 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             e.printStackTrace()
         }
         //binding.textOrderPrice.text = "₹ " + order.transactionModel.orderModel.price.toInt().toString()
-
         binding.textOrderId.text = "#" + order.transactionModel.orderModel.id
         binding.textTransactionId.text = "#" + order.transactionModel.transactionId
-        binding.textTotalPrice.text =
-            "₹" + order.transactionModel.orderModel.price?.toInt().toString()
+        binding.textTotalPrice.text = "₹" + order.transactionModel.orderModel.price?.toInt().toString()
         binding.textPaymentMode.text = "Paid via " + order.transactionModel.paymentMode
         if (!order.transactionModel.orderModel.cookingInfo.isNullOrEmpty()) {
             binding.textInfo.text = order.transactionModel.orderModel.cookingInfo
         } else {
             binding.textInfo.visibility = View.GONE
         }
-
         if (!order.transactionModel.orderModel.deliveryLocation.isNullOrEmpty()) {
             binding.textDeliveryLocation.text = order.transactionModel.orderModel.deliveryLocation
             isPickup = false
@@ -194,7 +183,6 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             binding.textDeliveryLocation.text = "Pick up from restaurant"
             isPickup = true
         }
-
         var itemTotal = 0.0
         order.orderItemsList.forEach {
             itemTotal += it.price
@@ -210,7 +198,6 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             binding.layoutDeliveryCharge.visibility = View.GONE
         }
-
         binding.layoutRating.visibility = View.GONE
         if (order.transactionModel.orderModel.rating != null) {
             if (order.transactionModel.orderModel.rating!! > 0.0) {
@@ -218,7 +205,6 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 binding.textRating.text = order.transactionModel.orderModel.rating.toString()
             }
         }
-
         if(!order.transactionModel.orderModel.feedBack.isNullOrEmpty()){
             binding.textRatingFeedback.visibility = View.VISIBLE
             order.transactionModel.orderModel.feedBack?.let{
@@ -227,9 +213,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         }else{
             binding.textRatingFeedback.visibility = View.GONE
         }
-
-        var status = order.orderStatusModel.last().orderStatus
-        when (status) {
+        when (order.orderStatusModel.last().orderStatus) {
             AppConstants.ORDER_STATUS_PENDING -> {
                 orderStatusList.clear()
                 orderStatusList.add(
@@ -678,15 +662,12 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 orderTimelineAdapter.notifyDataSetChanged()
             }
         }
-
     }
 
     private fun setListeners() {
-
         binding.swipeRefreshLayout.setOnRefreshListener {
             order.transactionModel.orderModel.id?.let { viewModel.getOrderById(it) }
         }
-
         binding.imageCall.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_DIAL,
@@ -696,49 +677,42 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             startActivity(intent)
             finish()
         }
-
         binding.textCancel.setOnClickListener {
             MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.confirm_order_status_update))
                 .setMessage(getString(R.string.cancel_order_request))
-                .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                .setPositiveButton(getString(R.string.yes)) { _, _ ->
                     val orderModel = OrderModel(
                         id = order.transactionModel.orderModel.id,
                         orderStatus = AppConstants.STATUS.CANCELLED_BY_SELLER.name
                     )
                     viewModel.updateOrder(orderModel)
                 }
-                .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
                 .show()
 
         }
 
         binding.textUpdateStatus.setOnClickListener {
             when (order.transactionModel.orderModel.orderStatus) {
-
                 AppConstants.STATUS.PLACED.name -> {
-
                     MaterialAlertDialogBuilder(this)
                         .setTitle(getString(R.string.confirm_order_status_update))
                         .setMessage(getString(R.string.accept_order_request))
-                        .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        .setPositiveButton(getString(R.string.yes)) { _, _ ->
                             val orderModel = OrderModel(
                                 id = order.transactionModel.orderModel.id,
                                 orderStatus = AppConstants.STATUS.ACCEPTED.name
                             )
                             viewModel.updateOrder(orderModel)
-
                         }
-                        .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                        .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
                         .show()
-
-
                 }
 
                 AppConstants.STATUS.ACCEPTED.name -> {
-
-                    var orderModel = OrderModel(id = order.transactionModel.orderModel.id)
-                    var msg = ""
+                    val orderModel = OrderModel(id = order.transactionModel.orderModel.id)
+                    val msg: String
                     if (order.transactionModel.orderModel.deliveryLocation == null) {
                         orderModel.orderStatus = AppConstants.STATUS.READY.name
                         msg = getString(R.string.pickup_order_request)
@@ -746,34 +720,26 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                         orderModel.orderStatus = AppConstants.STATUS.OUT_FOR_DELIVERY.name
                         msg = getString(R.string.delivery_order_request)
                     }
-
-
                     MaterialAlertDialogBuilder(this)
                         .setTitle(getString(R.string.confirm_order_status_update))
                         .setMessage(msg)
-                        .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        .setPositiveButton(getString(R.string.yes)) { _, _ ->
                             viewModel.updateOrder(orderModel)
                         }
-                        .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                        .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
                         .show()
-
-
                 }
-
                 AppConstants.STATUS.READY.name,
                 AppConstants.STATUS.OUT_FOR_DELIVERY.name -> {
                     showSecretKeyBottomSheet(order)
                 }
             }
-
         }
-
     }
 
-    var orderStatusList: ArrayList<OrderStatus> = ArrayList()
+    private var orderStatusList: ArrayList<OrderStatus> = ArrayList()
     private fun setupOrderStatusRecyclerView() {
         orderTimelineAdapter = OrderTimelineAdapter(
-            applicationContext,
             orderStatusList,
             object : OrderTimelineAdapter.OnItemClickListener {
                 override fun onItemClick(item: OrderStatus?, position: Int) {}
@@ -784,10 +750,8 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupShopRecyclerView() {
-
         orderList.addAll(order.orderItemsList)
         orderAdapter = OrderItemAdapter(
-            applicationContext,
             orderList,
             object : OrderItemAdapter.OnItemClickListener {
                 override fun onItemClick(item: OrderItems?, position: Int) {
@@ -799,14 +763,12 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setObservers() {
-
-
         viewModel.orderByIdResponse.observe(this, Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-                        var intent = Intent(applicationContext, OrderDetailActivity::class.java)
+                        val intent = Intent(applicationContext, OrderDetailActivity::class.java)
                         intent.putExtra(
                             AppConstants.ORDER_DETAIL,
                             Gson().toJson(resource.data?.data)
@@ -853,10 +815,8 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         progressDialog.dismiss()
-
                         order.transactionModel.orderModel.id?.let { viewModel.getOrderById(it) }
                     }
-
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -865,27 +825,22 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                             Toast.LENGTH_LONG
                         ).show()
                     }
-
                     Resource.Status.LOADING -> {
                         progressDialog.setMessage("Updating orders...")
                         progressDialog.show()
                     }
-
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(this, "No internet Connection", Toast.LENGTH_LONG).show()
                     }
-
                     Resource.Status.EMPTY -> {
                         progressDialog.dismiss()
                         Toast.makeText(this, "Empty Order", Toast.LENGTH_LONG).show()
                     }
                 }
             }
-
         })
     }
-
 
     override fun onClick(v: View) {
         when (v.id) {
@@ -917,7 +872,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun updateOrderRequest(
+    private fun updateOrderRequest(
         dialog: BottomSheetDialog, dialogBinding: BottomSheetSecretKeyBinding
         , orderItemListModel: OrderItemListModel
     ) {
@@ -926,18 +881,15 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))
         ) {
             val orderModel = OrderModel(id = orderItemListModel.transactionModel.orderModel.id)
-
             if (orderItemListModel.transactionModel.orderModel.deliveryLocation == null)
                 orderModel.orderStatus = AppConstants.STATUS.COMPLETED.name
             else
                 orderModel.orderStatus = AppConstants.STATUS.DELIVERED.name
-
             orderModel.secretKey = dialogBinding.editSecretKey.text.toString()
             viewModel.updateOrder(orderModel)
         }
         dialog.dismiss()
     }
-
 
     @ExperimentalCoroutinesApi
     private fun subscribeToOrders() {

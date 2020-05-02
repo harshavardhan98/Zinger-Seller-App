@@ -1,6 +1,6 @@
 package com.food.ordering.zinger.seller.ui.orderdetail
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +16,10 @@ import com.food.ordering.zinger.seller.utils.StatusHelper
 import java.lang.Exception
 import java.text.SimpleDateFormat
 
-class OrderTimelineAdapter(private val context: Context, private val orderStatusList: List<OrderStatus>, private val listener: OnItemClickListener) : RecyclerView.Adapter<OrderTimelineAdapter.OrderTimelineViewHolder>() {
+class OrderTimelineAdapter(
+    private val orderStatusList: List<OrderStatus>,
+    private val listener: OnItemClickListener
+) : RecyclerView.Adapter<OrderTimelineAdapter.OrderTimelineViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): OrderTimelineViewHolder {
         val binding: ItemOrderStatusBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_order_status, parent, false)
@@ -32,6 +35,7 @@ class OrderTimelineAdapter(private val context: Context, private val orderStatus
     }
 
     class OrderTimelineViewHolder(var binding: ItemOrderStatusBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SimpleDateFormat")
         fun bind(orderStatus: OrderStatus, orderStatusList: List<OrderStatus>, position: Int, listener: OnItemClickListener) {
             if (position == 0) {
                 binding.viewLineTop.visibility = View.INVISIBLE
