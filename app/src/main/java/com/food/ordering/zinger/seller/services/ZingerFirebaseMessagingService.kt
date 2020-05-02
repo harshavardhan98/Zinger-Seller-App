@@ -187,34 +187,9 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     if (payload.has("orderStatus")) {
                         status = payload.getString("orderStatus").toString()
                     }
-                    if (title.isNullOrEmpty()) {
-                        /*if(payload.has("orderId")){
-                            title+=shopName+"Order "+orderId + " - "
-                        }*/
-                        if (payload.has("orderStatus")) {
-                            title = "hell0"
-                            //title += "Order " + StatusHelper.getStatusMessage(status) + " - " + shopName
-                        }
-                    }
-                    if (message.isNullOrEmpty()) {
-                        //message += StatusHelper.getStatusDetailedMessage(status)
-                        when (status) {
-                            AppConstants.ORDER_STATUS_READY, AppConstants.ORDER_STATUS_OUT_FOR_DELIVERY -> {
-                                if (payload.has("secretKey")) {
-                                    message += "\nSecret Key: " + payload.getString("secretKey")
-                                        .toString()
-                                }
-                            }
-                        }
-                    }
-                    //intent.putExtra(AppConstants.INTENT_ORDER_ID, orderId)
-                    //val pendingIntent: PendingIntent = PendingIntent.getActivity(this, orderId.toInt(), intent, 0)
-                    //sendNotificationWithPendingIntent(orderId.toInt(), title, message, pendingIntent)
-                    //Alerting the order detail activity
-                    preferencesHelper.orderStatusChanged = true
-                    EventBus.send(OrderNotificationPayload("", 1, 0.0, ArrayList(), "", ""))
 
-                    //sendNotification(Date().time.toInt(),"status", "status")
+                    preferencesHelper.orderStatusChanged = true
+                    EventBus.send(OrderNotificationPayload("", orderId.toInt(), 0.0, ArrayList(), "", ""))
                 }
 
 

@@ -18,11 +18,17 @@ import com.food.ordering.zinger.seller.data.model.*
 import com.food.ordering.zinger.seller.databinding.ActivityOrderDetailBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetSecretKeyBinding
 import com.food.ordering.zinger.seller.utils.AppConstants
+import com.food.ordering.zinger.seller.utils.EventBus
 import com.food.ordering.zinger.seller.utils.StatusHelper
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -38,12 +44,14 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var order: OrderItemListModel
     var isPickup = false
 
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         getArgs()
         setListeners()
         setObservers()
+        subscribeToOrders()
     }
 
     private fun getArgs() {
@@ -579,28 +587,13 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             AppConstants.ORDER_STATUS_DELIVERED -> {
                 orderStatusList.clear()
                 orderStatusList.add(
-                    OrderStatus(
-                        isCurrent = false,
-                        isDone = true,
-                        name = StatusHelper.getStatusMessage(AppConstants.ORDER_STATUS_PLACED),
-                        orderStatusList = order.orderStatusModel
-                    )
+                    OrderStatus(isCurrent = false, isDone = true, name = StatusHelper.getStatusMessage(AppConstants.ORDER_STATUS_PLACED), orderStatusList = order.orderStatusModel)
                 )
                 orderStatusList.add(
-                    OrderStatus(
-                        isCurrent = false,
-                        isDone = true,
-                        name = StatusHelper.getStatusMessage(AppConstants.ORDER_STATUS_ACCEPTED),
-                        orderStatusList = order.orderStatusModel
-                    )
+                    OrderStatus(isCurrent = false, isDone = true, name = StatusHelper.getStatusMessage(AppConstants.ORDER_STATUS_ACCEPTED), orderStatusList = order.orderStatusModel)
                 )
                 orderStatusList.add(
-                    OrderStatus(
-                        isCurrent = false,
-                        isDone = true,
-                        name = StatusHelper.getStatusMessage(AppConstants.ORDER_STATUS_OUT_FOR_DELIVERY),
-                        orderStatusList = order.orderStatusModel
-                    )
+                    OrderStatus(isCurrent = false, isDone = true, name = StatusHelper.getStatusMessage(AppConstants.ORDER_STATUS_OUT_FOR_DELIVERY), orderStatusList = order.orderStatusModel)
                 )
                 orderStatusList.add(
                     OrderStatus(
@@ -943,5 +936,17 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.updateOrder(orderModel)
         }
         dialog.dismiss()
+    }
+
+
+    @ExperimentalCoroutinesApi
+    private fun subscribeToOrders() {
+        val subscription = EventBus.asChannel<OrderNotificationPayload>()
+        CoroutineScope(Dispatchers.Main).launch {
+            subscription.consumeEach {
+                println("Received order status event")
+                viewModel.getOrderById(it.orderId)
+            }
+        }
     }
 }
