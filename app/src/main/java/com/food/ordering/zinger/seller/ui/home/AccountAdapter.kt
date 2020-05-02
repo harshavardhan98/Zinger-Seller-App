@@ -37,7 +37,7 @@ class AccountAdapter(
             Picasso.get().load(account.shopModel.photoUrl).placeholder(R.drawable.ic_shop)
                 .into(binding.imageShop)
             binding.radioCurrent.isChecked = account.isSelected
-            binding.radioCurrent.setOnCheckedChangeListener { buttonView, isChecked ->
+            binding.radioCurrent.setOnCheckedChangeListener { _, _ ->
                 listener.onItemClick(account, position)
             }
             binding.layoutRoot.setOnClickListener {

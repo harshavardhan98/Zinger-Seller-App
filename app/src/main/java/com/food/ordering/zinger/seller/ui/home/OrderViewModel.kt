@@ -16,11 +16,10 @@ import kotlin.Exception
 
 class OrderViewModel(
     private val orderRepository: OrderRepository,
-    private val userRespository: UserRespository,
+    private val userRepository: UserRespository,
     private val shopRepository: ShopRepository,
     private val preferencesHelper: PreferencesHelper
 ) : ViewModel() {
-
 
     private val orderByIdRequest = MutableLiveData<Resource<Response<OrderItemListModel>>>()
     val orderByIdResponse: LiveData<Resource<Response<OrderItemListModel>>>
@@ -57,15 +56,13 @@ class OrderViewModel(
             try {
                 orderByShopId.value = Resource.loading()
                 val response = orderRepository.getOrderByShopId(shopId)
-
                 if (!response.data.isNullOrEmpty()) {
-                    var orders = response.data
+                    val orders = response.data
                     orderByShopId.value = Resource.success(orders)
                     preferencesHelper.orderStatusChanged = false
                 } else {
                     orderByShopId.value = Resource.empty()
                 }
-
             } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     orderByShopId.value = Resource.offlineError()
@@ -75,7 +72,6 @@ class OrderViewModel(
             }
         }
     }
-
 
     /*****************************************************************************/
 
@@ -103,30 +99,24 @@ class OrderViewModel(
         }
     }
 
-
     /*****************************************************************************/
 
     private val updateFcmToken = MutableLiveData<Resource<Response<String>>>()
     val updateFcmTokenResponse: LiveData<Resource<Response<String>>>
         get() = updateFcmToken
 
-
     fun updateFCMToken(user: UserModel){
-
         viewModelScope.launch {
             try {
                 updateFcmToken.value = Resource.loading()
-                val response = userRespository.updateFcmToken(user)
+                val response = userRepository.updateFcmToken(user)
                 if (response.code == 1) {
                     updateFcmToken.value = Resource.success(response)
                 } else {
                     updateFcmToken.value = Resource.error(message = response.message)
                 }
-
             } catch (e: Exception) {
-
                 println("fetch stats failed ${e.message}")
-
                 if (e is UnknownHostException) {
                     updateFcmToken.value = Resource.offlineError()
                 } else {
@@ -134,9 +124,6 @@ class OrderViewModel(
                 }
             }
         }
-
-
-
     }
 
 

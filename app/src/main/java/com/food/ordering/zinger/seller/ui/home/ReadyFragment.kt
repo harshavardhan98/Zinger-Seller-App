@@ -47,7 +47,6 @@ class ReadyFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_ready, container, false)
         return binding.root
     }
@@ -85,27 +84,21 @@ class ReadyFragment : Fragment() {
                     binding.swipeRefreshLayout.isRefreshing = false
                     ordersList.clear()
                     if (!it.data.isNullOrEmpty()) {
-                        it.data?.let { it1 ->
+                        it.data.let { it1 ->
                             //ordersList.addAll(it1)
-                            preferencesHelper.role?.let {
-                                if (it == AppConstants.ROLE.DELIVERY.name) {
-                                    ordersList.addAll(it1.filter {
-                                        it.orderStatusModel.last().orderStatus.equals(
-                                            AppConstants.STATUS.OUT_FOR_DELIVERY.name
-                                        )
+                            preferencesHelper.role?.let { role ->
+                                if (role == AppConstants.ROLE.DELIVERY.name) {
+                                    ordersList.addAll(it1.filter { order ->
+                                        order.orderStatusModel.last().orderStatus == AppConstants.STATUS.OUT_FOR_DELIVERY.name
                                     })
                                 } else {
-                                    ordersList.addAll(it1.filter {
-                                        it.orderStatusModel.last().orderStatus.equals(
-                                            AppConstants.STATUS.READY.name
-                                        ) || it.orderStatusModel.last().orderStatus.equals(
-                                            AppConstants.STATUS.OUT_FOR_DELIVERY.name
-                                        )
+                                    ordersList.addAll(it1.filter { order ->
+                                        order.orderStatusModel.last().orderStatus == AppConstants.STATUS.READY.name || order.orderStatusModel.last().orderStatus == AppConstants.STATUS.OUT_FOR_DELIVERY.name
                                     })
                                 }
-                                ordersList.forEach {
-                                    it.transactionModel.orderModel.orderStatus =
-                                        it.orderStatusModel.last().orderStatus
+                                ordersList.forEach { order ->
+                                    order.transactionModel.orderModel.orderStatus =
+                                        order.orderStatusModel.last().orderStatus
                                 }
                             }
                         }
@@ -158,7 +151,6 @@ class ReadyFragment : Fragment() {
                     showEmptyStateAnimation()
                 }
 
-
             }
         })
 
@@ -201,14 +193,14 @@ class ReadyFragment : Fragment() {
 
     }
 
-    var ordersList: ArrayList<OrderItemListModel> = ArrayList()
-    lateinit var orderAdapter: OrdersAdapter
+    private var ordersList: ArrayList<OrderItemListModel> = ArrayList()
+    private lateinit var orderAdapter: OrdersAdapter
     private fun updateUI() {
         println("Order list size " + ordersList.size)
         orderAdapter = OrdersAdapter(ordersList, object : OrdersAdapter.OnItemClickListener {
-            override fun onItemClick(item: OrderItemListModel?, position: Int) {
+            override fun onItemClick(orderItemListModel: OrderItemListModel?, position: Int) {
                 val intent = Intent(context, OrderDetailActivity::class.java)
-                intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(item))
+                intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(orderItemListModel))
                 startActivity(intent)
             }
 
@@ -234,8 +226,8 @@ class ReadyFragment : Fragment() {
         dialog.setContentView(dialogBinding.root)
         dialog.show()
 
-        dialogBinding.editSecretKey.setOnEditorActionListener { v, actionId, event ->
-            when(actionId){
+        dialogBinding.editSecretKey.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     updateOrderRequest(dialog, dialogBinding, orderItemListModel)
                     true
@@ -249,7 +241,7 @@ class ReadyFragment : Fragment() {
         }
     }
 
-    fun updateOrderRequest(
+    private fun updateOrderRequest(
         dialog: BottomSheetDialog, dialogBinding: BottomSheetSecretKeyBinding
         , orderItemListModel: OrderItemListModel
     ) {
@@ -259,9 +251,9 @@ class ReadyFragment : Fragment() {
             && dialogBinding.editSecretKey.text.toString().matches(Regex("\\d+"))
         ) {
             val orderModel =
-                OrderModel(id = orderItemListModel!!.transactionModel.orderModel.id)
+                OrderModel(id = orderItemListModel.transactionModel.orderModel.id)
 
-            if (orderItemListModel!!.transactionModel.orderModel.deliveryLocation == null)
+            if (orderItemListModel.transactionModel.orderModel.deliveryLocation == null)
                 orderModel.orderStatus = AppConstants.STATUS.COMPLETED.name
             else
                 orderModel.orderStatus = AppConstants.STATUS.DELIVERED.name
@@ -273,7 +265,7 @@ class ReadyFragment : Fragment() {
     }
 
 
-    fun showEmptyStateAnimation() {
+    private fun showEmptyStateAnimation() {
         binding.swipeRefreshLayout.isRefreshing = false
         binding.layoutStates.visibility = View.GONE
         binding.animationView.visibility = View.VISIBLE

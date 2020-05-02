@@ -44,7 +44,6 @@ class NewOrdersFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_orders, container, false)
         return binding.root
     }
@@ -73,8 +72,6 @@ class NewOrdersFragment : Fragment() {
     }
 
     private fun setObservers() {
-
-
         viewModel.orderByShopIdResponse.observe(viewLifecycleOwner, Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
@@ -85,16 +82,14 @@ class NewOrdersFragment : Fragment() {
                         if (!resource.data.isNullOrEmpty()) {
                             resource.data.let { it1 ->
                                 ordersList.addAll(it1.filter {
-                                    it.orderStatusModel.last().orderStatus.equals(
-                                        AppConstants.STATUS.PLACED.name
-                                    )
+                                    it.orderStatusModel.last().orderStatus == AppConstants.STATUS.PLACED.name
                                 })
                                 ordersList.forEach { it.transactionModel.orderModel.orderStatus = it.orderStatusModel.last().orderStatus }
                             }
                             orderAdapter.notifyDataSetChanged()
                         }
                         if(ordersList.isEmpty())
-                            showEmptyStateAnimation();
+                            showEmptyStateAnimation()
                         else{
                             binding.layoutStates.visibility = View.GONE
                             binding.animationView.visibility = View.GONE
@@ -142,7 +137,6 @@ class NewOrdersFragment : Fragment() {
             }
         })
 
-
         homeViewModel.updateOrderResponse.observe(viewLifecycleOwner, Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
@@ -176,14 +170,14 @@ class NewOrdersFragment : Fragment() {
 
     }
 
-    var ordersList: ArrayList<OrderItemListModel> = ArrayList()
-    lateinit var orderAdapter: OrdersAdapter
+    private var ordersList: ArrayList<OrderItemListModel> = ArrayList()
+    private lateinit var orderAdapter: OrdersAdapter
     private fun updateUI() {
         println("Order list size " + ordersList.size)
         orderAdapter = OrdersAdapter(ordersList, object : OrdersAdapter.OnItemClickListener {
-            override fun onItemClick(item: OrderItemListModel?, position: Int) {
+            override fun onItemClick(orderItemListModel: OrderItemListModel?, position: Int) {
                 val intent = Intent(context, OrderDetailActivity::class.java)
-                intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(item))
+                intent.putExtra(AppConstants.ORDER_DETAIL, Gson().toJson(orderItemListModel))
                 startActivity(intent)
             }
 
@@ -195,10 +189,10 @@ class NewOrdersFragment : Fragment() {
                 MaterialAlertDialogBuilder(context)
                     .setTitle(getString(R.string.confirm_order_status_update))
                     .setMessage(getString(R.string.accept_order_request))
-                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                    .setPositiveButton(getString(R.string.yes)) { _, _ ->
                         homeViewModel.updateOrder(orderModel)
                     }
-                    .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                    .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
                     .show()
 
             }
@@ -212,10 +206,10 @@ class NewOrdersFragment : Fragment() {
                 MaterialAlertDialogBuilder(context)
                     .setTitle(getString(R.string.confirm_order_status_update))
                     .setMessage(getString(R.string.cancel_order_request))
-                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                    .setPositiveButton(getString(R.string.yes)) { _, _ ->
                         homeViewModel.updateOrder(orderModel)
                     }
-                    .setNegativeButton(getString(R.string.no)) { dialog, which -> dialog.dismiss() }
+                    .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
                     .show()
 
             }
@@ -227,7 +221,7 @@ class NewOrdersFragment : Fragment() {
     }
 
 
-    fun showEmptyStateAnimation(){
+    private fun showEmptyStateAnimation(){
         binding.swipeRefreshLayout.isRefreshing = false
         binding.layoutStates.visibility = View.GONE
         binding.animationView.visibility = View.VISIBLE

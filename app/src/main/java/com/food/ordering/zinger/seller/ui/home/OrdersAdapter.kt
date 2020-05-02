@@ -1,5 +1,6 @@
 package com.food.ordering.zinger.seller.ui.home
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +17,8 @@ class OrdersAdapter(
     private val orderList: List<OrderItemListModel>,
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): OrderViewHolder {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val binding: ItemOrderBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             R.layout.item_order,
@@ -38,6 +37,7 @@ class OrdersAdapter(
     }
 
     class OrderViewHolder(var binding: ItemOrderBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n", "SimpleDateFormat")
         fun bind(order: OrderItemListModel, position: Int, listener: OnItemClickListener) {
             //Picasso.get().load(menuItem.photoUrl).into(binding.imageShop)
             binding.textOrderId.text = order.transactionModel.orderModel.id.toString()

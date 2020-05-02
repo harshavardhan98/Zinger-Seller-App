@@ -6,7 +6,6 @@ import com.food.ordering.zinger.seller.data.local.Resource
 import com.food.ordering.zinger.seller.data.model.OrderModel
 import com.food.ordering.zinger.seller.data.model.Response
 import com.food.ordering.zinger.seller.data.retrofit.OrderRepository
-import com.food.ordering.zinger.seller.data.retrofit.ShopRepository
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
