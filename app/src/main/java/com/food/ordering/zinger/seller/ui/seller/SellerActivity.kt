@@ -67,8 +67,8 @@ class SellerActivity : AppCompatActivity() {
                         resource.data?.data?.let {
                             progressDialog.dismiss()
                             userModelList.addAll(it)
-                            sellerAdapter.notifyDataSetChanged()
                         }
+                        sellerAdapter.notifyDataSetChanged()
                     }
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
@@ -88,6 +88,8 @@ class SellerActivity : AppCompatActivity() {
                     }
                     Resource.Status.EMPTY -> {
                         progressDialog.dismiss()
+                        userModelList.clear()
+                        sellerAdapter.notifyDataSetChanged()
                         Toast.makeText(applicationContext, "No new Sellers found",Toast.LENGTH_SHORT).show()
                     }
                     Resource.Status.LOADING -> {
