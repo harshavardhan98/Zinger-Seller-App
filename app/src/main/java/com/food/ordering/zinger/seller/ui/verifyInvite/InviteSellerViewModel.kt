@@ -38,7 +38,4 @@ class InviteSellerViewModel(private val sellerRepository: SellerRepository) : Vi
         }
     }
 
-    /*****************************************************************************/
-
-
 }
