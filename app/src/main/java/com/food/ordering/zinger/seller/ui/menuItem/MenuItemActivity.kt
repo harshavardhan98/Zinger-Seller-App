@@ -78,11 +78,6 @@ class MenuItemActivity : AppCompatActivity() {
         menuItemList.sortBy {
             it.id!!
         }
-        /*sort(menuItemList, object : Comparator<ItemModel> {
-            override fun compare(o1: ItemModel, o2: ItemModel): Int {
-                return o1.id!! - o2.id!!
-            }
-        })*/
     }
 
     private fun initView() {
@@ -653,11 +648,6 @@ class MenuItemActivity : AppCompatActivity() {
         menuItemList.sortBy {
             it.id!!
         }
-        /*sort(menuItemList, object : Comparator<ItemModel> {
-            override fun compare(o1: ItemModel, o2: ItemModel): Int {
-                return o1.id!! - o2.id!!
-            }
-        })*/
         var i = 0
         var k = 0
         while (i < menuItemList.size) {
