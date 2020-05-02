@@ -286,15 +286,15 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .setMessage("Are you sure want to sign out?")
                         .setPositiveButton("Yes") { dialog, which ->
                             FirebaseAuth.getInstance().signOut()
-                            preferencesHelper.clearPreferences()
                             preferencesHelper.getShop()?.forEach {
                                 FirebaseMessaging.getInstance()
                                     .unsubscribeFromTopic(
-                                        it.shopModel.name?.split(" ")?.get(0) + it.shopModel.id
+                                        AppConstants.NOTIFICATION_TOPIC_SHOP_ZINGER + it.shopModel.id
                                     );
                             }
                             FirebaseMessaging.getInstance()
                                 .unsubscribeFromTopic(AppConstants.NOTIFICATION_TOPIC_GLOBAL);
+                            preferencesHelper.clearPreferences()
                             startActivity(Intent(applicationContext, LoginActivity::class.java))
                             finish()
                         }
@@ -493,7 +493,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         if (preferencesHelper.isFCMTopicSubScribed == null || preferencesHelper.isFCMTopicSubScribed == false) {
             preferencesHelper.getShop()?.forEach {
                 FirebaseMessaging.getInstance()
-                    .subscribeToTopic(it.shopModel.name?.split(" ")?.get(0) + it.shopModel.id);
+                    .subscribeToTopic(AppConstants.NOTIFICATION_TOPIC_SHOP_ZINGER + it.shopModel.id);
             }
             FirebaseMessaging.getInstance()
                 .subscribeToTopic(AppConstants.NOTIFICATION_TOPIC_GLOBAL)

@@ -149,12 +149,12 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
                     binding.textUpdateStatus.text = "OUT FOR DELIVERY"
             }
             AppConstants.STATUS.READY.name -> {
-                binding.textCancel.visibility = View.INVISIBLE
+                binding.textCancel.visibility = View.GONE
                 binding.textCancel.isEnabled = false
                 binding.textUpdateStatus.text = "COMPLETE"
             }
             AppConstants.STATUS.OUT_FOR_DELIVERY.name -> {
-                binding.textCancel.visibility = View.INVISIBLE
+                binding.textCancel.visibility = View.GONE
                 binding.textCancel.isEnabled = false
                 binding.textUpdateStatus.text = "DELIVER"
             }
@@ -211,7 +211,7 @@ class OrderDetailActivity : AppCompatActivity(), View.OnClickListener {
             binding.layoutDeliveryCharge.visibility = View.GONE
         }
 
-        binding.layoutRating.visibility = View.INVISIBLE
+        binding.layoutRating.visibility = View.GONE
         if (order.transactionModel.orderModel.rating != null) {
             if (order.transactionModel.orderModel.rating!! > 0.0) {
                 binding.layoutRating.visibility = View.VISIBLE
