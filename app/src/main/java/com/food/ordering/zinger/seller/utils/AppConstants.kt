@@ -58,6 +58,7 @@ object AppConstants {
 
     //NOTIFICATION TOPICS
     const val NOTIFICATION_TOPIC_GLOBAL = "global"
+    const val NOTIFICATION_TOPIC_SHOP_ZINGER = "zinger"
 
 
     // REQUEST CODE
