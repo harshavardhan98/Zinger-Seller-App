@@ -22,13 +22,11 @@ class MenuViewModel(private val itemRepository: ItemRepository) : ViewModel() {
             try {
                 menuRequest.value = Resource.loading()
                 val response = itemRepository.getShopMenu(shopId)
-
                 if (!response.data.isNullOrEmpty()) {
                     menuRequest.value = Resource.success(response)
                 } else {
                     menuRequest.value = Resource.empty()
                 }
-
             } catch (e: Exception) {
                 if (e is UnknownHostException) {
                     menuRequest.value = Resource.offlineError()
@@ -38,8 +36,5 @@ class MenuViewModel(private val itemRepository: ItemRepository) : ViewModel() {
             }
         }
     }
-
-    /*****************************************************************************/
-
 
 }
