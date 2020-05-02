@@ -3,8 +3,6 @@ package com.food.ordering.zinger.seller.ui.seller
 import android.app.ProgressDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -16,7 +14,6 @@ import com.food.ordering.zinger.seller.data.model.ShopModel
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.data.model.UserShopModel
 import com.food.ordering.zinger.seller.databinding.ActivitySellerBinding
-import com.food.ordering.zinger.seller.databinding.BottomSheetAddEditMenuItemBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetInviteSellerBinding
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -34,11 +31,9 @@ class SellerActivity : AppCompatActivity() {
     private lateinit var sellerAdapter: SellerAdapter
     private lateinit var dialog : BottomSheetDialog
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seller)
-
         initView()
         setListeners()
         setObservers()
@@ -62,9 +57,7 @@ class SellerActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setObservers() {
-
         viewModel.getSellerResponse.observe(this, Observer { resource ->
             if (resource != null) {
                 when (resource.status) {
@@ -77,7 +70,6 @@ class SellerActivity : AppCompatActivity() {
                             sellerAdapter.notifyDataSetChanged()
                         }
                     }
-
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -86,7 +78,6 @@ class SellerActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -95,13 +86,10 @@ class SellerActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-
                     Resource.Status.EMPTY -> {
                         progressDialog.dismiss()
                         Toast.makeText(applicationContext, "No new Sellers found",Toast.LENGTH_SHORT).show()
                     }
-
-
                     Resource.Status.LOADING -> {
                         progressDialog.setMessage("Fetching Sellers...")
                         progressDialog.show()
@@ -118,7 +106,6 @@ class SellerActivity : AppCompatActivity() {
                         Toast.makeText(this, "Seller deleted", Toast.LENGTH_LONG).show()
                         viewModel.getSeller(preferencesHelper.currentShop.toString())
                     }
-
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -127,7 +114,6 @@ class SellerActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -136,7 +122,6 @@ class SellerActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-
                     Resource.Status.LOADING -> {
                         progressDialog.setMessage("Deleting Item...")
                         progressDialog.show()
@@ -153,7 +138,6 @@ class SellerActivity : AppCompatActivity() {
                         Toast.makeText(this, "Invite sent", Toast.LENGTH_LONG).show()
                         viewModel.getSeller(preferencesHelper.currentShop.toString())
                     }
-
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -162,7 +146,6 @@ class SellerActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -171,7 +154,6 @@ class SellerActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-
                     Resource.Status.LOADING -> {
                         progressDialog.setMessage("Inviting a seller...")
                         progressDialog.show()
@@ -188,7 +170,6 @@ class SellerActivity : AppCompatActivity() {
                         Toast.makeText(this, "Invite deleted", Toast.LENGTH_LONG).show()
                         viewModel.getSeller(preferencesHelper.currentShop.toString())
                     }
-
                     Resource.Status.ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -197,7 +178,6 @@ class SellerActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
                         Toast.makeText(
@@ -206,7 +186,6 @@ class SellerActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-
                     Resource.Status.LOADING -> {
                         progressDialog.setMessage("Deleting Invite...")
                         progressDialog.show()
@@ -214,14 +193,12 @@ class SellerActivity : AppCompatActivity() {
                 }
             }
         })
-
-
     }
 
 
     private fun setUpRecyclerView() {
         sellerAdapter =
-            SellerAdapter(this, userModelList, object : SellerAdapter.OnItemClickListener {
+            SellerAdapter(userModelList, object : SellerAdapter.OnItemClickListener {
                 override fun onDeleteClick(user: UserModel?, position: Int) {
                     user?.id?.let {
                         if(it!=0){
@@ -253,21 +230,16 @@ class SellerActivity : AppCompatActivity() {
             )
 
         dialogBinding.buttonAddSeller.setOnClickListener {
-
-            var mobile = dialogBinding.editMobile.text.toString()
+            val mobile = dialogBinding.editMobile.text.toString()
             var role = ""
-
-            if (dialogBinding.radioButtonDelivery.isChecked)
-                role = AppConstants.ROLE.DELIVERY.name
-            else if (dialogBinding.radioButtonSeller.isChecked)
-                role = AppConstants.ROLE.SELLER.name
-            else if(dialogBinding.radioButtonShopOwner.isChecked)
-                role = AppConstants.ROLE.SHOP_OWNER.name
-
+            when {
+                dialogBinding.radioButtonDelivery.isChecked -> role = AppConstants.ROLE.DELIVERY.name
+                dialogBinding.radioButtonSeller.isChecked -> role = AppConstants.ROLE.SELLER.name
+                dialogBinding.radioButtonShopOwner.isChecked -> role = AppConstants.ROLE.SHOP_OWNER.name
+            }
             if (mobile.length != 10 || !mobile.matches(Regex("\\d+")))
                 Toast.makeText(this, "Incorrect mobile format", Toast.LENGTH_LONG).show()
-            else if (role.equals(AppConstants.ROLE.DELIVERY.name) || role.equals(AppConstants.ROLE.SELLER.name)
-                || role.equals(AppConstants.ROLE.SHOP_OWNER.name)) {
+            else if (role == AppConstants.ROLE.DELIVERY.name || role == AppConstants.ROLE.SELLER.name || role == AppConstants.ROLE.SHOP_OWNER.name) {
                 val shopModel = ShopModel(id = preferencesHelper.currentShop)
                 val userModel = UserModel(mobile = mobile, role = role)
                 val userShopModel = UserShopModel(shopModel, userModel)
@@ -277,13 +249,9 @@ class SellerActivity : AppCompatActivity() {
             else {
                 Toast.makeText(this, "Choose a role", Toast.LENGTH_LONG).show()
             }
-
         }
-
-
         dialog.setContentView(dialogBinding.root)
         dialog.show()
-
     }
 
 }
