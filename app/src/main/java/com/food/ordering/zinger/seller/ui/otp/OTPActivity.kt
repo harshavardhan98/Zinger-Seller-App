@@ -134,7 +134,7 @@ class OTPActivity : AppCompatActivity() {
         }
 
 
-        binding.editOtp.setOnEditorActionListener { v, actionId, event ->
+        binding.editOtp.setOnEditorActionListener { _, actionId, event ->
             when(actionId){
                 EditorInfo.IME_ACTION_DONE -> {
                     if (binding.editOtp.text.toString()
@@ -172,11 +172,11 @@ class OTPActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        binding.textResendOtp.setOnClickListener(View.OnClickListener { v ->
+        binding.textResendOtp.setOnClickListener { v ->
             number?.let {
                 number?.let { resendVerificationCode(number!!, resendToken) }
             }
-        })
+        }
 
     }
 
@@ -366,14 +366,14 @@ class OTPActivity : AppCompatActivity() {
                     }
                     else{
                         // accept invite sign Up
-                        if(sellerShop.length>0 && sellerShop.matches(Regex("\\d+"))){
+                        if(sellerShop.isNotEmpty() && sellerShop.matches(Regex("\\d+"))){
                             var shopModel = ShopModel(id = sellerShop.toInt())
                             var userShopModel =
                                 userModel?.let { UserShopModel(shopModel= shopModel,userModel = it) }
                             userShopModel?.let { viewModel.acceptInvite(it) }
                         }
                         else{
-                          Toast.makeText(this,"Accept Invite failed",Toast.LENGTH_LONG);
+                          Toast.makeText(this,"Accept Invite failed",Toast.LENGTH_LONG).show()
                         }
 
                     }
@@ -410,7 +410,7 @@ class OTPActivity : AppCompatActivity() {
             .show()
     }
 
-    fun resendVerificationCode(number: String, token: PhoneAuthProvider.ForceResendingToken) {
+    private fun resendVerificationCode(number: String, token: PhoneAuthProvider.ForceResendingToken) {
 
         timeOut = false
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
