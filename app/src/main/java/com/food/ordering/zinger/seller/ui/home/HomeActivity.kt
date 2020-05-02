@@ -1,5 +1,6 @@
 package com.food.ordering.zinger.seller.ui.home
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Rect
@@ -74,13 +75,13 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
 
         shopConfig = preferencesHelper.getShop()!!
-            .filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
+            .filter { it.shopModel.id == preferencesHelper.currentShop }[0]
 
-        initView(savedInstanceState)
+        initView()
         setListeners()
         setupMaterialDrawer()
         setObservers()
-        setUpFCM()
+        setupFCM()
 
         viewModel.getOrderByShopId(preferencesHelper.currentShop)
         viewModel.getShopDetail(preferencesHelper.currentShop)
@@ -89,9 +90,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    // This API end point is responsible for inserting the order details. It verifies the availability of all the items in the shop and calculates the total bill
-    //  * amount.  After verifying
-    private fun initView(savedInstanceState: Bundle?) {
+    @SuppressLint("SetTextI18n")
+    private fun initView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
         headerLayout = DataBindingUtil.inflate(
             LayoutInflater.from(applicationContext),
@@ -185,7 +185,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
 
-        binding.imageCompany.setOnClickListener { v ->
+        binding.imageCompany.setOnClickListener {
             showAccountListBottomSheet()
         }
     }
@@ -238,8 +238,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         val contributorsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contributors")
             .withIcon(R.drawable.ic_drawer_info)
 
-
-
         drawer = DrawerBuilder()
             .withActivity(this)
             .withDisplayBelowStatusBar(false)
@@ -258,7 +256,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 DividerDrawerItem(),
                 signOutItem
             )
-            .withOnDrawerItemClickListener { view, position, drawerItem ->
+            .withOnDrawerItemClickListener { _, _, drawerItem ->
                 if (profileItem.identifier == drawerItem.identifier) {
                     startActivity(Intent(applicationContext, ProfileActivity::class.java))
                 }
@@ -284,7 +282,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                     MaterialAlertDialogBuilder(this@HomeActivity)
                         .setTitle("Confirm Sign Out")
                         .setMessage("Are you sure want to sign out?")
-                        .setPositiveButton("Yes") { dialog, which ->
+                        .setPositiveButton("Yes") { _, _ ->
                             FirebaseAuth.getInstance().signOut()
                             preferencesHelper.getShop()?.forEach {
                                 FirebaseMessaging.getInstance()
@@ -298,7 +296,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                             startActivity(Intent(applicationContext, LoginActivity::class.java))
                             finish()
                         }
-                        .setNegativeButton("No") { dialog, which -> dialog.dismiss() }
+                        .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
                         .show()
                 }
                 true
@@ -316,6 +314,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setObservers() {
 
         viewModel.updateFcmTokenResponse.observe(this, Observer { resource ->
@@ -339,8 +338,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 when (resource.status) {
                     Resource.Status.SUCCESS -> {
                         if (resource.data?.data != null) {
-                            var latestShopDetail = resource.data.data
-                            var shopConfigurationList = preferencesHelper.getShop()
+                            val latestShopDetail = resource.data.data
+                            val shopConfigurationList = preferencesHelper.getShop()
                             if (shopConfigurationList != null) {
                                 for (shop in shopConfigurationList) {
                                     if (shop.shopModel.id == latestShopDetail.shopModel.id)
@@ -350,8 +349,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                                 }
                                 preferencesHelper.shop = Gson().toJson(shopConfigurationList)
                                 shopConfig = preferencesHelper.getShop()!!
-                                    .filter { it.shopModel.id == preferencesHelper.currentShop }
-                                    .get(0)
+                                    .filter { it.shopModel.id == preferencesHelper.currentShop }[0]
                                 binding.textShopName.text = shopConfig?.shopModel?.name
                                 binding.textShopRating.text =
                                     shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
@@ -388,7 +386,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         dialog.setContentView(dialogBinding.root)
         dialog.show()
 
-        var accountList: ArrayList<ShopConfigurationModel> = ArrayList()
+        val accountList: ArrayList<ShopConfigurationModel> = ArrayList()
         preferencesHelper.getShop()?.let {
 
             accountList.addAll(it)
@@ -398,6 +396,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
         accountAdapter = AccountAdapter(accountList, object : AccountAdapter.OnItemClickListener {
+            @SuppressLint("SetTextI18n")
             override fun onItemClick(item: ShopConfigurationModel, position: Int) {
                 for (i in accountList.indices) {
                     accountList[i].isSelected = false
@@ -434,12 +433,13 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onResume() {
         super.onResume()
 
         try {
             preferencesHelper.orderStatusChanged.let {
-                if (it == false)
+                if (!it)
                     viewModel.getOrderByShopId(preferencesHelper.currentShop)
             }
         } catch (e: Exception) {
@@ -448,7 +448,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
 
         shopConfig = preferencesHelper.getShop()!!
-            .filter { it.shopModel.id == preferencesHelper.currentShop }.get(0)
+            .filter { it.shopModel.id == preferencesHelper.currentShop }[0]
         binding.textShopName.text = shopConfig?.shopModel?.name
         binding.textShopRating.text =
             shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
@@ -460,15 +460,15 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         MaterialAlertDialogBuilder(this@HomeActivity)
             .setTitle("Exit app?")
             .setMessage("Are you sure want to exit the app?")
-            .setPositiveButton("Yes") { dialog, which ->
+            .setPositiveButton("Yes") { dialog, _ ->
                 super.onBackPressed()
                 dialog.dismiss()
             }
-            .setNegativeButton("No") { dialog, which -> dialog.dismiss() }
+            .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
-    fun setUpFCM() {
+    private fun setupFCM() {
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
