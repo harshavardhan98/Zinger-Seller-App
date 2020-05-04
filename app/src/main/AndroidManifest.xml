@@ -20,25 +20,9 @@
         <activity android:name=".ui.contactus.ContactUsActivity" />
         <activity android:name=".ui.webview.WebViewActivity" />
         <activity android:name=".ui.searchorders.SearchOrderActivity" />
-        <activity android:name=".ui.verifyInvite.InviteSellerActivity">
-            <intent-filter android:label="@string/link_filter_intent">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="www.zinger.tech"
-                    android:scheme="https" />
-                <data
-                    android:host="www.zinger.tech"
-                    android:scheme="http" />
-            </intent-filter>
-        </activity>
         <activity android:name=".ui.display.DisplayActivity" />
         <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".ui.otp.OTPActivity" />
-        <activity android:name=".ui.seller.SellerActivity" />
         <activity android:name=".ui.menuItem.MenuItemActivity" />
         <activity android:name=".ui.menu.MenuActivity" />
         <activity android:name=".ui.shopProfile.ShopProfileActivity" />

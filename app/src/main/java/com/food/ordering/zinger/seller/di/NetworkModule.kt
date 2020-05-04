@@ -19,7 +19,6 @@ val networkModule = module {
     single { ItemRepository(get()) }
     single { ShopRepository(get()) }
     single { OrderRepository(get())}
-    single { SellerRepository(get())}
     single { UserRespository(get())}
 }
 

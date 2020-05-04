@@ -11,9 +11,7 @@ import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailViewModel
 import com.food.ordering.zinger.seller.ui.orderhistory.OrderHistoryViewModel
 import com.food.ordering.zinger.seller.ui.otp.OTPViewModel
 import com.food.ordering.zinger.seller.ui.searchorders.SearchOrderViewModel
-import com.food.ordering.zinger.seller.ui.seller.SellerViewModel
 import com.food.ordering.zinger.seller.ui.shopProfile.ShopProfileViewModel
-import com.food.ordering.zinger.seller.ui.verifyInvite.InviteSellerViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -31,12 +29,10 @@ val viewModelModule = module {
     }
     viewModel { SearchOrderViewModel(get()) }
     viewModel { OrderHistoryViewModel(get()) }
-    viewModel { SellerViewModel(get()) }
     viewModel { ProfileViewModel(get(),get()) }
-    viewModel { OTPViewModel(get(),get()) }
+    viewModel { OTPViewModel(get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { ShopProfileViewModel(get()) }
     viewModel { OrderDetailViewModel(get()) }
-    viewModel { InviteSellerViewModel(get()) }
     viewModel { ContributorViewModel() }
 }

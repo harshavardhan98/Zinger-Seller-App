@@ -25,7 +25,6 @@ import com.food.ordering.zinger.seller.data.model.OrderNotificationPayload
 import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.databinding.ActivityHomeBinding
-import com.food.ordering.zinger.seller.databinding.BottomSheetAccountSwitchBinding
 import com.food.ordering.zinger.seller.databinding.HeaderLayoutBinding
 import com.food.ordering.zinger.seller.ui.contactus.ContactUsActivity
 import com.food.ordering.zinger.seller.ui.contributors.ContributorsActivity
@@ -33,12 +32,10 @@ import com.food.ordering.zinger.seller.ui.login.LoginActivity
 import com.food.ordering.zinger.seller.ui.menu.MenuActivity
 import com.food.ordering.zinger.seller.ui.orderhistory.OrderHistoryActivity
 import com.food.ordering.zinger.seller.ui.profile.ProfileActivity
-import com.food.ordering.zinger.seller.ui.seller.SellerActivity
 import com.food.ordering.zinger.seller.ui.shopProfile.ShopProfileActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.food.ordering.zinger.seller.utils.EventBus
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -192,9 +189,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
 
-        binding.imageCompany.setOnClickListener {
-            showAccountListBottomSheet()
-        }
     }
 
     private fun setStatusBarHeight() {
@@ -243,8 +237,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .withIcon(R.drawable.ic_drawer_past_rides)
         val menuItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Shop Menu")
             .withIcon(R.drawable.ic_menu)
-        val sellerItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Employees")
-            .withIcon(R.drawable.ic_employee)
         val contactUsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contact Us")
             .withIcon(R.drawable.ic_drawer_mail)
         val signOutItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Sign out")
@@ -264,7 +256,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 shopProfileItem,
                 ordersItem,
                 menuItem,
-                sellerItem,
                 contributorsItem,
                 contactUsItem,
                 DividerDrawerItem(),
@@ -282,9 +273,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 if (menuItem.identifier == drawerItem.identifier) {
                     startActivity(Intent(applicationContext, MenuActivity::class.java))
-                }
-                if (sellerItem.identifier == drawerItem.identifier) {
-                    startActivity(Intent(applicationContext, SellerActivity::class.java))
                 }
                 if (contributorsItem.identifier == drawerItem.identifier) {
                     startActivity(Intent(applicationContext, ContributorsActivity::class.java))
@@ -318,12 +306,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .build()
 
         preferencesHelper.role?.let { role ->
-            if (role == AppConstants.ROLE.SELLER.name) {
-                drawer.removeItem(sellerItem.identifier)
-            } else if (role == AppConstants.ROLE.DELIVERY.name) {
+            if (role == AppConstants.ROLE.DELIVERY.name) {
                 drawer.removeItem(shopProfileItem.identifier)
                 drawer.removeItem(menuItem.identifier)
-                drawer.removeItem(sellerItem.identifier)
             }
         }
     }
@@ -390,61 +375,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         })
 
     }
-
-    lateinit var accountAdapter: AccountAdapter
-    private fun showAccountListBottomSheet() {
-        val dialogBinding: BottomSheetAccountSwitchBinding =
-            DataBindingUtil.inflate(
-                layoutInflater,
-                R.layout.bottom_sheet_account_switch,
-                null,
-                false
-            )
-
-        val dialog = BottomSheetDialog(this)
-        dialog.setContentView(dialogBinding.root)
-        dialog.show()
-
-        val accountList: ArrayList<ShopConfigurationModel> = ArrayList()
-        preferencesHelper.getShop()?.let {
-
-            accountList.addAll(it)
-            for (i in accountList.indices) {
-                accountList[i].isSelected =
-                    accountList[i].shopModel.id == preferencesHelper.currentShop
-            }
-        }
-        accountAdapter = AccountAdapter(accountList, object : AccountAdapter.OnItemClickListener {
-            @SuppressLint("SetTextI18n")
-            override fun onItemClick(item: ShopConfigurationModel, position: Int) {
-                for (i in accountList.indices) {
-                    accountList[i].isSelected = false
-                }
-                accountList[position].isSelected = true
-                accountAdapter.notifyDataSetChanged()
-
-                accountList[position].shopModel.id?.let {
-                    shopConfig = accountList[position]
-                    preferencesHelper.currentShop = it
-                    Picasso.get().load(accountList[position].shopModel.photoUrl)
-                        .placeholder(R.drawable.ic_shop)
-                        .into(binding.imageCompany)
-                    binding.textShopName.text = accountList[position].shopModel.name
-                    var rating = "N/R"
-                    if(accountList[position].ratingModel.rating.toInt()>=1) {
-                        rating  = it.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
-                    }
-                    binding.textShopRating.text = rating
-                    this@HomeActivity.recreate()
-                }
-
-                dialog.dismiss()
-            }
-        })
-        dialogBinding.recyclerAccounts.layoutManager = LinearLayoutManager(this)
-        dialogBinding.recyclerAccounts.adapter = accountAdapter
-    }
-
 
     override fun onClick(v: View) {
         when (v.id) {

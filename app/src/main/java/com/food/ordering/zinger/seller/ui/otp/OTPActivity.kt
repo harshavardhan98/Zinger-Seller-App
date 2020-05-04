@@ -50,8 +50,7 @@ class OTPActivity : AppCompatActivity() {
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
     lateinit var verificationCallBack: PhoneAuthProvider.OnVerificationStateChangedCallbacks
     lateinit var countDownTimer: CountDownTimer
-    private var verifySeller = false
-    private var sellerShop = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,11 +64,6 @@ class OTPActivity : AppCompatActivity() {
 
     private fun getArgs() {
         number = intent.getStringExtra(AppConstants.PREFS_SELLER_MOBILE)
-        verifySeller = intent.getBooleanExtra(AppConstants.SELLER_INVITE, false)
-        sellerShop = intent.getStringExtra(AppConstants.SELLER_SHOP)
-
-        println("TestingHar:"+verifySeller+" "+sellerShop+" "+number)
-        println("Number testing" + number)
     }
 
     @SuppressLint("SetTextI18n")
@@ -87,6 +81,7 @@ class OTPActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long) {
                 binding.textResendOtp.text = "Resend OTP (" + millisUntilFinished / 1000 + ")"
             }
+
             @SuppressLint("SetTextI18n")
             override fun onFinish() {
                 binding.textResendOtp.text = "Resend OTP"
@@ -102,6 +97,7 @@ class OTPActivity : AppCompatActivity() {
                 binding.editOtp.setText(p0.smsCode)
                 signInWithPhoneAuthCredential(p0)
             }
+
             override fun onVerificationFailed(p0: FirebaseException) {
                 progressDialog.dismiss()
                 p0.printStackTrace()
@@ -110,6 +106,7 @@ class OTPActivity : AppCompatActivity() {
                 otpSent = false
                 binding.textResendOtp.isEnabled = true
             }
+
             override fun onCodeSent(
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
@@ -121,6 +118,7 @@ class OTPActivity : AppCompatActivity() {
                 binding.textResendOtp.isEnabled = false
                 countDownTimer.start()
             }
+
             override fun onCodeAutoRetrievalTimeOut(p0: String) {
                 super.onCodeAutoRetrievalTimeOut(p0)
                 otpSent = false
@@ -130,7 +128,7 @@ class OTPActivity : AppCompatActivity() {
             }
         }
         binding.editOtp.setOnEditorActionListener { _, actionId, _ ->
-            when(actionId){
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     if (binding.editOtp.text.toString()
                             .isNotEmpty() && binding.editOtp.text.toString().length == 6
@@ -240,73 +238,6 @@ class OTPActivity : AppCompatActivity() {
             }
         })
 
-
-        viewModel.acceptInviteResponse.observe(this, Observer { resource ->
-            if (resource != null) {
-                when (resource.status) {
-                    Resource.Status.SUCCESS -> {
-                        if (resource.data != null) {
-                            progressDialog.dismiss()
-                            val shopModelList = resource.data.data?.shopModelList
-                            val userModel = resource.data.data?.userModel
-                            if (userModel != null) {
-                                preferencesHelper.saveUser(
-                                    id = userModel.id,
-                                    name = userModel.name,
-                                    email = userModel.email,
-                                    mobile = userModel.mobile,
-                                    role = userModel.role,
-                                    oauthId = userModel.oauthId,
-                                    shop = Gson().toJson(shopModelList)
-                                )
-                                preferencesHelper.currentShop =
-                                    shopModelList?.get(0)?.shopModel?.id!!
-                                unloadKoinModules(networkModule)
-                                loadKoinModules(networkModule)
-                                startActivity(Intent(applicationContext, HomeActivity::class.java))
-                                finish()
-                            } else {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Data not available in Server",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        } else {
-                            Toast.makeText(
-                                applicationContext,
-                                "Something went wrong",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                    Resource.Status.OFFLINE_ERROR -> {
-                        progressDialog.dismiss()
-                        Toast.makeText(
-                            applicationContext,
-                            "No Internet Connection",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    Resource.Status.ERROR -> {
-                        progressDialog.dismiss()
-                        resource.message?.let {
-                            Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
-                        } ?: run {
-                            Toast.makeText(
-                                applicationContext,
-                                "Something went wrong",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                    Resource.Status.LOADING -> {
-                        progressDialog.setMessage("Logging in...")
-                        progressDialog.show()
-                    }
-                }
-            }
-        })
     }
 
     private fun sendOtp(number: String) {
@@ -329,7 +260,6 @@ class OTPActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     progressDialog.dismiss()
-                    println("TestingHar2:$verifySeller $sellerShop $number")
                     val user = task.result?.user
                     preferencesHelper.oauthId = user?.uid
                     preferencesHelper.mobile = user?.phoneNumber?.substring(3)
@@ -341,24 +271,11 @@ class OTPActivity : AppCompatActivity() {
                             )
                         }
                     }
-                    if (!verifySeller) {
-                        // Normal sign up
-                        userModel?.let { viewModel.login(it) } ?: run {
-                            Toast.makeText(applicationContext, "Login failed!", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
-                    else{
-                        // accept invite sign Up
-                        if(sellerShop.isNotEmpty() && sellerShop.matches(Regex("\\d+"))){
-                            var shopModel = ShopModel(id = sellerShop.toInt())
-                            var userShopModel =
-                                userModel?.let { UserShopModel(shopModel= shopModel,userModel = it) }
-                            userShopModel?.let { viewModel.acceptInvite(it) }
-                        }
-                        else{
-                          Toast.makeText(this,"Accept Invite failed",Toast.LENGTH_LONG).show()
-                        }
+                    userModel?.let {
+                        viewModel.login(it)
+                    } ?: run {
+                        Toast.makeText(applicationContext, "Login failed!", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
                     progressDialog.dismiss()
@@ -390,7 +307,10 @@ class OTPActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun resendVerificationCode(number: String, token: PhoneAuthProvider.ForceResendingToken) {
+    private fun resendVerificationCode(
+        number: String,
+        token: PhoneAuthProvider.ForceResendingToken
+    ) {
         timeOut = false
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
             number,        // Phone number to verify
