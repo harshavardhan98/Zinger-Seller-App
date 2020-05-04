@@ -53,10 +53,8 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     val message = it["message"]
                     val payload = JSONObject(it.get("payload"))
                     if (payload.has("url")) {
-                        intent.putExtra(
-                            AppConstants.NOTIFICATIONTYPE.URL.name,
-                            payload.getString("url").toString()
-                        )
+                        intent.putExtra(AppConstants.URL, payload.getString("url").toString())
+                        intent.putExtra(AppConstants.NOTIFICATION_TITLE, title)
                         val pendingIntent: PendingIntent =
                             PendingIntent.getActivity(this, 0, intent, 0)
                         sendNotificationWithPendingIntent(
@@ -76,7 +74,11 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                         Gson().fromJson(it["payload"], OrderNotificationPayload::class.java)
                     println(payload)
                     if (title.isNullOrEmpty()) {
-                        title = "New Order Received"
+                        if (payload.orderStatus.equals(AppConstants.STATUS.PLACED.name)) {
+                            title = "New Order Received"
+                        } else {
+                            title = "Order Cancelled By User"
+                        }
                     }
                     if (message.isNullOrEmpty()) {
                         message = "OrderId: " + payload.orderId.toString() + "\nItems:\n"
@@ -108,6 +110,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                             PendingIntent.getActivity(this, payload.orderId, acceptIntent, 0)
                         val declinePendingIntent: PendingIntent =
                             PendingIntent.getActivity(this, payload.orderId, declineIntent, 0)
+
                         sendNotificationNewOrder(
                             payload.orderId,
                             title,
@@ -116,6 +119,8 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                             acceptPendingIntent,
                             declinePendingIntent
                         )
+
+
                         EventBus.send(payload)
                         preferencesHelper.orderStatusChanged = true
                     } else {
@@ -189,7 +194,16 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                     }
 
                     preferencesHelper.orderStatusChanged = true
-                    EventBus.send(OrderNotificationPayload("", orderId.toInt(), 0.0, ArrayList(), "", ""))
+                    EventBus.send(
+                        OrderNotificationPayload(
+                            "",
+                            orderId.toInt(),
+                            0.0,
+                            ArrayList(),
+                            "",
+                            ""
+                        )
+                    )
                 }
 
 

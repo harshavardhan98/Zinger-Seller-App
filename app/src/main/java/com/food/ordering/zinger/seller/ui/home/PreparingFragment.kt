@@ -107,6 +107,8 @@ class PreparingFragment : Fragment() {
                     binding.animationView.setAnimation("order_failed_animation.json")
                     binding.animationView.playAnimation()
                     errorSnackBar.setText("Something went wrong")
+                    ordersList.clear()
+                    orderAdapter.notifyDataSetChanged()
 
                     Toast.makeText(
                         context,
@@ -133,10 +135,14 @@ class PreparingFragment : Fragment() {
                     binding.animationView.setAnimation("no_internet_connection_animation.json")
                     binding.animationView.playAnimation()
                     errorSnackBar.setText("No Internet Connection")
+                    ordersList.clear()
+                    orderAdapter.notifyDataSetChanged()
                     Handler().postDelayed({ errorSnackBar.show() }, 500)
                 }
 
                 Resource.Status.EMPTY -> {
+                    ordersList.clear()
+                    orderAdapter.notifyDataSetChanged()
                     showEmptyStateAnimation()
                 }
             }

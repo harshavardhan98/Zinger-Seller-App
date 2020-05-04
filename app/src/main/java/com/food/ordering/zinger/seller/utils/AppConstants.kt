@@ -53,6 +53,8 @@ object AppConstants {
     const val INTENT_DECLINE = "decline"
     const val INTENT_UPDATED_ITEM = "updated_item_list"
     const val INTENT_UPDATED_ITEM_CATEGORY = "updated_item_category"
+    const val URL = "URL"
+    const val NOTIFICATION_TITLE = "NOTIFICATION_TITLE"
 
 
 

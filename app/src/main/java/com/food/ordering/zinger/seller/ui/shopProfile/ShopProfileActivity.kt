@@ -24,6 +24,7 @@ import com.food.ordering.zinger.seller.ui.display.DisplayActivity
 import com.food.ordering.zinger.seller.utils.AppConstants
 import com.food.ordering.zinger.seller.utils.CommonUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
@@ -48,6 +49,7 @@ class ShopProfileActivity : AppCompatActivity() {
     private var isShopCoverImageClicked = false
     private var mStorageRef: StorageReference? = null
     private lateinit var updateConfigurationModel: ConfigurationModel
+    private lateinit var successSnackbar: Snackbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +65,7 @@ class ShopProfileActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shop_profile)
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
+        successSnackbar = Snackbar.make(binding.root, " ", Snackbar.LENGTH_INDEFINITE)
     }
 
     private fun updateUI() {
@@ -147,8 +150,8 @@ class ShopProfileActivity : AppCompatActivity() {
                 binding.textLogo.isEnabled = false
                 binding.textCoverPhoto.isEnabled = false
 
-                binding.switchOrders.isEnabled = false
-                binding.switchDelivery.isEnabled = false
+                binding.switchOrders.isClickable = false
+                binding.switchDelivery.isClickable = false
                 binding.buttonUpdate.visibility = View.GONE
                 binding.buttonUpdate.isEnabled = false
             }
@@ -389,11 +392,8 @@ class ShopProfileActivity : AppCompatActivity() {
                                 preferencesHelper.shop = Gson().toJson(shopConfigurationList)
                             }
                             progressDialog.dismiss()
-                            Toast.makeText(
-                                applicationContext,
-                                "Profile Successfully Updated",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            successSnackbar.setText("Shop Profile Updated")
+                            successSnackbar.show()
                         }
                         Resource.Status.OFFLINE_ERROR -> {
                             progressDialog.dismiss()

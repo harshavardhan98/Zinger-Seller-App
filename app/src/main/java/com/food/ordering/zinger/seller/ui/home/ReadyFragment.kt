@@ -102,11 +102,11 @@ class ReadyFragment : Fragment() {
                                 }
                             }
                         }
-                        orderAdapter.notifyDataSetChanged()
                     }
-                    if (ordersList.isEmpty())
+                    orderAdapter.notifyDataSetChanged()
+                    if (ordersList.isEmpty()) {
                         showEmptyStateAnimation()
-                    else {
+                    } else {
                         binding.layoutStates.visibility = View.GONE
                         binding.animationView.visibility = View.GONE
                         binding.animationView.cancelAnimation()
@@ -120,6 +120,8 @@ class ReadyFragment : Fragment() {
                     binding.animationView.loop(true)
                     binding.animationView.setAnimation("order_failed_animation.json")
                     binding.animationView.playAnimation()
+                    ordersList.clear()
+                    orderAdapter.notifyDataSetChanged()
                     errorSnackBar.setText("Error: " + it.message)
 
                     //Toast.makeText(context,"Something went wrong. Error:\n"+it.message, Toast.LENGTH_LONG).show()
@@ -144,10 +146,14 @@ class ReadyFragment : Fragment() {
                     binding.animationView.setAnimation("no_internet_connection_animation.json")
                     binding.animationView.playAnimation()
                     errorSnackBar.setText("No Internet Connection")
+                    ordersList.clear()
+                    orderAdapter.notifyDataSetChanged()
                     Handler().postDelayed({ errorSnackBar.show() }, 500)
                 }
 
                 Resource.Status.EMPTY -> {
+                    ordersList.clear()
+                    orderAdapter.notifyDataSetChanged()
                     showEmptyStateAnimation()
                 }
 

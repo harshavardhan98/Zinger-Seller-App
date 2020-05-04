@@ -17,6 +17,7 @@ import com.food.ordering.zinger.seller.data.model.UserModel
 import com.food.ordering.zinger.seller.databinding.ActivityProfileBinding
 import com.food.ordering.zinger.seller.databinding.BottomSheetVerifyOtpBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
@@ -37,6 +38,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var countDownTimer: CountDownTimer
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
     private var otpVerified = false
+    private lateinit var successSnackbar: Snackbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +52,11 @@ class ProfileActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile)
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
+        dialog = BottomSheetDialog(this)
         binding.editName.setText(preferencesHelper.name)
         binding.editEmail.setText(preferencesHelper.email)
         binding.editMobile.setText(preferencesHelper.mobile)
+        successSnackbar = Snackbar.make(binding.root, " ", Snackbar.LENGTH_INDEFINITE)
     }
 
     private fun setListener() {
@@ -70,11 +74,13 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         binding.buttonUpdate.setOnClickListener {
-            if (binding.editName.isEnabled)
+            if (binding.editName.isEnabled) {
                 Toast.makeText(this, "Please confirm name change", Toast.LENGTH_LONG).show()
-            else if (binding.editEmail.isEnabled)
+            } else if (binding.editEmail.isEnabled) {
                 Toast.makeText(this, "Please confirm email change", Toast.LENGTH_LONG).show()
-            else {
+            } else if(binding.editName.editableText.toString().isEmpty() || binding.editEmail.editableText.toString().isEmpty()) {
+                Toast.makeText(this, "Name or email is empty", Toast.LENGTH_LONG).show()
+            } else {
                 val name = binding.editName.editableText.toString()
                 val email = binding.editEmail.editableText.toString()
                 val mobile = preferencesHelper.mobile
@@ -159,20 +165,14 @@ class ProfileActivity : AppCompatActivity() {
                         }
                         binding.editMobile.setText(preferencesHelper.mobile)
                         progressDialog.dismiss()
-                        Toast.makeText(
-                            applicationContext,
-                            "Profile Successfully Updated",
-                            Toast.LENGTH_SHORT
-                        ).show()
                         dialog.let { dialog.dismiss() }
+                        successSnackbar.setText("Profile Updated Successfully")
+                        successSnackbar.show()
                     }
                     Resource.Status.OFFLINE_ERROR -> {
                         progressDialog.dismiss()
-                        Toast.makeText(
-                            applicationContext,
-                            "No Internet Connection",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        successSnackbar.setText("No Internet Connection")
+                        successSnackbar.show()
                         dialog.let { dialog.dismiss() }
                     }
                     Resource.Status.ERROR -> {

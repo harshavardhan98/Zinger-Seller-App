@@ -107,8 +107,15 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         snackButton.setTextColor(ContextCompat.getColor(applicationContext, R.color.accent))
         binding.imageMenu.setOnClickListener(this)
         binding.textShopName.text = shopConfig?.shopModel?.name
-        binding.textShopRating.text =
-            shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
+
+        var rating = "N/R"
+        shopConfig?.ratingModel?.rating?.let { it->
+            if(it.toInt()>=1) {
+                rating  = it.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
+            }
+        }
+        binding.textShopRating.text = rating
+
         progressDialog = ProgressDialog(this)
 
 
@@ -207,14 +214,21 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateHeaderLayoutUI() {
-        headerLayout.textCustomerName.text = preferencesHelper.name
-        headerLayout.textEmail.text = preferencesHelper.email
-        val textDrawable = TextDrawable.builder()
-            .buildRound(
-                preferencesHelper.name?.get(0).toString().capitalize(),
-                ContextCompat.getColor(this, R.color.accent)
-            )
-        headerLayout.imageProfilePic.setImageDrawable(textDrawable)
+        if(preferencesHelper.name.isNullOrEmpty()){
+            headerLayout.textCustomerName.text = "Zinger Partner"
+            headerLayout.textEmail.text = shopConfig?.shopModel?.name
+            headerLayout.imageProfilePic.setImageResource(R.mipmap.ic_launcher)
+        }else{
+            headerLayout.textCustomerName.text = preferencesHelper.name
+            headerLayout.textEmail.text = preferencesHelper.email
+            val textDrawable = TextDrawable.builder()
+                .buildRound(
+                    preferencesHelper.name?.get(0).toString().capitalize(),
+                    ContextCompat.getColor(this, R.color.accent)
+                )
+            headerLayout.imageProfilePic.setImageDrawable(textDrawable)
+        }
+
 
     }
 
@@ -228,7 +242,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         val ordersItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Past Orders")
             .withIcon(R.drawable.ic_drawer_past_rides)
         val menuItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Shop Menu")
-            .withIcon(R.drawable.ic_drawer_order)
+            .withIcon(R.drawable.ic_menu)
         val sellerItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Employees")
             .withIcon(R.drawable.ic_employee)
         val contactUsItem = PrimaryDrawerItem().withIdentifier(++identifier).withName("Contact Us")
@@ -351,8 +365,13 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                                 shopConfig = preferencesHelper.getShop()!!
                                     .filter { it.shopModel.id == preferencesHelper.currentShop }[0]
                                 binding.textShopName.text = shopConfig?.shopModel?.name
-                                binding.textShopRating.text =
-                                    shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
+                                var rating = "N/R"
+                                shopConfig?.ratingModel?.rating?.let { it->
+                                    if(it.toInt()>=1) {
+                                        rating  = it.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
+                                    }
+                                }
+                                binding.textShopRating.text = rating
                             }
                         }
                     }
@@ -411,10 +430,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         .placeholder(R.drawable.ic_shop)
                         .into(binding.imageCompany)
                     binding.textShopName.text = accountList[position].shopModel.name
-                    binding.textShopRating.text =
-                        accountList[position].ratingModel.rating.toString() + " (" + accountList[position].ratingModel.userCount + ")"
+                    var rating = "N/R"
+                    if(accountList[position].ratingModel.rating.toInt()>=1) {
+                        rating  = it.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
+                    }
+                    binding.textShopRating.text = rating
                     this@HomeActivity.recreate()
-                    //viewModel.getOrderByShopId(it)
                 }
 
                 dialog.dismiss()
@@ -450,8 +471,13 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         shopConfig = preferencesHelper.getShop()!!
             .filter { it.shopModel.id == preferencesHelper.currentShop }[0]
         binding.textShopName.text = shopConfig?.shopModel?.name
-        binding.textShopRating.text =
-            shopConfig?.ratingModel?.rating.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
+        var rating = "N/R"
+        shopConfig?.ratingModel?.rating?.let { it->
+            if(it.toInt()>=1) {
+                rating  = it.toString() + " (" + shopConfig?.ratingModel?.userCount + ")"
+            }
+        }
+        binding.textShopRating.text = rating
         updateHeaderLayoutUI()
     }
 
