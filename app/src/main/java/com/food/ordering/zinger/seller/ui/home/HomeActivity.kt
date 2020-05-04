@@ -61,6 +61,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
+
     private lateinit var binding: ActivityHomeBinding
     private val viewModel: OrderViewModel by viewModel()
     private val preferencesHelper: PreferencesHelper by inject()
