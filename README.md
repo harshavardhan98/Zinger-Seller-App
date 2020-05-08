@@ -19,7 +19,7 @@
 </p>
 
 <h1 align="center">
-  Welcome to Zinger Partner Android App
+  Zinger Partner Android App
 </h1>
 
 This is an open source food ordering application developed to showcase the capabilities of <a href="https://zinger.pw" target="_blank">Zinger Framework</a>. This app can be used by restaurant owners to accept food orders within a campus, tech park, or mall. This application receives orders placed using <a href="https://github.com/shrikanth7698/Zinger-Android-App" target="_blank">Zinger Customer App</a>. Seller can accept orders, manage inventory and fulfill delivery and pickup orders using this app.
