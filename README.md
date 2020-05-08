@@ -1,11 +1,20 @@
 ![Cover Image](zinger_seller_app_cover_with_text.jpg)
 
+<h1 align="center">
+  Zinger Partner Android App
+</h1>
+
 <p align="center">
+  Join our active, engaged community: <br>
   <strong>
     <a href="https://zinger.pw/app">website</a>
-    •
+    |
+    <a href="https://zinger-workspace.slack.com/join/shared_invite/zt-e6xt0gc2-nBEy85RhEy7NZv3gWCt6Dg/">slack</a>
+    |
+    <a href="https://discord.gg/TqADaXV">discord</a>
+    |
     <a href="https://zinger.pw/app/docs">docs</a>
-    •
+    |
     <a href="https://zinger.pw">framework</a>
   </strong>
 </p>
@@ -15,12 +24,7 @@
   <a href="https://zinger.pw/app/docs"><img alt="Documentation" src="https://img.shields.io/badge/code-documented-brightgreen.svg?style=flat-square"></a>
   <a href="https://github.com/harshavardhan98/Zinger-Seller-App/pulls"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square"></a>
   <a href="https://github.com/harshavardhan98/Zinger-Seller-App/pulls"><img alt="Contributions Welcome" src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square"></a>
-
 </p>
-
-<h1 align="center">
-  Zinger Partner Android App
-</h1>
 
 This is an open source food ordering application developed to showcase the capabilities of <a href="https://zinger.pw" target="_blank">Zinger Framework</a>. This app can be used by restaurant owners to accept food orders within a campus, tech park, or mall. This application receives orders placed using <a href="https://github.com/shrikanth7698/Zinger-Android-App" target="_blank">Zinger Customer App</a>. Seller can accept orders, manage inventory and fulfill delivery and pickup orders using this app.
 
