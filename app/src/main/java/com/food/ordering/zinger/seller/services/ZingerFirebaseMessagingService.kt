@@ -12,7 +12,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.food.ordering.zinger.seller.R
 import com.food.ordering.zinger.seller.data.local.PreferencesHelper
 import com.food.ordering.zinger.seller.data.model.OrderNotificationPayload
-import com.food.ordering.zinger.seller.data.model.ShopConfigurationModel
 import com.food.ordering.zinger.seller.ui.home.HomeActivity
 import com.food.ordering.zinger.seller.ui.orderdetail.OrderDetailActivity
 import com.food.ordering.zinger.seller.ui.webview.WebViewActivity
@@ -21,7 +20,6 @@ import com.food.ordering.zinger.seller.utils.EventBus
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
@@ -56,7 +54,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                         intent.putExtra(AppConstants.URL, payload.getString("url").toString())
                         intent.putExtra(AppConstants.NOTIFICATION_TITLE, title)
                         val pendingIntent: PendingIntent =
-                            PendingIntent.getActivity(this, 0, intent, 0)
+                            PendingIntent.getActivity(this, Date().time.toInt(), intent, 0)
                         sendNotificationWithPendingIntent(
                             Date().time.toInt(),
                             title,
@@ -81,7 +79,12 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                         }
                     }
                     if (message.isNullOrEmpty()) {
-                        message = "OrderId: " + payload.orderId.toString() + "\nItems:\n"
+                        message = "OrderId: " + payload.orderId.toString()
+                        if(payload.orderType.equals("D"))
+                            message+="\nOrder Type: DELIVERY"
+                        else
+                            message+="\nOrder Type: PICKUP"
+                        message+= "\nItems:\n"
                         for (i in payload.itemList)
                             message += i + "\n"
                     }
@@ -107,9 +110,9 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                         val pendingIntent: PendingIntent =
                             PendingIntent.getActivity(this, payload.orderId, intent, 0)
                         val acceptPendingIntent: PendingIntent =
-                            PendingIntent.getActivity(this, payload.orderId, acceptIntent, 0)
+                            PendingIntent.getActivity(this, payload.orderId*-1, acceptIntent, 0)
                         val declinePendingIntent: PendingIntent =
-                            PendingIntent.getActivity(this, payload.orderId, declineIntent, 0)
+                            PendingIntent.getActivity(this, payload.orderId*-2, declineIntent, 0)
 
                         sendNotificationNewOrder(
                             payload.orderId,
@@ -165,7 +168,7 @@ class ZingerFirebaseMessagingService : FirebaseMessagingService() {
                         message += shopName + " has arrived in your place. Try it out!"
                     }
                     intent.putExtra(AppConstants.SHOP_ID, shopId)
-                    val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+                    val pendingIntent: PendingIntent = PendingIntent.getActivity(this, Date().time.toInt(), intent, 0)
                     sendNotificationWithPendingIntent(
                         Date().time.toInt(),
                         title,
