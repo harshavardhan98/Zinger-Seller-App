@@ -417,8 +417,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             .setTitle("Exit app?")
             .setMessage("Are you sure want to exit the app?")
             .setPositiveButton("Yes") { dialog, _ ->
-                super.onBackPressed()
                 dialog.dismiss()
+                val intent = Intent(Intent.ACTION_MAIN)
+                intent.addCategory(Intent.CATEGORY_HOME)
+                startActivity(intent)
             }
             .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
             .show()
